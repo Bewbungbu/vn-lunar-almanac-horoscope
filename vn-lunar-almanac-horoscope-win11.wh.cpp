@@ -1,5 +1,5 @@
 // ==WindhawkMod==
-// @id              vn-lunar-almanac-horoscope
+// @id              vn-lunar-almanac-horoscope-win11
 // @name            Vietnamese Lunar Almanac & Personalized Horoscope
 // @name:vi-VN      Lịch Vạn Niên & Tử Vi Phong Thủy
 // @description     Displays the Vietnamese Lunar Calendar, 24 Solar Terms, Five Elements (Ngũ Hành), Google Calendar notes, and personalized daily Horoscope (Tử Vi) on the Windows 11 taskbar clock, tooltip, and calendar flyout
