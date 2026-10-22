@@ -18,5 +18,5 @@ Bản Mod dành cho **Windhawk** giúp tích hợp **Âm lịch Việt Nam**, **
 ## 🚀 Cách cài đặt vào Windhawk
 1. Tải và cài đặt phần mềm [Windhawk](https://windhawk.net/).
 2. Mở Windhawk, bấm vào nút **Create a new mod** (Tạo mod mới) ở góc dưới bên phải.
-3. Sao chép toàn bộ nội dung trong tệp [`vn-lunar-almanac-horoscope.wh.cpp`](./vn-lunar-almanac-horoscope.wh.cpp) và dán đè vào cửa sổ mã nguồn.
+3. Sao chép toàn bộ nội dung trong tệp [`vn-lunar-almanac-horoscope-win11.wh.cpp`](./vn-lunar-almanac-horoscope-win11.wh.cpp) và dán đè vào cửa sổ mã nguồn.
 4. Nhấn **Compile Mod** (Biên dịch) và chuyển sang tab **Settings** (Cài đặt) để nhập Năm sinh Âm lịch cũng như link `.ics` Google Calendar của bạn.
