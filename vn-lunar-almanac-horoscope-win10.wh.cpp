@@ -2,22 +2,83 @@
 // @id              vn-lunar-almanac-horoscope-win10
 // @name            Vietnamese Lunar Almanac & Personalized Horoscope
 // @name:vi-VN      Lịch Vạn Niên & Tử Vi Phong Thủy
-// @description     Displays the Vietnamese Lunar Calendar, 24 Solar Terms, Five Elements (Ngũ Hành), Google Calendar notes, and personalized daily Horoscope (Tử Vi) on the Windows 10 taskbar clock, acrylic color-emoji tooltip, and calendar flyout
-// @description:vi-VN Hiển thị Âm lịch Việt Nam, 24 Tiết khí, Ngũ hành Nạp âm, đồng bộ ghi chú Google Calendar và Tử Vi cá nhân hóa theo tuổi trên đồng hồ Taskbar, hộp chú thích trong suốt và khay Lịch Windows 10
-// @version         0.1.3
+// @description     Displays the Vietnamese Lunar Calendar, 24 Solar Terms, Five Elements (Ngũ Hành), Google Calendar notes, personalized daily Horoscope (Tử Vi), live Taskbar System Stats, and independent Multi-Monitor Wi-Fi & Audio controls on Windows 10
+// @description:vi-VN Hiển thị Âm lịch Việt Nam, 24 Tiết khí, Ngũ hành Nạp âm, đồng bộ Google Calendar, Tử Vi cá nhân hóa, khung thông số hệ thống (CPU/GPU/RAM/Mạng/Ping) và cụm điều khiển Wi-Fi & Âm thanh độc lập cho màn hình phụ trên Windows 10
+// @version         0.2.2
 // @author          bewbungbu
 // @include         explorer.exe
 // @include         ShellExperienceHost.exe
 // @architecture    x86-64
-// @compilerOptions -lole32 -loleaut32 -lruntimeobject -lversion -lwinhttp -lurlmon -lcomctl32 -ld2d1 -ldwrite -lgdi32 -ldwmapi
+// @compilerOptions -lole32 -loleaut32 -lruntimeobject -lversion -lwinhttp -lurlmon -lcomctl32 -ld2d1 -ldwrite -lgdi32 -ldwmapi -lshell32
 // @license         GPL-3.0-only
 // ==/WindhawkMod==
 
 // ==WindhawkModReadme==
 /*
-# Lịch Vạn Niên & Tử Vi Phong Thủy (Tích hợp Google Calendar)
+# 🌕 Lịch Vạn Niên, Tử Vi & Tiện Ích Taskbar Đa Màn Hình (Windows 10)
 
-Bản Mod tích hợp **Âm lịch Việt Nam**, **24 Tiết Khí**, **Bát tự Can Chi**, **Ngũ Hành Nạp Âm**, **Ngày lễ truyền thống**, **Đồng bộ Ghi chú Google Calendar (.ics)** và **Tử Vi cá nhân hóa theo năm sinh** trực tiếp vào thanh Taskbar, hộp chú thích trong suốt (hỗ trợ Color Emoji) và khay Lịch (Calendar Flyout) của **Windows 10**.
+Bản Mod tích hợp **Âm lịch Việt Nam**, **24 Tiết Khí**, **Bát tự Can Chi**, **Ngũ Hành Nạp Âm**, **Ngày lễ truyền thống**, **Đồng bộ Ghi chú Google Calendar (.ics)**, **Tử Vi cá nhân hóa theo năm sinh**, **Khung theo dõi thông số hệ thống (CPU, GPU, RAM, Mạng, Ping)** và **Cụm điều khiển Wi-Fi & Âm thanh độc lập cho màn hình phụ** trực tiếp vào thanh Taskbar, hộp chú thích trong suốt (hỗ trợ Color Emoji) và khay Lịch (Calendar Flyout) của **Windows 10**.
+
+---
+
+## ✨ I. Tổng hợp tất cả các tính năng nổi bật
+
+1. **Hiển thị Âm lịch trực tiếp trên thanh Taskbar:**
+   * Hỗ trợ chế độ **2 dòng** (Giờ + Thứ/Ngày Dương lịch ở dòng trên, Ngày/Tháng/Năm Can Chi Âm lịch ở dòng dưới) hoặc chế độ **1 dòng nối tiếp**.
+   * Tự động tính toán chính xác **tháng Nhuận** và múi giờ chuẩn Việt Nam (**UTC+7**).
+2. **Hộp chú thích trong suốt (Acrylic Color-Emoji Tooltip) & Bảo mật riêng tư:**
+   * Hiển thị nhanh Âm lịch, Lễ Tết, Bát tự, Ngũ hành, Tử Vi và lịch trình Google Calendar trong ngày kèm tùy chỉnh độ trong suốt nền (`tooltipOpacity`).
+   * **Chế độ Riêng Tư:** Bật/tắt hiển thị nội dung ghi chú Google Calendar trên hộp rê chuột để tránh lộ thông tin cá nhân.
+3. **Khay Lịch tháng (Calendar Flyout) & Bảng Chi tiết Tử Vi:**
+   * Hiển thị ngày Âm lịch dưới từng ô ngày Dương lịch, **tự động tô đỏ** ngày Lễ, Tết truyền thống Việt Nam.
+   * **Đánh dấu cá nhân hóa theo tuổi:** Gắn sao **(★)** cho ngày Tam Hợp / Lục Hợp / Tương Sinh và dấu chấm than **(!)** cho ngày Lục Xung / Thiên Khắc Địa Xung.
+   * **Đánh dấu sự kiện Google Calendar `(•)`:** Nhấp vào bất kỳ ngày nào để mở bảng luận giải Tử Vi và lịch trình chi tiết.
+4. **📊 Khung theo dõi Thông số hệ thống trực tiếp trên Taskbar (CPU, GPU, RAM, Mạng, Ping):**
+   * Hiển thị thời gian thực `% CPU`, `% GPU`, `% & GB RAM`, tốc độ mạng (`↓ / ↑`) và độ trễ `Ping (ms)`.
+   * **Kéo thả tự do & Ghi nhớ vị trí vĩnh viễn:** Giữ chuột trái kéo tới vị trí mong muốn; tọa độ được lưu vĩnh viễn vào `HKCU\Software\VnLunarAlmanac\Settings`, không bị mất sau khi khởi động lại máy.
+   * Nhấp đúp chuột trái mở nhanh **Task Manager**; nhấp chuột phải để bật/tắt nhanh từng chỉ số hoặc chọn **"Đặt lại vị trí"**.
+5. **🖥️ Tiện ích Đa Màn Hình (Multi-Monitor): Wi-Fi, Âm thanh & Thông số độc lập trên Màn hình phụ:**
+   * **Tự động phát hiện toàn bộ màn hình thứ 2 trở lên** (bỏ qua màn hình chính), hoạt động tách biệt hoàn toàn không ảnh hưởng màn hình chính.
+   * **2 nút tách biệt (Wi-Fi / Mạng và Âm thanh) với bảng điều khiển nổi Fluent UI 120fps:**
+     * **Nút Wi-Fi / Mạng:** Xem mạng Wi-Fi khả dụng cùng cường độ sóng, bấm **Kết nối / Ngắt kết nối** trực tiếp, nút **Quét lại (`↻`)**, hiển thị chính xác Ethernet vật lý (tự loại card ảo Hyper-V / WSL / VPN).
+     * **Nút Âm thanh:** Thanh trượt âm lượng mượt 120fps, nút Mute/Unmute, lăn chuột trực tiếp trên icon Loa để chỉnh ±2% kèm OSD `%`, hỗ trợ **chuyển đổi thiết bị đầu ra** và tích hợp chuyển loa vật lý thông minh cho **FxSound**.
+   * **Đồng bộ màu & co giãn thông minh:** Nền bảng nổi tự động đổi màu theo đúng màu Taskbar, tự trượt ngang tránh đè đồng hồ/chuông thông báo, khóa vị trí vững khi bật **Ẩn Taskbar (Auto-Hide)**.
+   * **Nhân bản Khung Thông số lên màn hình phụ:** Hỗ trợ kéo thả và lưu vị trí độc lập với màn hình chính.
+
+---
+
+## ⚙️ II. Danh sách các tùy chỉnh (Settings) trong Mod
+
+### 1. Ngôn ngữ & Cá nhân hóa Tử Vi
+* **Ngôn ngữ hiển thị (`language`):** `Tự động theo hệ thống`, `Tiếng Việt` hoặc `English`.
+* **Năm sinh Âm lịch (`birthYear`):** Nhập năm sinh (VD: `1995`, `2000`) để tính Ngũ hành Nạp âm và đánh dấu ngày Hợp `(★)` / Xung `(!)`. Để `0` nếu không dùng.
+* **Đánh dấu ngày Hợp / Xung trên ô lịch (`markPersonalDaysOnCalendar`).**
+
+### 2. Đồng bộ Google Calendar (.ics)
+* **Link Google Calendar cá nhân (`googleIcsUrl`):** Dán 1 hoặc nhiều link `.ics` (cách nhau bằng dấu `;`).
+* **Chu kỳ tự động đồng bộ (`icsRefreshMinutes`):** Mặc định `10` phút.
+* **Đánh dấu chấm `(•)` trên ô lịch (`markGoogleEventsOnCalendar`).**
+* **Hiển thị ghi chú trên Tooltip (`showGoogleEventsInTooltip`)** & **Độ trong suốt nền Tooltip (`tooltipOpacity`: 80–240).**
+
+### 3. Đồng hồ Taskbar & Khay Lịch
+* **Hiển thị Âm lịch trên Taskbar (`enableTaskbarClock`)** & **Định dạng 2 dòng (`taskbarClockSolarOnTop`).**
+* **Hiển thị Tooltip phong thủy (`enableTaskbarTooltip`).**
+* **Hiển thị Âm lịch trong khay Lịch (`enableCalendarFlyout`)** & **Mở trang chi tiết khi bấm vào ngày (`enableHoroscopePage`).**
+
+### 4. Khung Thông số hệ thống & Đa màn hình (Multi-Monitor)
+* **Hiển thị khung thông số trên Taskbar chính (`enableTaskbarSystemStats`).**
+* **Hiển thị nút Wi-Fi & Âm thanh độc lập trên màn hình phụ (`enableSecondaryMonitorTray`).**
+* **Hiển thị khung thông số hệ thống trên màn hình phụ (`enableSecondaryMonitorStats`).**
+* **Tùy chọn từng chỉ số:** `showCpuStats`, `showGpuStats`, `showRamStats`, `showNetStats`, `showPingStats`.
+
+---
+
+## 📅 III. Hướng dẫn lấy link đồng bộ Google Calendar (.ics)
+
+1. Mở **Google Calendar** trên trình duyệt máy tính → **Cài đặt (⚙️ Settings)**.
+2. Ở cột trái, chọn **Tên lịch cá nhân của bạn** dưới mục *Cài đặt cho lịch của tôi*.
+3. Cuộn xuống mục **Địa chỉ bí mật ở định dạng iCal (Secret address in iCal format)**.
+4. Sao chép đường link `.ics` và dán vào mục **Link Google Calendar cá nhân (.ics)** trong phần **Cài đặt** của Mod.
 */
 // ==/WindhawkModReadme==
 
@@ -57,6 +118,25 @@ Bản Mod tích hợp **Âm lịch Việt Nam**, **24 Tiết Khí**, **Bát tự
   $name: Hiển thị Âm lịch trong khay Lịch
 - enableHoroscopePage: true
   $name: Mở trang Tử Vi & Ghi chú khi bấm vào ngày trên lịch
+- enableTaskbarSystemStats: true
+  $name: "Hiển thị khung thông số hệ thống (CPU, GPU, RAM, Mạng) trên Taskbar"
+  $description: "Hiển thị bảng theo dõi CPU, GPU, RAM, Mạng và Ping thời gian thực ngay bên trái khay hệ thống. Hỗ trợ kéo chuột trái để chỉnh vị trí, nhấp đúp mở Task Manager, hoặc chuột phải để bật/tắt nhanh từng thông số."
+- enableSecondaryMonitorTray: true
+  $name: "Hiển thị nút Wi-Fi & Âm thanh độc lập trên màn hình phụ"
+  $description: "Tự động phát hiện các màn hình thứ 2 trở lên và hiển thị 2 nút tách biệt (Wi-Fi / Mạng và Âm thanh) có bảng điều khiển nổi riêng ngay trên màn hình phụ, không ảnh hưởng màn hình chính."
+- enableSecondaryMonitorStats: false
+  $name: "Hiển thị khung thông số hệ thống trên màn hình phụ"
+  $description: "Nhân bản khung đo CPU, GPU, RAM, Mạng lên các màn hình phụ (đặt bên trái cụm khay hệ thống phụ)."
+- showCpuStats: true
+  $name: "  • Hiển thị % CPU trên Taskbar"
+- showGpuStats: true
+  $name: "  • Hiển thị % GPU trên Taskbar"
+- showRamStats: true
+  $name: "  • Hiển thị % và dung lượng RAM trên Taskbar"
+- showNetStats: true
+  $name: "  • Hiển thị tốc độ Mạng (↓ Tải xuống / ↑ Tải lên) trên Taskbar"
+- showPingStats: true
+  $name: "  • Hiển thị độ trễ mạng Ping (ms) trên Taskbar"
 */
 // ==/WindhawkModSettings==
 
@@ -74,8 +154,17 @@ Bản Mod tích hợp **Âm lịch Việt Nam**, **24 Tiết Khí**, **Bát tự
 #include <string>
 #include <thread>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
+
+#include <windows.h>
+#include <mmdeviceapi.h>
+#include <endpointvolume.h>
+#include <propsys.h>
+#include <wlanapi.h>
+#include <tlhelp32.h>
+#include <uiautomationclient.h>
 
 #undef GetCurrentTime
 
@@ -84,6 +173,7 @@ Bản Mod tích hợp **Âm lịch Việt Nam**, **24 Tiết Khí**, **Bát tự
 #include <d2d1.h>
 #include <dwmapi.h>
 #include <dwrite.h>
+#include <shellapi.h>
 #include <urlmon.h>
 #include <winhttp.h>
 #include <winrt/base.h>
@@ -133,6 +223,14 @@ struct ModSettings {
     bool enableTaskbarClock = true;
     bool taskbarClockSolarOnTop = true;
     bool enableTaskbarTooltip = true;
+    bool enableTaskbarSystemStats = true;
+    bool enableSecondaryMonitorTray = true;
+    bool enableSecondaryMonitorStats = false;
+    bool showCpuStats = true;
+    bool showGpuStats = true;
+    bool showRamStats = true;
+    bool showNetStats = true;
+    bool showPingStats = true;
     bool enableCalendarFlyout = true;
     bool enableHoroscopePage = true;
 };
@@ -166,12 +264,20 @@ void LoadSettings() {
     s.showGoogleEventsInTooltip = Wh_GetIntSetting(L"showGoogleEventsInTooltip") != 0;
 
     s.tooltipOpacity = Wh_GetIntSetting(L"tooltipOpacity");
-    if (s.tooltipOpacity < 40) s.tooltipOpacity = 40;
+    if (s.tooltipOpacity < 80) s.tooltipOpacity = 80;
     if (s.tooltipOpacity > 255) s.tooltipOpacity = 255;
 
     s.enableTaskbarClock = Wh_GetIntSetting(L"enableTaskbarClock") != 0;
     s.taskbarClockSolarOnTop = Wh_GetIntSetting(L"taskbarClockSolarOnTop") != 0;
     s.enableTaskbarTooltip = Wh_GetIntSetting(L"enableTaskbarTooltip") != 0;
+    s.enableTaskbarSystemStats = Wh_GetIntSetting(L"enableTaskbarSystemStats") != 0;
+    s.enableSecondaryMonitorTray = Wh_GetIntSetting(L"enableSecondaryMonitorTray") != 0;
+    s.enableSecondaryMonitorStats = Wh_GetIntSetting(L"enableSecondaryMonitorStats") != 0;
+    s.showCpuStats = Wh_GetIntSetting(L"showCpuStats") != 0;
+    s.showGpuStats = Wh_GetIntSetting(L"showGpuStats") != 0;
+    s.showRamStats = Wh_GetIntSetting(L"showRamStats") != 0;
+    s.showNetStats = Wh_GetIntSetting(L"showNetStats") != 0;
+    s.showPingStats = Wh_GetIntSetting(L"showPingStats") != 0;
     s.enableCalendarFlyout = Wh_GetIntSetting(L"enableCalendarFlyout") != 0;
     s.enableHoroscopePage = Wh_GetIntSetting(L"enableHoroscopePage") != 0;
 
@@ -404,17 +510,89 @@ struct GoogleCalendarEvent {
     std::wstring location;
 };
 
+enum class IcsSyncStatus { None, LoadedFromCache, Synced, Failed };
+
 std::mutex g_icsMutex;
 std::unordered_map<int32_t, std::vector<GoogleCalendarEvent>> g_icsEventsByDate;
 size_t g_totalSyncedEventsCount = 0;
 ULONGLONG g_lastIcsSyncTick = 0;
 std::wstring g_lastSyncedIcsUrl;
-std::wstring g_lastSyncStatusMsg;
+IcsSyncStatus g_lastSyncStatus = IcsSyncStatus::None;
+int g_lastSyncHour = 0;
+int g_lastSyncMin = 0;
 std::atomic<bool> g_icsSyncInProgress{false};
 std::atomic<uint32_t> g_icsDataGeneration{0};
 std::atomic<bool> g_backgroundSyncLoopStarted{false};
 
+std::mutex g_syncThreadsMutex;
+HANDLE g_stopEvent = nullptr;
+std::thread g_syncWorkerThread;
+std::thread g_periodicLoopThread;
+
+std::mutex g_activeHttpMutex;
+HINTERNET g_activeHttpSession = nullptr;
+HINTERNET g_activeHttpConnect = nullptr;
+HINTERNET g_activeHttpRequest = nullptr;
+
 void NotifyCalendarUiAfterIcsSync();
+
+std::wstring DisplayEventSummary(std::wstring const& summary, bool vi) {
+    if (!summary.empty()) return summary;
+    return vi ? L"(Sự kiện không tiêu đề)" : L"(Untitled event)";
+}
+
+std::wstring FormatIcsSyncStatus(bool vi) {
+    IcsSyncStatus status;
+    size_t count = 0;
+    int hour = 0, min = 0;
+    {
+        std::lock_guard<std::mutex> lock(g_icsMutex);
+        status = g_lastSyncStatus;
+        count = g_totalSyncedEventsCount;
+        hour = g_lastSyncHour;
+        min = g_lastSyncMin;
+    }
+    WCHAR buf[128]{};
+    switch (status) {
+        case IcsSyncStatus::LoadedFromCache:
+            _snwprintf_s(buf, _TRUNCATE,
+                         vi ? L"Đã nạp %zu sự kiện" : L"Loaded %zu event(s)", count);
+            return buf;
+        case IcsSyncStatus::Synced:
+            _snwprintf_s(buf, _TRUNCATE,
+                         vi ? L"Đã đồng bộ %zu sự kiện lúc %02d:%02d"
+                            : L"Synced %zu event(s) at %02d:%02d",
+                         count, hour, min);
+            return buf;
+        case IcsSyncStatus::Failed:
+            return vi ? L"Chưa tải được dữ liệu (Kiểm tra lại link .ics)"
+                      : L"Failed to sync (Check .ics link)";
+        default:
+            return {};
+    }
+}
+
+uint64_t ComputeIcsUrlHash(std::wstring const& url) {
+    uint64_t h = 14695981039346656037ULL;
+    for (wchar_t c : url) {
+        h ^= static_cast<uint64_t>(c);
+        h *= 1099511628211ULL;
+    }
+    return h;
+}
+
+std::string FormatUrlHashHeader(uint64_t hash) {
+    char buf[64]{};
+    snprintf(buf, sizeof(buf), "X-WH-URL-HASH:%016llx\r\n", static_cast<unsigned long long>(hash));
+    return buf;
+}
+
+bool CheckCachedUrlHashHeader(std::string const& data, uint64_t expectedHash) {
+    if (expectedHash == 0) return true;
+    const std::string prefix = "X-WH-URL-HASH:";
+    if (data.rfind(prefix, 0) != 0) return false;
+    return data.rfind(FormatUrlHashHeader(expectedHash), 0) == 0;
+}
 
 std::wstring Utf8ToWide(std::string const& utf8) {
     if (utf8.empty()) return {};
@@ -446,29 +624,56 @@ std::vector<std::wstring> GetCandidateIcsCachePaths() {
     std::vector<std::wstring> paths;
     WCHAR buf[MAX_PATH]{};
 
+    auto addUnique = [&](std::wstring const& p) {
+        if (p.empty()) return;
+        for (const auto& existing : paths) {
+            if (_wcsicmp(existing.c_str(), p.c_str()) == 0) return;
+        }
+        paths.push_back(p);
+    };
+
     if (GetTempPathW(ARRAYSIZE(buf), buf) > 0) {
-        paths.push_back(std::wstring(buf) + L"windhawk_vn_lunar_gcal_cache.ics");
+        addUnique(std::wstring(buf) + L"windhawk_vn_lunar_gcal_cache.ics");
     }
     if (ExpandEnvironmentStringsW(L"%USERPROFILE%\\AppData\\Local\\Temp\\windhawk_vn_lunar_gcal_cache.ics", buf, ARRAYSIZE(buf)) > 0) {
-        paths.push_back(buf);
-    }
-    if (ExpandEnvironmentStringsW(L"%PUBLIC%\\windhawk_vn_lunar_gcal_cache.ics", buf, ARRAYSIZE(buf)) > 0) {
-        paths.push_back(buf);
+        addUnique(buf);
     }
     return paths;
 }
 
 constexpr PCWSTR kIcsCacheRegSubKey = L"Software\\Windhawk_VnLunarCalendar_Cache";
 
-void SaveIcsToSharedCache(std::string const& rawIcs) {
+void ClearSharedIcsCache() {
+    HKEY hKey = nullptr;
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, kIcsCacheRegSubKey, 0, KEY_SET_VALUE, &hKey) == ERROR_SUCCESS) {
+        RegDeleteValueW(hKey, L"IcsData");
+        RegDeleteValueW(hKey, L"UrlHash");
+        RegDeleteValueW(hKey, L"LastUpdateTick");
+        RegCloseKey(hKey);
+    }
+    for (const auto& path : GetCandidateIcsCachePaths()) {
+        DeleteFileW(path.c_str());
+    }
+    // Best-effort cleanup of legacy world-readable cache file if present
+    WCHAR legacyPublic[MAX_PATH]{};
+    if (ExpandEnvironmentStringsW(L"%PUBLIC%\\windhawk_vn_lunar_gcal_cache.ics", legacyPublic, ARRAYSIZE(legacyPublic)) > 0) {
+        DeleteFileW(legacyPublic);
+    }
+}
+
+void SaveIcsToSharedCache(std::string const& rawIcs, uint64_t urlHash) {
     if (rawIcs.empty()) return;
 
-    if (rawIcs.size() <= 2 * 1024 * 1024) {
+    std::string taggedIcs = FormatUrlHashHeader(urlHash) + rawIcs;
+
+    if (taggedIcs.size() <= 2 * 1024 * 1024) {
         HKEY hKey = nullptr;
         if (RegCreateKeyExW(HKEY_CURRENT_USER, kIcsCacheRegSubKey, 0, nullptr, 0, KEY_WRITE, nullptr, &hKey, nullptr) == ERROR_SUCCESS) {
             RegSetValueExW(hKey, L"IcsData", 0, REG_BINARY,
-                           reinterpret_cast<const BYTE*>(rawIcs.data()),
-                           static_cast<DWORD>(rawIcs.size()));
+                           reinterpret_cast<const BYTE*>(taggedIcs.data()),
+                           static_cast<DWORD>(taggedIcs.size()));
+            RegSetValueExW(hKey, L"UrlHash", 0, REG_QWORD,
+                           reinterpret_cast<const BYTE*>(&urlHash), sizeof(urlHash));
             ULONGLONG nowTick = GetTickCount64();
             RegSetValueExW(hKey, L"LastUpdateTick", 0, REG_QWORD,
                            reinterpret_cast<const BYTE*>(&nowTick), sizeof(nowTick));
@@ -476,23 +681,39 @@ void SaveIcsToSharedCache(std::string const& rawIcs) {
         }
     }
 
+    WCHAR pidSuffix[32]{};
+    _snwprintf_s(pidSuffix, _TRUNCATE, L".tmp.%lu", GetCurrentProcessId());
     for (const auto& path : GetCandidateIcsCachePaths()) {
-        HANDLE hFile = CreateFileW(path.c_str(), GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE,
+        std::wstring tmpPath = path + pidSuffix;
+        HANDLE hFile = CreateFileW(tmpPath.c_str(), GENERIC_WRITE, 0,
                                    nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
         if (hFile != INVALID_HANDLE_VALUE) {
             DWORD written = 0;
-            WriteFile(hFile, rawIcs.data(), static_cast<DWORD>(rawIcs.size()), &written, nullptr);
+            BOOL ok = WriteFile(hFile, taggedIcs.data(), static_cast<DWORD>(taggedIcs.size()), &written, nullptr);
             CloseHandle(hFile);
+            if (ok && written == taggedIcs.size()) {
+                MoveFileExW(tmpPath.c_str(), path.c_str(), MOVEFILE_REPLACE_EXISTING);
+            } else {
+                DeleteFileW(tmpPath.c_str());
+            }
         }
     }
 }
 
-std::string LoadIcsFromSharedCache() {
+std::string LoadIcsFromSharedCache(uint64_t expectedUrlHash) {
     HKEY hKey = nullptr;
     if (RegOpenKeyExW(HKEY_CURRENT_USER, kIcsCacheRegSubKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+        uint64_t storedHash = 0;
+        DWORD hashSize = sizeof(storedHash);
+        DWORD hashType = 0;
+        bool hashMatches = (RegQueryValueExW(hKey, L"UrlHash", nullptr, &hashType,
+                                             reinterpret_cast<LPBYTE>(&storedHash), &hashSize) == ERROR_SUCCESS &&
+                            hashType == REG_QWORD && storedHash == expectedUrlHash);
+
         DWORD dataSize = 0;
         DWORD dataType = 0;
-        if (RegQueryValueExW(hKey, L"IcsData", nullptr, &dataType, nullptr, &dataSize) == ERROR_SUCCESS &&
+        if (hashMatches &&
+            RegQueryValueExW(hKey, L"IcsData", nullptr, &dataType, nullptr, &dataSize) == ERROR_SUCCESS &&
             dataType == REG_BINARY && dataSize > 32 && dataSize <= 4 * 1024 * 1024) {
             std::string buffer(dataSize, '\0');
             if (RegQueryValueExW(hKey, L"IcsData", nullptr, &dataType,
@@ -507,7 +728,7 @@ std::string LoadIcsFromSharedCache() {
     }
 
     for (const auto& path : GetCandidateIcsCachePaths()) {
-        HANDLE hFile = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
+        HANDLE hFile = CreateFileW(path.c_str(), GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
                                    nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
         if (hFile != INVALID_HANDLE_VALUE) {
             DWORD fileSize = GetFileSize(hFile, nullptr);
@@ -517,9 +738,11 @@ std::string LoadIcsFromSharedCache() {
                 if (ReadFile(hFile, buffer.data(), fileSize, &bytesRead, nullptr) && bytesRead > 0) {
                     CloseHandle(hFile);
                     buffer.resize(bytesRead);
-                    if (buffer.find("BEGIN:VCALENDAR") != std::string::npos) {
+                    if (CheckCachedUrlHashHeader(buffer, expectedUrlHash) &&
+                        buffer.find("BEGIN:VCALENDAR") != std::string::npos) {
                         return buffer;
                     }
+                    continue;
                 }
             }
             CloseHandle(hFile);
@@ -551,21 +774,24 @@ std::wstring UnescapeIcsText(std::wstring const& raw) {
 
     std::wstring cleaned;
     cleaned.reserve(unescaped.size());
-    bool inTag = false;
     for (size_t i = 0; i < unescaped.size(); i++) {
-        if (!inTag && unescaped[i] == L'<') {
-            if (_wcsnicmp(unescaped.c_str() + i, L"<br>", 4) == 0 ||
-                _wcsnicmp(unescaped.c_str() + i, L"<br/>", 5) == 0 ||
-                _wcsnicmp(unescaped.c_str() + i, L"<br />", 6) == 0 ||
-                _wcsnicmp(unescaped.c_str() + i, L"</p>", 4) == 0) {
-                cleaned.push_back(L'\n');
+        if (unescaped[i] == L'<' && i + 1 < unescaped.size()) {
+            wchar_t next = unescaped[i + 1];
+            if (iswalpha(next) || next == L'/' || next == L'!') {
+                size_t closePos = unescaped.find(L'>', i + 1);
+                if (closePos != std::wstring::npos && closePos - i <= 256) {
+                    if (_wcsnicmp(unescaped.c_str() + i, L"<br>", 4) == 0 ||
+                        _wcsnicmp(unescaped.c_str() + i, L"<br/>", 5) == 0 ||
+                        _wcsnicmp(unescaped.c_str() + i, L"<br />", 6) == 0 ||
+                        _wcsnicmp(unescaped.c_str() + i, L"</p>", 4) == 0 ||
+                        _wcsnicmp(unescaped.c_str() + i, L"</div>", 6) == 0 ||
+                        _wcsnicmp(unescaped.c_str() + i, L"</li>", 5) == 0) {
+                        cleaned.push_back(L'\n');
+                    }
+                    i = closePos;
+                    continue;
+                }
             }
-            inTag = true;
-            continue;
-        }
-        if (inTag) {
-            if (unescaped[i] == L'>') inTag = false;
-            continue;
         }
         cleaned.push_back(unescaped[i]);
     }
@@ -573,11 +799,11 @@ std::wstring UnescapeIcsText(std::wstring const& raw) {
     struct Entity { PCWSTR code; PCWSTR ch; };
     static const Entity kEntities[] = {
         { L"&nbsp;", L" " },
-        { L"&amp;",  L"&" },
         { L"&lt;",   L"<" },
         { L"&gt;",   L">" },
         { L"&quot;", L"\"" },
         { L"&#39;",  L"'" },
+        { L"&amp;",  L"&" },
     };
     for (const auto& e : kEntities) {
         size_t pos = 0;
@@ -599,6 +825,18 @@ struct ParsedIcsDateTime {
     bool valid = false;
 };
 
+bool ParseAsciiDigits(std::string const& s, size_t offset, size_t len, int& outVal) {
+    if (offset + len > s.size()) return false;
+    int v = 0;
+    for (size_t i = 0; i < len; i++) {
+        char c = s[offset + i];
+        if (c < '0' || c > '9') return false;
+        v = v * 10 + (c - '0');
+    }
+    outVal = v;
+    return true;
+}
+
 ParsedIcsDateTime ParseIcsDateTimeProperty(std::string const& propParams, std::string const& val) {
     ParsedIcsDateTime out;
     std::string s = val;
@@ -609,13 +847,11 @@ ParsedIcsDateTime ParseIcsDateTimeProperty(std::string const& propParams, std::s
         s.erase(s.begin());
     }
     if (s.size() < 8) return out;
-    for (int i = 0; i < 8; i++) {
-        if (s[i] < '0' || s[i] > '9') return out;
+    if (!ParseAsciiDigits(s, 0, 4, out.year) ||
+        !ParseAsciiDigits(s, 4, 2, out.month) ||
+        !ParseAsciiDigits(s, 6, 2, out.day)) {
+        return out;
     }
-
-    out.year = std::stoi(s.substr(0, 4));
-    out.month = std::stoi(s.substr(4, 2));
-    out.day = std::stoi(s.substr(6, 2));
     if (!IsValidDate(out.year, out.month, out.day)) return out;
 
     bool isValueDate = (propParams.find("VALUE=DATE") != std::string::npos &&
@@ -628,9 +864,14 @@ ParsedIcsDateTime ParseIcsDateTimeProperty(std::string const& propParams, std::s
     }
 
     if (s.size() >= 13) {
+        if (!ParseAsciiDigits(s, 9, 2, out.hour) ||
+            !ParseAsciiDigits(s, 11, 2, out.minute)) {
+            return out;
+        }
+        if (out.hour < 0 || out.hour > 23 || out.minute < 0 || out.minute > 59) {
+            return out;
+        }
         out.isAllDay = false;
-        out.hour = std::stoi(s.substr(9, 2));
-        out.minute = std::stoi(s.substr(11, 2));
         bool isUtc = (s.back() == 'Z' || s.back() == 'z');
 
         if (isUtc) {
@@ -667,6 +908,18 @@ std::string ToUpperAscii(std::string s) {
     return s;
 }
 
+void DateFromJDN(int jdn, int& y, int& m, int& d) {
+    int a = jdn + 32044;
+    int b = (4 * a + 3) / 146097;
+    int c = a - (146097 * b) / 4;
+    int dd = (4 * c + 3) / 1461;
+    int e = c - (1461 * dd) / 4;
+    int mm = (5 * e + 2) / 153;
+    d = e - (153 * mm + 2) / 5 + 1;
+    m = mm + 3 - 12 * (mm / 10);
+    y = 100 * b + dd - 4800 + mm / 10;
+}
+
 std::unordered_map<int32_t, std::vector<GoogleCalendarEvent>> ParseIcsContent(std::string const& rawIcs, size_t* outTotalEvents = nullptr) {
     std::unordered_map<int32_t, std::vector<GoogleCalendarEvent>> result;
     if (outTotalEvents) *outTotalEvents = 0;
@@ -695,8 +948,11 @@ std::unordered_map<int32_t, std::vector<GoogleCalendarEvent>> ParseIcsContent(st
     SYSTEMTIME stNow{};
     GetLocalTime(&stNow);
     int currentYear = stNow.wYear;
+    int windowMinYear = currentYear - 1;
+    int windowMaxYear = currentYear + 2;
 
     bool inEvent = false;
+    bool inAlarm = false;
     ParsedIcsDateTime dtStart{};
     ParsedIcsDateTime dtEnd{};
     std::wstring summary;
@@ -704,6 +960,7 @@ std::unordered_map<int32_t, std::vector<GoogleCalendarEvent>> ParseIcsContent(st
     std::wstring location;
     bool isCancelled = false;
     std::string rruleStr;
+    std::unordered_set<int32_t> exDates;
     size_t parsedEventCount = 0;
 
     for (const auto& line : lines) {
@@ -712,8 +969,10 @@ std::unordered_map<int32_t, std::vector<GoogleCalendarEvent>> ParseIcsContent(st
             trimmedLine.pop_back();
         }
 
-        if (trimmedLine == "BEGIN:VEVENT") {
+        std::string upperLine = ToUpperAscii(trimmedLine);
+        if (upperLine == "BEGIN:VEVENT") {
             inEvent = true;
+            inAlarm = false;
             dtStart = {};
             dtEnd = {};
             summary.clear();
@@ -721,10 +980,21 @@ std::unordered_map<int32_t, std::vector<GoogleCalendarEvent>> ParseIcsContent(st
             location.clear();
             isCancelled = false;
             rruleStr.clear();
+            exDates.clear();
             continue;
         }
 
-        if (trimmedLine == "END:VEVENT") {
+        if (upperLine == "BEGIN:VALARM") {
+            if (inEvent) inAlarm = true;
+            continue;
+        }
+
+        if (upperLine == "END:VALARM") {
+            inAlarm = false;
+            continue;
+        }
+
+        if (upperLine == "END:VEVENT") {
             if (inEvent && dtStart.valid && !isCancelled) {
                 parsedEventCount++;
                 GoogleCalendarEvent baseEv;
@@ -736,57 +1006,160 @@ std::unordered_map<int32_t, std::vector<GoogleCalendarEvent>> ParseIcsContent(st
                     baseEv.endMin = dtEnd.minute;
                     baseEv.hasEndTime = true;
                 }
-                baseEv.summary = summary.empty() ? L"(Sự kiện không tiêu đề)" : summary;
+                baseEv.summary = summary;
                 baseEv.description = description;
                 baseEv.location = location;
 
-                int untilDateKey = 99991231;
-                size_t untilPos = rruleStr.find("UNTIL=");
-                if (untilPos != std::string::npos && untilPos + 14 <= rruleStr.size()) {
-                    std::string uStr = rruleStr.substr(untilPos + 6, 8);
-                    bool allDigits = true;
-                    for (char ch : uStr) if (ch < '0' || ch > '9') allDigits = false;
-                    if (allDigits) untilDateKey = std::stoi(uStr);
-                }
+                if (!rruleStr.empty()) {
+                    std::string freq;
+                    int interval = 1;
+                    int maxCount = 0;
+                    int32_t untilDateKey = 99991231;
+                    uint8_t byDayMask = 0;
 
-                if (rruleStr.find("FREQ=YEARLY") != std::string::npos) {
-                    for (int y = std::max(dtStart.year, currentYear - 1); y <= currentYear + 2; y++) {
-                        int32_t k = MakeDateKey(y, dtStart.month, dtStart.day);
-                        if (k <= untilDateKey && IsValidDate(y, dtStart.month, dtStart.day)) {
-                            GoogleCalendarEvent ev = baseEv;
-                            ev.dateKey = k;
-                            result[ev.dateKey].push_back(std::move(ev));
-                        }
-                    }
-                } else if (rruleStr.find("FREQ=MONTHLY") != std::string::npos) {
-                    for (int y = std::max(dtStart.year, currentYear - 1); y <= currentYear + 1; y++) {
-                        for (int m = 1; m <= 12; m++) {
-                            int32_t k = MakeDateKey(y, m, dtStart.day);
-                            if (k >= MakeDateKey(dtStart.year, dtStart.month, dtStart.day) &&
-                                k <= untilDateKey && IsValidDate(y, m, dtStart.day)) {
-                                GoogleCalendarEvent ev = baseEv;
-                                ev.dateKey = k;
-                                result[ev.dateKey].push_back(std::move(ev));
-                            }
-                        }
-                    }
-                } else if (rruleStr.find("FREQ=WEEKLY") != std::string::npos) {
-                    int startJdn = CalculateJDN(dtStart.day, dtStart.month, dtStart.year);
-                    int startWeekday = ((startJdn % 7) + 7) % 7;
-                    for (int y = std::max(dtStart.year, currentYear - 1); y <= currentYear + 1; y++) {
-                        for (int m = 1; m <= 12; m++) {
-                            int maxD = DaysInMonth(y, m);
-                            for (int d = 1; d <= maxD; d++) {
-                                int32_t k = MakeDateKey(y, m, d);
-                                if (k < MakeDateKey(dtStart.year, dtStart.month, dtStart.day) || k > untilDateKey) continue;
-                                int jdn = CalculateJDN(d, m, y);
-                                if (((jdn % 7) + 7) % 7 == startWeekday) {
-                                    GoogleCalendarEvent ev = baseEv;
-                                    ev.dateKey = k;
-                                    result[ev.dateKey].push_back(std::move(ev));
+                    size_t pos = 0;
+                    while (pos < rruleStr.size()) {
+                        size_t semi = rruleStr.find(';', pos);
+                        if (semi == std::string::npos) semi = rruleStr.size();
+                        std::string token = rruleStr.substr(pos, semi - pos);
+                        size_t eq = token.find('=');
+                        if (eq != std::string::npos) {
+                            std::string k = token.substr(0, eq);
+                            std::string v = token.substr(eq + 1);
+                            if (k == "FREQ") {
+                                freq = v;
+                            } else if (k == "INTERVAL") {
+                                int iv = 0;
+                                if (ParseAsciiDigits(v, 0, v.size(), iv) && iv >= 1) interval = iv;
+                            } else if (k == "COUNT") {
+                                int cnt = 0;
+                                if (ParseAsciiDigits(v, 0, v.size(), cnt) && cnt >= 1) maxCount = cnt;
+                            } else if (k == "UNTIL") {
+                                ParsedIcsDateTime udt = ParseIcsDateTimeProperty("", v);
+                                if (udt.valid) {
+                                    untilDateKey = MakeDateKey(udt.year, udt.month, udt.day);
+                                }
+                            } else if (k == "BYDAY") {
+                                static const char* kDayCodes[7] = { "MO", "TU", "WE", "TH", "FR", "SA", "SU" };
+                                size_t dpos = 0;
+                                while (dpos < v.size()) {
+                                    size_t comma = v.find(',', dpos);
+                                    if (comma == std::string::npos) comma = v.size();
+                                    std::string dtok = v.substr(dpos, comma - dpos);
+                                    if (dtok.size() >= 2) {
+                                        std::string code = dtok.substr(dtok.size() - 2);
+                                        for (int wd = 0; wd < 7; wd++) {
+                                            if (code == kDayCodes[wd]) {
+                                                byDayMask |= static_cast<uint8_t>(1u << wd);
+                                            }
+                                        }
+                                    }
+                                    dpos = comma + 1;
                                 }
                             }
                         }
+                        pos = semi + 1;
+                    }
+
+                    auto emitOccurrence = [&](int y, int m, int d) {
+                        int32_t k = MakeDateKey(y, m, d);
+                        if (y < windowMinYear || y > windowMaxYear) return;
+                        if (exDates.find(k) != exDates.end()) return;
+                        GoogleCalendarEvent ev = baseEv;
+                        ev.dateKey = k;
+                        result[k].push_back(std::move(ev));
+                    };
+
+                    int emittedTotal = 0;
+                    int32_t maxWindowKey = MakeDateKey(windowMaxYear, 12, 31);
+                    int32_t stopKey = std::min(untilDateKey, maxWindowKey);
+
+                    if (freq == "DAILY") {
+                        int startJdn = CalculateJDN(dtStart.day, dtStart.month, dtStart.year);
+                        int maxJdn = CalculateJDN(31, 12, windowMaxYear);
+                        int curJdn = startJdn;
+                        if (maxCount == 0 && dtStart.year < windowMinYear) {
+                            int minJdn = CalculateJDN(1, 1, windowMinYear);
+                            int skipSteps = (minJdn - startJdn) / interval;
+                            if (skipSteps > 0) curJdn += skipSteps * interval;
+                        }
+                        for (int iter = 0; iter < 4000 && curJdn <= maxJdn; iter++, curJdn += interval) {
+                            int y, m, d;
+                            DateFromJDN(curJdn, y, m, d);
+                            int32_t k = MakeDateKey(y, m, d);
+                            if (k > stopKey) break;
+                            emitOccurrence(y, m, d);
+                            emittedTotal++;
+                            if (maxCount > 0 && emittedTotal >= maxCount) break;
+                        }
+                    } else if (freq == "WEEKLY") {
+                        int startJdn = CalculateJDN(dtStart.day, dtStart.month, dtStart.year);
+                        int startWeekday = ((startJdn % 7) + 7) % 7;
+                        if (byDayMask == 0) {
+                            byDayMask = static_cast<uint8_t>(1u << startWeekday);
+                        }
+                        int weekMondayJdn = startJdn - startWeekday;
+                        int maxJdn = CalculateJDN(31, 12, windowMaxYear);
+                        if (maxCount == 0 && dtStart.year < windowMinYear) {
+                            int minJdn = CalculateJDN(1, 1, windowMinYear);
+                            int skipWeeks = ((minJdn - weekMondayJdn) / 7) / interval;
+                            if (skipWeeks > 0) weekMondayJdn += skipWeeks * interval * 7;
+                        }
+                        bool done = false;
+                        for (int iter = 0; iter < 1500 && !done && weekMondayJdn <= maxJdn; iter++, weekMondayJdn += interval * 7) {
+                            for (int wd = 0; wd < 7; wd++) {
+                                if (!(byDayMask & (1u << wd))) continue;
+                                int curJdn = weekMondayJdn + wd;
+                                if (curJdn < startJdn) continue;
+                                int y, m, d;
+                                DateFromJDN(curJdn, y, m, d);
+                                int32_t k = MakeDateKey(y, m, d);
+                                if (k > stopKey) {
+                                    done = true;
+                                    break;
+                                }
+                                emitOccurrence(y, m, d);
+                                emittedTotal++;
+                                if (maxCount > 0 && emittedTotal >= maxCount) {
+                                    done = true;
+                                    break;
+                                }
+                            }
+                        }
+                    } else if (freq == "MONTHLY") {
+                        int totalMonths = dtStart.year * 12 + (dtStart.month - 1);
+                        if (maxCount == 0 && dtStart.year < windowMinYear) {
+                            int minMonths = windowMinYear * 12;
+                            int skipSteps = (minMonths - totalMonths) / interval;
+                            if (skipSteps > 0) totalMonths += skipSteps * interval;
+                        }
+                        for (int iter = 0; iter < 2400; iter++, totalMonths += interval) {
+                            int y = totalMonths / 12;
+                            int m = (totalMonths % 12) + 1;
+                            if (y > windowMaxYear) break;
+                            if (!IsValidDate(y, m, dtStart.day)) continue;
+                            int32_t k = MakeDateKey(y, m, dtStart.day);
+                            if (k > stopKey) break;
+                            emitOccurrence(y, m, dtStart.day);
+                            emittedTotal++;
+                            if (maxCount > 0 && emittedTotal >= maxCount) break;
+                        }
+                    } else if (freq == "YEARLY") {
+                        int y = dtStart.year;
+                        if (maxCount == 0 && y < windowMinYear) {
+                            int skipSteps = (windowMinYear - y) / interval;
+                            if (skipSteps > 0) y += skipSteps * interval;
+                        }
+                        for (int iter = 0; iter < 500 && y <= windowMaxYear; iter++, y += interval) {
+                            if (!IsValidDate(y, dtStart.month, dtStart.day)) continue;
+                            int32_t k = MakeDateKey(y, dtStart.month, dtStart.day);
+                            if (k > stopKey) break;
+                            emitOccurrence(y, dtStart.month, dtStart.day);
+                            emittedTotal++;
+                            if (maxCount > 0 && emittedTotal >= maxCount) break;
+                        }
+                    } else {
+                        emitOccurrence(dtStart.year, dtStart.month, dtStart.day);
                     }
                 } else {
                     int y1 = dtStart.year, m1 = dtStart.month, d1 = dtStart.day;
@@ -796,26 +1169,32 @@ std::unordered_map<int32_t, std::vector<GoogleCalendarEvent>> ParseIcsContent(st
                         y2 = dtEnd.year;
                         m2 = dtEnd.month;
                         d2 = dtEnd.day;
-                        if (dtStart.isAllDay && MakeDateKey(y2, m2, d2) > MakeDateKey(y1, m1, d1)) {
-                            PrevCalendarDay(y2, m2, d2);
+                        if (MakeDateKey(y2, m2, d2) > MakeDateKey(y1, m1, d1)) {
+                            if (dtStart.isAllDay || (!dtEnd.isAllDay && dtEnd.hour == 0 && dtEnd.minute == 0)) {
+                                PrevCalendarDay(y2, m2, d2);
+                            }
                         }
                     }
 
                     int spanDays = 0;
                     while (MakeDateKey(y1, m1, d1) <= MakeDateKey(y2, m2, d2) && spanDays < 60) {
-                        GoogleCalendarEvent ev = baseEv;
-                        ev.dateKey = MakeDateKey(y1, m1, d1);
-                        result[ev.dateKey].push_back(std::move(ev));
+                        int32_t k = MakeDateKey(y1, m1, d1);
+                        if (exDates.find(k) == exDates.end()) {
+                            GoogleCalendarEvent ev = baseEv;
+                            ev.dateKey = k;
+                            result[ev.dateKey].push_back(std::move(ev));
+                        }
                         NextCalendarDay(y1, m1, d1);
                         spanDays++;
                     }
                 }
             }
             inEvent = false;
+            inAlarm = false;
             continue;
         }
 
-        if (!inEvent) continue;
+        if (!inEvent || inAlarm) continue;
 
         size_t colonPos = line.find(':');
         if (colonPos == std::string::npos) continue;
@@ -848,6 +1227,17 @@ std::unordered_map<int32_t, std::vector<GoogleCalendarEvent>> ParseIcsContent(st
             }
         } else if (propName == "RRULE") {
             rruleStr = ToUpperAscii(propVal);
+        } else if (propName == "EXDATE") {
+            size_t epos = 0;
+            while (epos < propVal.size()) {
+                size_t comma = propVal.find(',', epos);
+                if (comma == std::string::npos) comma = propVal.size();
+                ParsedIcsDateTime exDt = ParseIcsDateTimeProperty(propParams, propVal.substr(epos, comma - epos));
+                if (exDt.valid) {
+                    exDates.insert(MakeDateKey(exDt.year, exDt.month, exDt.day));
+                }
+                epos = comma + 1;
+            }
         }
     }
 
@@ -894,7 +1284,41 @@ std::string DownloadViaUrlMonFallback(std::wstring const& url) {
     return {};
 }
 
+struct ActiveHttpGuard {
+    HINTERNET* slot;
+    HINTERNET handle;
+    ActiveHttpGuard(HINTERNET* s, HINTERNET h) : slot(s), handle(h) {
+        std::lock_guard<std::mutex> lock(g_activeHttpMutex);
+        *slot = handle;
+    }
+    ~ActiveHttpGuard() {
+        HINTERNET toClose = nullptr;
+        {
+            std::lock_guard<std::mutex> lock(g_activeHttpMutex);
+            if (*slot == handle) {
+                *slot = nullptr;
+                toClose = handle;
+            }
+        }
+        if (toClose) WinHttpCloseHandle(toClose);
+    }
+};
+
+void AbortActiveHttpRequests() {
+    HINTERNET req = nullptr, conn = nullptr, sess = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(g_activeHttpMutex);
+        req = g_activeHttpRequest; g_activeHttpRequest = nullptr;
+        conn = g_activeHttpConnect; g_activeHttpConnect = nullptr;
+        sess = g_activeHttpSession; g_activeHttpSession = nullptr;
+    }
+    if (req) WinHttpCloseHandle(req);
+    if (conn) WinHttpCloseHandle(conn);
+    if (sess) WinHttpCloseHandle(sess);
+}
+
 std::string DownloadHttpsUrl(std::wstring const& rawUrl) {
+    if (g_shuttingDown) return {};
     std::wstring url = CleanIcsUrl(rawUrl);
     if (url.empty()) return {};
 
@@ -915,67 +1339,73 @@ std::string DownloadHttpsUrl(std::wstring const& rawUrl) {
     urlComp.dwUrlPathLength = ARRAYSIZE(urlPath);
 
     std::string responseBody;
-    if (WinHttpCrackUrl(fetchUrl.c_str(), static_cast<DWORD>(fetchUrl.size()), 0, &urlComp)) {
-        HINTERNET hSession = WinHttpOpen(L"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Windhawk-Lunar-Calendar/0.1.3",
+    if (!g_shuttingDown && WinHttpCrackUrl(fetchUrl.c_str(), static_cast<DWORD>(fetchUrl.size()), 0, &urlComp)) {
+        HINTERNET hSession = WinHttpOpen(L"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Windhawk-Lunar-Calendar/0.2.0",
                                          WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY,
                                          WINHTTP_NO_PROXY_NAME,
                                          WINHTTP_NO_PROXY_BYPASS, 0);
         if (!hSession) {
-            hSession = WinHttpOpen(L"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Windhawk-Lunar-Calendar/0.1.3",
+            hSession = WinHttpOpen(L"Mozilla/5.0 (Windows NT 10.0; Win64; x64) Windhawk-Lunar-Calendar/0.2.0",
                                    WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
                                    WINHTTP_NO_PROXY_NAME,
                                    WINHTTP_NO_PROXY_BYPASS, 0);
         }
         if (hSession) {
+            ActiveHttpGuard sessionGuard(&g_activeHttpSession, hSession);
             DWORD secureProtocols = WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_2 | WINHTTP_FLAG_SECURE_PROTOCOL_TLS1_3;
             WinHttpSetOption(hSession, WINHTTP_OPTION_SECURE_PROTOCOLS, &secureProtocols, sizeof(secureProtocols));
-            DWORD redirectPolicy = WINHTTP_OPTION_REDIRECT_POLICY_ALWAYS;
+            DWORD redirectPolicy = WINHTTP_OPTION_REDIRECT_POLICY_DISALLOW_HTTPS_TO_HTTP;
             WinHttpSetOption(hSession, WINHTTP_OPTION_REDIRECT_POLICY, &redirectPolicy, sizeof(redirectPolicy));
-            WinHttpSetTimeouts(hSession, 8000, 8000, 12000, 12000);
+            WinHttpSetTimeouts(hSession, 5000, 5000, 8000, 8000);
 
-            HINTERNET hConnect = WinHttpConnect(hSession, hostName, urlComp.nPort, 0);
-            if (hConnect) {
-                DWORD flags = (urlComp.nScheme == INTERNET_SCHEME_HTTPS) ? WINHTTP_FLAG_SECURE : 0;
-                flags |= WINHTTP_FLAG_REFRESH;
+            if (!g_shuttingDown) {
+                HINTERNET hConnect = WinHttpConnect(hSession, hostName, urlComp.nPort, 0);
+                if (hConnect) {
+                    ActiveHttpGuard connectGuard(&g_activeHttpConnect, hConnect);
+                    DWORD flags = (urlComp.nScheme == INTERNET_SCHEME_HTTPS) ? WINHTTP_FLAG_SECURE : 0;
+                    flags |= WINHTTP_FLAG_REFRESH;
 
-                HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", urlPath,
-                                                        nullptr, WINHTTP_NO_REFERER,
-                                                        WINHTTP_DEFAULT_ACCEPT_TYPES, flags);
-                if (hRequest) {
-                    PCWSTR headers = L"Cache-Control: no-cache, no-store, must-revalidate\r\nPragma: no-cache\r\nAccept: text/calendar, text/plain, */*\r\n";
-                    if (WinHttpSendRequest(hRequest, headers, static_cast<DWORD>(-1L),
-                                           WINHTTP_NO_REQUEST_DATA, 0, 0, 0) &&
-                        WinHttpReceiveResponse(hRequest, nullptr)) {
-                        DWORD statusCode = 0;
-                        DWORD statusSize = sizeof(statusCode);
-                        WinHttpQueryHeaders(hRequest,
-                                            WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
-                                            WINHTTP_HEADER_NAME_BY_INDEX,
-                                            &statusCode, &statusSize, WINHTTP_NO_HEADER_INDEX);
+                    if (!g_shuttingDown) {
+                        HINTERNET hRequest = WinHttpOpenRequest(hConnect, L"GET", urlPath,
+                                                                nullptr, WINHTTP_NO_REFERER,
+                                                                WINHTTP_DEFAULT_ACCEPT_TYPES, flags);
+                        if (hRequest) {
+                            ActiveHttpGuard requestGuard(&g_activeHttpRequest, hRequest);
+                            PCWSTR headers = L"Cache-Control: no-cache, no-store, must-revalidate\r\nPragma: no-cache\r\nAccept: text/calendar, text/plain, */*\r\n";
+                            if (!g_shuttingDown &&
+                                WinHttpSendRequest(hRequest, headers, static_cast<DWORD>(-1L),
+                                                   WINHTTP_NO_REQUEST_DATA, 0, 0, 0) &&
+                                !g_shuttingDown &&
+                                WinHttpReceiveResponse(hRequest, nullptr)) {
+                                DWORD statusCode = 0;
+                                DWORD statusSize = sizeof(statusCode);
+                                WinHttpQueryHeaders(hRequest,
+                                                    WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER,
+                                                    WINHTTP_HEADER_NAME_BY_INDEX,
+                                                    &statusCode, &statusSize, WINHTTP_NO_HEADER_INDEX);
 
-                        if (statusCode == 200) {
-                            DWORD dwSize = 0;
-                            while (!g_shuttingDown && WinHttpQueryDataAvailable(hRequest, &dwSize) && dwSize > 0) {
-                                std::vector<char> buffer(dwSize);
-                                DWORD dwDownloaded = 0;
-                                if (WinHttpReadData(hRequest, buffer.data(), dwSize, &dwDownloaded) && dwDownloaded > 0) {
-                                    responseBody.append(buffer.data(), dwDownloaded);
-                                } else {
-                                    break;
+                                if (statusCode == 200) {
+                                    DWORD dwSize = 0;
+                                    while (!g_shuttingDown && WinHttpQueryDataAvailable(hRequest, &dwSize) && dwSize > 0) {
+                                        std::vector<char> buffer(dwSize);
+                                        DWORD dwDownloaded = 0;
+                                        if (WinHttpReadData(hRequest, buffer.data(), dwSize, &dwDownloaded) && dwDownloaded > 0) {
+                                            responseBody.append(buffer.data(), dwDownloaded);
+                                        } else {
+                                            break;
+                                        }
+                                        if (responseBody.size() > 10 * 1024 * 1024) break;
+                                    }
                                 }
-                                if (responseBody.size() > 10 * 1024 * 1024) break;
                             }
                         }
                     }
-                    WinHttpCloseHandle(hRequest);
                 }
-                WinHttpCloseHandle(hConnect);
             }
-            WinHttpCloseHandle(hSession);
         }
     }
 
-    if (responseBody.find("BEGIN:VCALENDAR") == std::string::npos) {
+    if (!g_shuttingDown && responseBody.find("BEGIN:VCALENDAR") == std::string::npos) {
         std::string fallbackBody = DownloadViaUrlMonFallback(fetchUrl);
         if (fallbackBody.find("BEGIN:VCALENDAR") != std::string::npos) {
             responseBody = std::move(fallbackBody);
@@ -991,22 +1421,22 @@ void EnsureIcsCacheLoadedInMemory() {
 
     {
         std::lock_guard<std::mutex> lock(g_icsMutex);
-        if (!g_icsEventsByDate.empty()) return;
+        if (!g_icsEventsByDate.empty() && g_lastSyncedIcsUrl == settings.googleIcsUrl) return;
     }
 
-    std::string cachedIcs = LoadIcsFromSharedCache();
+    uint64_t urlHash = ComputeIcsUrlHash(settings.googleIcsUrl);
+    std::string cachedIcs = LoadIcsFromSharedCache(urlHash);
     if (!cachedIcs.empty()) {
         size_t evCount = 0;
         auto parsed = ParseIcsContent(cachedIcs, &evCount);
         if (!parsed.empty()) {
             std::lock_guard<std::mutex> lock(g_icsMutex);
-            if (g_icsEventsByDate.empty()) {
+            if (g_icsEventsByDate.empty() || g_lastSyncedIcsUrl != settings.googleIcsUrl) {
                 g_icsEventsByDate = std::move(parsed);
                 g_totalSyncedEventsCount = evCount;
-                if (g_lastSyncStatusMsg.empty()) {
-                    WCHAR buf[128]{};
-                    _snwprintf_s(buf, _TRUNCATE, L"Đã nạp %zu sự kiện", evCount);
-                    g_lastSyncStatusMsg = buf;
+                g_lastSyncedIcsUrl = settings.googleIcsUrl;
+                if (g_lastSyncStatus == IcsSyncStatus::None) {
+                    g_lastSyncStatus = IcsSyncStatus::LoadedFromCache;
                 }
                 g_icsDataGeneration.fetch_add(1);
             }
@@ -1019,13 +1449,21 @@ void TriggerGoogleCalendarSyncIfNeeded(bool forceSync = false) {
 
     ModSettings settings = GetSettings();
     if (settings.googleIcsUrl.empty()) {
-        std::lock_guard<std::mutex> lock(g_icsMutex);
-        if (!g_icsEventsByDate.empty()) {
-            g_icsEventsByDate.clear();
-            g_totalSyncedEventsCount = 0;
-            g_lastSyncedIcsUrl.clear();
-            g_lastSyncStatusMsg.clear();
-            g_icsDataGeneration.fetch_add(1);
+        bool cleared = false;
+        {
+            std::lock_guard<std::mutex> lock(g_icsMutex);
+            if (!g_icsEventsByDate.empty() || !g_lastSyncedIcsUrl.empty() || g_lastSyncStatus != IcsSyncStatus::None) {
+                g_icsEventsByDate.clear();
+                g_totalSyncedEventsCount = 0;
+                g_lastIcsSyncTick = 0;
+                g_lastSyncedIcsUrl.clear();
+                g_lastSyncStatus = IcsSyncStatus::None;
+                g_icsDataGeneration.fetch_add(1);
+                cleared = true;
+            }
+        }
+        if (cleared || forceSync) {
+            ClearSharedIcsCache();
         }
         return;
     }
@@ -1048,100 +1486,167 @@ void TriggerGoogleCalendarSyncIfNeeded(bool forceSync = false) {
     }
 
     std::wstring rawUrls = settings.googleIcsUrl;
-    std::thread([rawUrls]() {
-        std::unordered_map<int32_t, std::vector<GoogleCalendarEvent>> mergedEvents;
-        std::string combinedRawIcs;
-        size_t totalEventsCount = 0;
-        bool downloadedFromNetwork = false;
+    std::lock_guard<std::mutex> threadLock(g_syncThreadsMutex);
+    if (g_shuttingDown) {
+        g_icsSyncInProgress = false;
+        return;
+    }
+    if (g_syncWorkerThread.joinable()) {
+        g_syncWorkerThread.join();
+    }
 
-        size_t start = 0;
-        while (start < rawUrls.size()) {
-            size_t end = rawUrls.find_first_of(L";,\r\n", start);
-            if (end == std::wstring::npos) end = rawUrls.size();
+    g_syncWorkerThread = std::thread([rawUrls]() {
+        try {
+            uint64_t urlHash = ComputeIcsUrlHash(rawUrls);
+            std::unordered_map<int32_t, std::vector<GoogleCalendarEvent>> mergedEvents;
+            std::string combinedRawIcs;
+            size_t totalEventsCount = 0;
+            bool downloadedFromNetwork = false;
 
-            std::wstring singleUrl = CleanIcsUrl(rawUrls.substr(start, end - start));
-            if (!singleUrl.empty() && _wcsnicmp(singleUrl.c_str(), L"http", 4) == 0) {
-                std::string rawIcs = DownloadHttpsUrl(singleUrl);
-                if (rawIcs.find("BEGIN:VCALENDAR") != std::string::npos && !g_shuttingDown) {
-                    downloadedFromNetwork = true;
-                    combinedRawIcs += rawIcs + "\r\n";
-                    size_t evCount = 0;
-                    auto parsed = ParseIcsContent(rawIcs, &evCount);
-                    totalEventsCount += evCount;
-                    for (auto& kv : parsed) {
-                        auto& destVec = mergedEvents[kv.first];
-                        for (auto& ev : kv.second) {
-                            destVec.push_back(std::move(ev));
+            size_t start = 0;
+            while (start < rawUrls.size() && !g_shuttingDown) {
+                size_t end = rawUrls.find_first_of(L";\r\n", start);
+                if (end == std::wstring::npos) end = rawUrls.size();
+
+                std::wstring singleUrl = CleanIcsUrl(rawUrls.substr(start, end - start));
+                if (!singleUrl.empty() && _wcsnicmp(singleUrl.c_str(), L"http", 4) == 0) {
+                    std::string rawIcs = DownloadHttpsUrl(singleUrl);
+                    if (rawIcs.find("BEGIN:VCALENDAR") != std::string::npos && !g_shuttingDown) {
+                        downloadedFromNetwork = true;
+                        combinedRawIcs += rawIcs + "\r\n";
+                        size_t evCount = 0;
+                        auto parsed = ParseIcsContent(rawIcs, &evCount);
+                        totalEventsCount += evCount;
+                        for (auto& kv : parsed) {
+                            auto& destVec = mergedEvents[kv.first];
+                            for (auto& ev : kv.second) {
+                                destVec.push_back(std::move(ev));
+                            }
                         }
                     }
                 }
-            }
-            start = end + 1;
-        }
-
-        if (downloadedFromNetwork && !combinedRawIcs.empty()) {
-            SaveIcsToSharedCache(combinedRawIcs);
-        }
-
-        bool loadedFromCache = false;
-        if (!downloadedFromNetwork && !g_shuttingDown) {
-            std::string cachedIcs = LoadIcsFromSharedCache();
-            if (!cachedIcs.empty()) {
-                loadedFromCache = true;
-                size_t evCount = 0;
-                mergedEvents = ParseIcsContent(cachedIcs, &evCount);
-                totalEventsCount = evCount;
-            }
-        }
-
-        if ((downloadedFromNetwork || loadedFromCache) && !g_shuttingDown) {
-            for (auto& kv : mergedEvents) {
-                auto& vec = kv.second;
-                std::sort(vec.begin(), vec.end(), [](GoogleCalendarEvent const& a, GoogleCalendarEvent const& b) {
-                    if (a.isAllDay != b.isAllDay) return a.isAllDay > b.isAllDay;
-                    if (a.startHour != b.startHour) return a.startHour < b.startHour;
-                    return a.startMin < b.startMin;
-                });
+                start = end + 1;
             }
 
-            SYSTEMTIME stSync{};
-            GetLocalTime(&stSync);
-            WCHAR statusBuf[128]{};
-            _snwprintf_s(statusBuf, _TRUNCATE, L"Đã đồng bộ %zu sự kiện lúc %02d:%02d",
-                         totalEventsCount, stSync.wHour, stSync.wMinute);
+            if (downloadedFromNetwork && !combinedRawIcs.empty() && !g_shuttingDown) {
+                SaveIcsToSharedCache(combinedRawIcs, urlHash);
+            }
 
-            {
+            bool loadedFromCache = false;
+            if (!downloadedFromNetwork && !g_shuttingDown) {
+                std::string cachedIcs = LoadIcsFromSharedCache(urlHash);
+                if (!cachedIcs.empty()) {
+                    loadedFromCache = true;
+                    size_t evCount = 0;
+                    mergedEvents = ParseIcsContent(cachedIcs, &evCount);
+                    totalEventsCount = evCount;
+                }
+            }
+
+            if ((downloadedFromNetwork || loadedFromCache) && !g_shuttingDown) {
+                for (auto& kv : mergedEvents) {
+                    auto& vec = kv.second;
+                    std::sort(vec.begin(), vec.end(), [](GoogleCalendarEvent const& a, GoogleCalendarEvent const& b) {
+                        if (a.isAllDay != b.isAllDay) return a.isAllDay > b.isAllDay;
+                        if (a.startHour != b.startHour) return a.startHour < b.startHour;
+                        if (a.startMin != b.startMin) return a.startMin < b.startMin;
+                        return a.summary < b.summary;
+                    });
+                }
+
+                SYSTEMTIME stSync{};
+                GetLocalTime(&stSync);
+
+                {
+                    std::lock_guard<std::mutex> lock(g_icsMutex);
+                    g_icsEventsByDate = std::move(mergedEvents);
+                    g_totalSyncedEventsCount = totalEventsCount;
+                    g_lastIcsSyncTick = GetTickCount64();
+                    g_lastSyncedIcsUrl = rawUrls;
+                    g_lastSyncStatus = IcsSyncStatus::Synced;
+                    g_lastSyncHour = stSync.wHour;
+                    g_lastSyncMin = stSync.wMinute;
+                    g_icsDataGeneration.fetch_add(1);
+                }
+                NotifyCalendarUiAfterIcsSync();
+            } else if (!g_shuttingDown) {
                 std::lock_guard<std::mutex> lock(g_icsMutex);
-                g_icsEventsByDate = std::move(mergedEvents);
-                g_totalSyncedEventsCount = totalEventsCount;
                 g_lastIcsSyncTick = GetTickCount64();
-                g_lastSyncedIcsUrl = rawUrls;
-                g_lastSyncStatusMsg = statusBuf;
-                g_icsDataGeneration.fetch_add(1);
+                if (g_lastSyncStatus == IcsSyncStatus::None) {
+                    g_lastSyncStatus = IcsSyncStatus::Failed;
+                }
             }
-            NotifyCalendarUiAfterIcsSync();
-        } else if (!g_shuttingDown) {
-            std::lock_guard<std::mutex> lock(g_icsMutex);
-            g_lastIcsSyncTick = GetTickCount64();
-            if (g_lastSyncStatusMsg.empty()) {
-                g_lastSyncStatusMsg = L"Chưa tải được dữ liệu (Kiểm tra lại link .ics)";
-            }
-        }
+        } catch (...) {}
         g_icsSyncInProgress = false;
-    }).detach();
+    });
 }
 
 void StartPeriodicGoogleCalendarSyncLoop() {
+    if (g_shuttingDown) return;
     if (g_backgroundSyncLoopStarted.exchange(true)) return;
-    std::thread([]() {
+    std::lock_guard<std::mutex> lock(g_syncThreadsMutex);
+    if (g_shuttingDown) {
+        g_backgroundSyncLoopStarted = false;
+        return;
+    }
+    if (!g_stopEvent) {
+        g_stopEvent = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    } else {
+        ResetEvent(g_stopEvent);
+    }
+    if (g_periodicLoopThread.joinable()) {
+        g_periodicLoopThread.join();
+    }
+    g_periodicLoopThread = std::thread([]() {
         while (!g_shuttingDown) {
-            for (int i = 0; i < 15 && !g_shuttingDown; i++) {
-                std::this_thread::sleep_for(std::chrono::seconds(1));
-            }
-            if (g_shuttingDown) break;
+            DWORD waitRes = g_stopEvent
+                ? WaitForSingleObject(g_stopEvent, 15000)
+                : WAIT_TIMEOUT;
+            if (g_shuttingDown || waitRes == WAIT_OBJECT_0) break;
             TriggerGoogleCalendarSyncIfNeeded(false);
         }
-    }).detach();
+    });
+}
+
+void StopGoogleCalendarSyncThreads() {
+    g_shuttingDown = true;
+    HANDLE stopEv = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(g_syncThreadsMutex);
+        stopEv = g_stopEvent;
+    }
+    if (stopEv) {
+        SetEvent(stopEv);
+    }
+    AbortActiveHttpRequests();
+
+    std::thread periodic;
+    {
+        std::lock_guard<std::mutex> lock(g_syncThreadsMutex);
+        periodic = std::move(g_periodicLoopThread);
+    }
+    if (periodic.joinable()) {
+        periodic.join();
+    }
+
+    std::thread worker;
+    {
+        std::lock_guard<std::mutex> lock(g_syncThreadsMutex);
+        worker = std::move(g_syncWorkerThread);
+    }
+    if (worker.joinable()) {
+        worker.join();
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(g_syncThreadsMutex);
+        if (g_stopEvent) {
+            CloseHandle(g_stopEvent);
+            g_stopEvent = nullptr;
+        }
+    }
+    g_backgroundSyncLoopStarted = false;
+    g_icsSyncInProgress = false;
 }
 
 bool HasGoogleEventsOnDate(int32_t dateKey) {
@@ -1221,7 +1726,7 @@ std::wstring FormatGoogleEventsForTooltip(int32_t todayKey, ModSettings const& s
                 _snwprintf_s(timePrefix, _TRUNCATE, L"%02d:%02d", ev.startHour, ev.startMin);
             }
 
-            std::wstring summaryShort = ev.summary;
+            std::wstring summaryShort = DisplayEventSummary(ev.summary, vi);
             if (summaryShort.size() > 32) summaryShort = summaryShort.substr(0, 32) + L"...";
 
             out += L"\r\n   • [";
@@ -1248,7 +1753,7 @@ std::wstring FormatGoogleEventsForTooltip(int32_t todayKey, ModSettings const& s
             WCHAR datePrefix[32]{};
             _snwprintf_s(datePrefix, _TRUNCATE, L"%02d/%02d", d, m);
 
-            std::wstring summaryShort = ev.summary;
+            std::wstring summaryShort = DisplayEventSummary(ev.summary, vi);
             if (summaryShort.size() > 30) summaryShort = summaryShort.substr(0, 30) + L"...";
 
             out += L"\r\n   • [";
@@ -1611,7 +2116,8 @@ PersonalCompatibility EvaluatePersonalAgeCompatibility(int birthYear, int canDay
     res.summary = finalBuf;
 
     WCHAR line1Buf[160]{};
-    _snwprintf_s(line1Buf, _TRUNCATE, L"%s — Tuổi %s (%d)",
+    _snwprintf_s(line1Buf, _TRUNCATE,
+                 vi ? L"%s — Tuổi %s (%d)" : L"%s — Sign %s (%d)",
                  branchStatus, userCanChi.c_str(), birthYear);
     res.compactTooltipLine1 = line1Buf;
     res.compactTooltipLine2 = std::wstring(L"   └ ") + elemRelationBuf;
@@ -1660,7 +2166,7 @@ VietnameseHolidayResult EvaluateVietnameseHoliday(int sDay, int sMonth, int sYea
         { 2,  9,  HolidayScope::SolarOnly, L"Quốc khánh Việt Nam",        L"Vietnam National Day" },
         { 20, 10, HolidayScope::SolarOnly, L"Ngày Phụ nữ Việt Nam",       L"Vietnamese Women's Day" },
         { 20, 11, HolidayScope::SolarOnly, L"Ngày Nhà giáo Việt Nam",     L"Vietnamese Teachers' Day" },
-        { 24, 11, HolidayScope::SolarOnly, L"Ngày Văn hóa Việt Nam",      L"Vietnam Cultural Heritage Day" },
+        { 24, 11, HolidayScope::SolarOnly, L"Ngày Văn hóa Việt Nam",      L"Vietnam Culture Day" },
         { 22, 12, HolidayScope::SolarOnly, L"Thành lập QĐND Việt Nam",    L"People's Army Foundation Day" },
         { 24, 12, HolidayScope::SolarOnly, L"Đêm Giáng Sinh",             L"Christmas Eve" },
         { 25, 12, HolidayScope::SolarOnly, L"Lễ Giáng Sinh (Noel)",       L"Christmas Day" },
@@ -1678,7 +2184,6 @@ VietnameseHolidayResult EvaluateVietnameseHoliday(int sDay, int sMonth, int sYea
         { 15, 7,  HolidayScope::Both,      L"Lễ Vu Lan (Rằm tháng Bảy)",          L"Vu Lan Festival (Ghost Festival)" },
         { 15, 8,  HolidayScope::Both,      L"Tết Trung Thu (Rằm tháng Tám)",      L"Mid-Autumn Festival (Tết Trung Thu)" },
         { 23, 12, HolidayScope::LunarOnly, L"Tiễn Ông Công Ông Táo",              L"Kitchen Guardians Day (Ông Công Ông Táo)" },
-        { 29, 12, HolidayScope::Both,      L"Tất niên / Giao thừa",               L"Lunar New Year's Eve (Tất niên)" },
         { 30, 12, HolidayScope::Both,      L"Tất niên / Giao thừa",               L"Lunar New Year's Eve (Giao thừa)" },
     };
 
@@ -1699,6 +2204,23 @@ VietnameseHolidayResult EvaluateVietnameseHoliday(int sDay, int sMonth, int sYea
                 if (entry.scope == HolidayScope::Both || entry.scope == HolidayScope::SolarOnly) highlightSolar = true;
                 if (entry.scope == HolidayScope::Both || entry.scope == HolidayScope::LunarOnly) highlightLunar = true;
             }
+        }
+        if (lDay == 29 && lMonth == 12) {
+            int ny = sYear, nm = sMonth, nd = sDay;
+            NextCalendarDay(ny, nm, nd);
+            int nld = 0, nlm = 0, nly = 0;
+            bool nleap = false;
+            std::wstring ncc;
+            GetVietnameseLunarDate(ny, nm, nd, nld, nlm, nly, nleap, ncc);
+            if (nld == 1 && nlm == 1) {
+                addName(PickText(vi, L"Tất niên / Giao thừa", L"Lunar New Year's Eve (Giao thừa)"));
+                highlightSolar = true;
+                highlightLunar = true;
+            } else {
+                addName(PickText(vi, L"29 Tết (Áp Tết)", L"29th of Lunar December"));
+                highlightLunar = true;
+            }
+            matchedLunarFestival = true;
         }
         if (!matchedLunarFestival) {
             if (lDay == 1) addName(PickText(vi, L"Ngày Mùng 1 (Sóc)", L"New Moon Day (Mùng 1)"));
@@ -1775,8 +2297,9 @@ ComputedHoroscope ComputeHoroscopeForDate(int sYear, int sMonth, int sDay, bool 
     int chiMonthIdx = ((info.lMonth + 1) % 12 + 12) % 12;
     info.monthCanChi = std::wstring(CAN_10[canMonthIdx]) + L" " + CHI_12[chiMonthIdx];
 
+    int effectiveCanDayForHour = (hour == 23) ? ((canDayIdx + 1) % 10) : canDayIdx;
     int chiHourIdx = (((hour + 1) / 2) % 12 + 12) % 12;
-    int canHourIdx = (((canDayIdx % 5) * 2 + chiHourIdx) % 10 + 10) % 10;
+    int canHourIdx = (((effectiveCanDayForHour % 5) * 2 + chiHourIdx) % 10 + 10) % 10;
     info.hourCanChi = std::wstring(CAN_10[canHourIdx]) + L" " + CHI_12[chiHourIdx];
 
     struct BilingualText { PCWSTR vi; PCWSTR en; };
@@ -1860,7 +2383,7 @@ ComputedHoroscope ComputeHoroscopeForDate(int sYear, int sMonth, int sDay, bool 
         { L"Khai",  L"Khai trương, động thổ, xuất hành, nhậm chức",    L"An táng, tranh chấp",
                     L"Grand openings, groundbreaking, travel",         L"Burials, disputes" },
         { L"Bế",    L"Đắp đê, tu bổ, cất giữ tài vật, lập kế hoạch",   L"Khai trương, xuất hành xa",
-                    L"Maintenance, saving assets, planning",           L"Grand journeys" },
+                    L"Maintenance, saving assets, planning",           L"Grand openings, long journeys" },
     };
     int trucIdx = (chiDayIdx - chiMonthIdx + 12) % 12;
     info.trucName = kTruc[trucIdx].name;
@@ -2128,6 +2651,9 @@ thread_local int32_t t_selectedHoroscopeKey = 0;
 thread_local uint32_t t_lastSeenIcsGeneration = 0;
 thread_local winrt::weak_ref<wuxc::CalendarView> t_calendarView{nullptr};
 thread_local bool t_calendarViewHandlersAdded = false;
+thread_local wf::IInspectable t_cvPressedHandler{nullptr};
+thread_local wf::IInspectable t_cvReleasedHandler{nullptr};
+thread_local wf::IInspectable t_cvWheelHandler{nullptr};
 
 struct HeaderState {
     winrt::weak_ref<wuxc::Panel> headerPanel{nullptr};
@@ -2155,7 +2681,7 @@ struct TranslatedLabelState {
 thread_local std::unordered_map<void*, TranslatedLabelState> t_translatedLabels;
 thread_local winrt::weak_ref<wuxc::TextBlock> t_monthYearBannerTb{nullptr};
 thread_local winrt::weak_ref<wuxc::Button> t_monthYearHeaderBtn{nullptr};
-thread_local int t_lastKnownCalendarYear = 2026;
+thread_local int t_lastKnownCalendarYear = 0;
 
 struct HiddenCalendarChild {
     winrt::weak_ref<wux::UIElement> element{nullptr};
@@ -2296,7 +2822,7 @@ struct DayCell {
 
     int32_t key = 0;
     int64_t dateChangedToken = 0;
-    bool pointerHandlersRegistered = false;
+    wf::IInspectable pointerPressedHandler{nullptr};
     bool busy = false;
 };
 
@@ -2378,7 +2904,15 @@ void FindOrCreateLunarTextBlock(wuxc::CalendarViewDayItem const& item,
 
     for (const auto& tb : allTextBlocks) {
         if (tb == lunarOut) continue;
-        if (!solarOut) {
+        if (IsSolarDayLabelText(ElementText(tb))) {
+            solarOut = tb;
+            break;
+        }
+    }
+
+    if (!solarOut) {
+        for (const auto& tb : allTextBlocks) {
+            if (tb == lunarOut) continue;
             solarOut = tb;
             break;
         }
@@ -2605,31 +3139,28 @@ void ApplyToDayItem(wuxc::CalendarViewDayItem const& item) {
         } catch (...) {}
     }
 
-    if (!cell.pointerHandlersRegistered) {
+    if (!cell.pointerPressedHandler) {
         try {
-            item.AddHandler(
-                wux::UIElement::PointerPressedEvent(),
-                winrt::box_value(wuxi::PointerEventHandler(
-                    [](wf::IInspectable const& sender, wuxi::PointerRoutedEventArgs const& args) {
-                        if (!GetSettings().enableHoroscopePage) return;
-                        if (auto dayItem = sender.try_as<wuxc::CalendarViewDayItem>()) {
-                            try {
-                                auto pt = args.GetCurrentPoint(dayItem);
-                                if (pt.PointerDevice().PointerDeviceType() ==
-                                    winrt::Windows::Devices::Input::PointerDeviceType::Mouse) {
-                                    if (!pt.Properties().IsLeftButtonPressed()) return;
-                                }
-                            } catch (...) {}
-
-                            int32_t clickedKey = DateKeyFromDateTime(dayItem.Date());
-                            if (clickedKey != 0) {
-                                RequestOpenHoroscopeForDateKey(clickedKey);
+            auto handler = winrt::box_value(wuxi::PointerEventHandler(
+                [](wf::IInspectable const& sender, wuxi::PointerRoutedEventArgs const& args) {
+                    if (g_shuttingDown || !GetSettings().enableHoroscopePage) return;
+                    if (auto dayItem = sender.try_as<wuxc::CalendarViewDayItem>()) {
+                        try {
+                            auto pt = args.GetCurrentPoint(dayItem);
+                            if (pt.PointerDevice().PointerDeviceType() ==
+                                winrt::Windows::Devices::Input::PointerDeviceType::Mouse) {
+                                if (!pt.Properties().IsLeftButtonPressed()) return;
                             }
-                        }
-                    })),
-                true);
+                        } catch (...) {}
 
-            cell.pointerHandlersRegistered = true;
+                        int32_t clickedKey = DateKeyFromDateTime(dayItem.Date());
+                        if (clickedKey != 0) {
+                            RequestOpenHoroscopeForDateKey(clickedKey);
+                        }
+                    }
+                }));
+            item.AddHandler(wux::UIElement::PointerPressedEvent(), handler, true);
+            cell.pointerPressedHandler = std::move(handler);
         } catch (...) {
             LogCalendarException(L"AddHandler PointerPressed");
         }
@@ -2821,7 +3352,35 @@ std::wstring XmlEscape(std::wstring const& s) {
     return out;
 }
 
-wux::FrameworkElement BuildModernHoroscopeCardView(int32_t key, bool vi) {
+bool IsLightSystemThemeFallback() {
+    HKEY hKey = nullptr;
+    if (RegOpenKeyExW(HKEY_CURRENT_USER,
+                      L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                      0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+        DWORD val = 0, size = sizeof(val), type = 0;
+        if (RegQueryValueExW(hKey, L"SystemUsesLightTheme", nullptr, &type,
+                             reinterpret_cast<LPBYTE>(&val), &size) == ERROR_SUCCESS &&
+            type == REG_DWORD) {
+            RegCloseKey(hKey);
+            return val != 0;
+        }
+        RegCloseKey(hKey);
+    }
+    return false;
+}
+
+bool DetectPanelLightTheme(wuxc::Panel const& panel) {
+    if (panel) {
+        try {
+            auto theme = panel.ActualTheme();
+            if (theme == wux::ElementTheme::Light) return true;
+            if (theme == wux::ElementTheme::Dark) return false;
+        } catch (...) {}
+    }
+    return IsLightSystemThemeFallback();
+}
+
+wux::FrameworkElement BuildModernHoroscopeCardView(int32_t key, bool vi, bool isLightTheme) {
     int sYear = key / 10000;
     int sMonth = (key / 100) % 100;
     int sDay = key % 100;
@@ -2831,6 +3390,24 @@ wux::FrameworkElement BuildModernHoroscopeCardView(int32_t key, bool vi) {
 
     ComputedHoroscope h = ComputeHoroscopeForDate(sYear, sMonth, sDay, vi, stNow.wHour);
     int monthIdx = (sMonth >= 1 && sMonth <= 12) ? (sMonth - 1) : 0;
+
+    PCWSTR backBg        = isLightTheme ? L"#18000000" : L"#28FFFFFF";
+    PCWSTR backBorder    = isLightTheme ? L"#30000000" : L"#40FFFFFF";
+    PCWSTR cardBg        = isLightTheme ? L"#10000000" : L"#18FFFFFF";
+    PCWSTR cardBgAlt     = isLightTheme ? L"#0C000000" : L"#14FFFFFF";
+    PCWSTR cardBgSoft    = isLightTheme ? L"#0A000000" : L"#12FFFFFF";
+    PCWSTR cardBorder    = isLightTheme ? L"#22000000" : L"#28FFFFFF";
+    PCWSTR cardBorderAlt = isLightTheme ? L"#1E000000" : L"#24FFFFFF";
+    PCWSTR lunarFg       = isLightTheme ? L"#FF9A5B00" : L"#FFFFD580";
+    PCWSTR holidayBg     = isLightTheme ? L"#22D32F2F" : L"#28FF6B6B";
+    PCWSTR holidayFg     = isLightTheme ? L"#FFB71C1C" : L"#FFFFB3B3";
+    PCWSTR gcalBg        = isLightTheme ? L"#181976D2" : L"#1A55AAFF";
+    PCWSTR gcalBorder    = isLightTheme ? L"#441976D2" : L"#4055AAFF";
+    PCWSTR gcalTitleFg   = isLightTheme ? L"#FF0D47A1" : L"#FF99CCFF";
+    PCWSTR starGoodFg    = isLightTheme ? L"#FF9A6000" : L"#FFFFE082";
+    PCWSTR starBadFg     = isLightTheme ? L"#FF424242" : L"#FFE0E0E0";
+    PCWSTR goodFg        = isLightTheme ? L"#FF1B5E20" : L"#FFA5D6A7";
+    PCWSTR badFg         = isLightTheme ? L"#FFB71C1C" : L"#FFEF9A9A";
 
     WCHAR solarHeaderBuf[256]{};
     if (vi) {
@@ -2844,8 +3421,8 @@ wux::FrameworkElement BuildModernHoroscopeCardView(int32_t key, bool vi) {
     WCHAR lunarBadgeBuf[256]{};
     if (vi) {
         if (h.isLeap) {
-            _snwprintf_s(lunarBadgeBuf, _TRUNCATE, L"🌙 Âm lịch: %02d/%02d (Nhuận) • Năm %s",
-                         h.lDay, h.lMonth, h.yearCanChi.c_str());
+            _snwprintf_s(lunarBadgeBuf, _TRUNCATE, L"🌙 Âm lịch: %02d/%02d/%d (Nhuận) • Năm %s",
+                         h.lDay, h.lMonth, h.lYear, h.yearCanChi.c_str());
         } else {
             _snwprintf_s(lunarBadgeBuf, _TRUNCATE, L"🌙 Âm lịch: %02d/%02d/%d • Năm %s",
                          h.lDay, h.lMonth, h.lYear, h.yearCanChi.c_str());
@@ -2862,8 +3439,8 @@ wux::FrameworkElement BuildModernHoroscopeCardView(int32_t key, bool vi) {
 
     std::wstring holidayXaml;
     if (!h.specialHoliday.empty()) {
-        holidayXaml = L"<Border Background='#28FF6B6B' CornerRadius='5' Padding='7,3' Margin='0,4,0,0'>"
-                      L"<TextBlock Text='🎉 " + XmlEscape(h.specialHoliday) + L"' FontSize='11.5' FontWeight='SemiBold' Foreground='#FFFFB3B3' TextWrapping='Wrap'/>"
+        holidayXaml = std::wstring(L"<Border Background='") + holidayBg + L"' CornerRadius='5' Padding='7,3' Margin='0,4,0,0'>"
+                      L"<TextBlock Text='🎉 " + XmlEscape(h.specialHoliday) + L"' FontSize='11.5' FontWeight='SemiBold' Foreground='" + holidayFg + L"' TextWrapping='Wrap'/>"
                       L"</Border>";
     }
 
@@ -2894,12 +3471,12 @@ wux::FrameworkElement BuildModernHoroscopeCardView(int32_t key, bool vi) {
                     _snwprintf_s(timeBadge, _TRUNCATE, L"%02d:%02d", ev.startHour, ev.startMin);
                 }
 
-                std::wstring titleLine = L"[" + std::wstring(timeBadge) + L"]  " + ev.summary;
+                std::wstring titleLine = L"[" + std::wstring(timeBadge) + L"]  " + DisplayEventSummary(ev.summary, vi);
                 if (!ev.location.empty()) {
                     titleLine += L"  (📍 " + ev.location + L")";
                 }
 
-                itemsXaml += L"<Border Background='#18FFFFFF' CornerRadius='5' Padding='7,4' Margin='0,4,0,0'>"
+                itemsXaml += std::wstring(L"<Border Background='") + cardBg + L"' CornerRadius='5' Padding='7,4' Margin='0,4,0,0'>"
                              L"<StackPanel>"
                              L"<TextBlock Text='" + XmlEscape(titleLine) + L"' FontSize='11.8' FontWeight='SemiBold' TextWrapping='Wrap'/>";
 
@@ -2914,21 +3491,17 @@ wux::FrameworkElement BuildModernHoroscopeCardView(int32_t key, bool vi) {
             }
 
             googleCardXaml =
-                L"<Border Background='#1A55AAFF' BorderBrush='#4055AAFF' BorderThickness='1' CornerRadius='7' Padding='10,7' Margin='0,0,0,6'>"
+                std::wstring(L"<Border Background='") + gcalBg + L"' BorderBrush='" + gcalBorder + L"' BorderThickness='1' CornerRadius='7' Padding='10,7' Margin='0,0,0,6'>"
                 L"<StackPanel>"
-                L"<TextBlock Text='" + std::wstring(vi ? L"📌 LỊCH TRÌNH &amp; GHI CHÚ GOOGLE CALENDAR" : L"📌 GOOGLE CALENDAR SCHEDULE &amp; NOTES") + L"' FontSize='11' FontWeight='Bold' Foreground='#FF99CCFF'/>"
+                L"<TextBlock Text='" + std::wstring(vi ? L"📌 LỊCH TRÌNH &amp; GHI CHÚ GOOGLE CALENDAR" : L"📌 GOOGLE CALENDAR SCHEDULE &amp; NOTES") + L"' FontSize='11' FontWeight='Bold' Foreground='" + gcalTitleFg + L"'/>"
                 + itemsXaml +
                 L"</StackPanel></Border>";
         } else {
-            std::wstring statusCopy;
-            {
-                std::lock_guard<std::mutex> lock(g_icsMutex);
-                statusCopy = g_lastSyncStatusMsg;
-            }
+            std::wstring statusCopy = FormatIcsSyncStatus(vi);
             if (!statusCopy.empty()) {
                 std::wstring emptyNote = (vi ? L"📌 Không có lịch trình trong ngày • " : L"📌 No events today • ") + statusCopy;
                 googleCardXaml =
-                    L"<Border Background='#12FFFFFF' CornerRadius='7' Padding='9,5' Margin='0,0,0,6'>"
+                    std::wstring(L"<Border Background='") + cardBgSoft + L"' CornerRadius='7' Padding='9,5' Margin='0,0,0,6'>"
                     L"<TextBlock Text='" + XmlEscape(emptyNote) + L"' FontSize='11' Opacity='0.75' TextWrapping='Wrap'/>"
                     L"</Border>";
             }
@@ -2937,29 +3510,29 @@ wux::FrameworkElement BuildModernHoroscopeCardView(int32_t key, bool vi) {
 
     std::wstring personalCardXaml;
     if (!h.personalMatch.summary.empty()) {
-        PCWSTR cardBg = L"#18FFFFFF";
-        PCWSTR cardBorder = L"#30FFFFFF";
+        PCWSTR pBg = cardBg;
+        PCWSTR pBorder = isLightTheme ? L"#28000000" : L"#30FFFFFF";
         if (h.personalMatch.state == AgeMatchState::Harmonious) {
-            cardBg = L"#224CAF50";
-            cardBorder = L"#5581C784";
+            pBg = isLightTheme ? L"#242E7D32" : L"#224CAF50";
+            pBorder = isLightTheme ? L"#662E7D32" : L"#5581C784";
         } else if (h.personalMatch.state == AgeMatchState::ClashedMajor) {
-            cardBg = L"#26F44336";
-            cardBorder = L"#66E57373";
+            pBg = isLightTheme ? L"#24C62828" : L"#26F44336";
+            pBorder = isLightTheme ? L"#66C62828" : L"#66E57373";
         } else if (h.personalMatch.state == AgeMatchState::ClashedMinor) {
-            cardBg = L"#22FF9800";
-            cardBorder = L"#55FFB74D";
+            pBg = isLightTheme ? L"#24EF6C00" : L"#22FF9800";
+            pBorder = isLightTheme ? L"#66EF6C00" : L"#55FFB74D";
         }
 
         personalCardXaml =
-            std::wstring(L"<Border Background='") + cardBg + L"' BorderBrush='" + cardBorder + L"' BorderThickness='1' CornerRadius='7' Padding='10,6' Margin='0,0,0,4'>"
+            std::wstring(L"<Border Background='") + pBg + L"' BorderBrush='" + pBorder + L"' BorderThickness='1' CornerRadius='7' Padding='10,6' Margin='0,0,0,4'>"
             L"<TextBlock Text='" + XmlEscape(h.personalMatch.summary) + L"' FontSize='11.5' FontWeight='SemiBold' TextWrapping='Wrap'/>"
             L"</Border>";
     } else {
         std::wstring tipText = vi ? L"💡 Nhập Năm sinh Âm lịch trong Settings của Mod để xem xung hợp bản mệnh."
                                   : L"💡 Set your Birth Year in Mod Settings for personal compatibility.";
         personalCardXaml =
-            L"<Border Background='#12FFFFFF' CornerRadius='7' Padding='9,5' Margin='0,0,0,4'>"
-            L"<TextBlock Text='" + XmlEscape(tipText) + L"' FontSize='11' Opacity='0.7' TextWrapping='Wrap'/>"
+            std::wstring(L"<Border Background='") + cardBgSoft + L"' CornerRadius='7' Padding='9,5' Margin='0,0,0,4'>"
+            L"<TextBlock Text='" + XmlEscape(tipText) + L"' FontSize='11' Opacity='0.75' TextWrapping='Wrap'/>"
             L"</Border>";
     }
 
@@ -2987,40 +3560,40 @@ wux::FrameworkElement BuildModernHoroscopeCardView(int32_t key, bool vi) {
         L"    <RowDefinition Height='*'/>"
         L"  </Grid.RowDefinitions>"
 
-        L"  <Border x:Name='BackBannerBorder' Grid.Row='0' Background='#28FFFFFF' BorderBrush='#40FFFFFF' BorderThickness='1' CornerRadius='6' Padding='8,5' Margin='0,0,0,6'>"
+        L"  <Border x:Name='BackBannerBorder' Grid.Row='0' Background='" + std::wstring(backBg) + L"' BorderBrush='" + backBorder + L"' BorderThickness='1' CornerRadius='6' Padding='8,5' Margin='0,0,0,6'>"
         L"    <TextBlock Text='" + XmlEscape(backBtnText) + L"' FontSize='11.8' FontWeight='SemiBold' HorizontalAlignment='Center'/>"
         L"  </Border>"
 
         L"  <ScrollViewer Grid.Row='1' VerticalScrollBarVisibility='Auto' HorizontalScrollBarVisibility='Disabled'>"
         L"    <StackPanel Padding='0,0,4,6'>"
 
-        L"      <Border Background='#18FFFFFF' BorderBrush='#28FFFFFF' BorderThickness='1' CornerRadius='7' Padding='10,7' Margin='0,0,0,6'>"
+        L"      <Border Background='" + std::wstring(cardBg) + L"' BorderBrush='" + cardBorder + L"' BorderThickness='1' CornerRadius='7' Padding='10,7' Margin='0,0,0,6'>"
         L"        <StackPanel>"
         L"          <TextBlock Text='" + XmlEscape(solarHeaderBuf) + L"' FontSize='13.2' FontWeight='Bold' TextWrapping='Wrap'/>"
-        L"          <TextBlock Text='" + XmlEscape(lunarBadgeBuf) + L"' FontSize='12.2' FontWeight='SemiBold' Foreground='#FFFFD580' Margin='0,2,0,0' TextWrapping='Wrap'/>"
+        L"          <TextBlock Text='" + XmlEscape(lunarBadgeBuf) + L"' FontSize='12.2' FontWeight='SemiBold' Foreground='" + lunarFg + L"' Margin='0,2,0,0' TextWrapping='Wrap'/>"
         + holidayXaml +
         L"        </StackPanel>"
         L"      </Border>"
 
         + googleCardXaml +
 
-        L"      <Border Background='#14FFFFFF' BorderBrush='#24FFFFFF' BorderThickness='1' CornerRadius='7' Padding='10,7' Margin='0,0,0,6'>"
+        L"      <Border Background='" + std::wstring(cardBgAlt) + L"' BorderBrush='" + cardBorderAlt + L"' BorderThickness='1' CornerRadius='7' Padding='10,7' Margin='0,0,0,6'>"
         L"        <StackPanel>"
         L"          <TextBlock Text='" + std::wstring(vi ? L"🔮 BÁT TỰ &amp; TỬ VI PHONG THỦY" : L"🔮 FOUR PILLARS &amp; ALMANAC") + L"' FontSize='11' FontWeight='Bold' Opacity='0.8' Margin='0,0,0,4'/>"
         L"          <TextBlock Text='🐉 " + XmlEscape(fourPillarsLine) + L"' FontSize='11.5' FontWeight='SemiBold' TextWrapping='Wrap' Margin='0,0,0,3'/>"
         L"          <TextBlock Text='☯ " + XmlEscape(std::wstring(vi ? L"Nạp âm: " : L"Element: ") + h.napAmStr) + L"' FontSize='11.5' TextWrapping='Wrap' Margin='0,0,0,3'/>"
-        L"          <TextBlock Text='" + XmlEscape(starLine) + L"' FontSize='11.5' FontWeight='SemiBold' Foreground='" + std::wstring(h.isHoangDao ? L"#FFFFE082" : L"#FFE0E0E0") + L"' TextWrapping='Wrap' Margin='0,0,0,3'/>"
+        L"          <TextBlock Text='" + XmlEscape(starLine) + L"' FontSize='11.5' FontWeight='SemiBold' Foreground='" + std::wstring(h.isHoangDao ? starGoodFg : starBadFg) + L"' TextWrapping='Wrap' Margin='0,0,0,3'/>"
         L"          <TextBlock Text='" + XmlEscape(trucTietLine) + L"' FontSize='11.5' TextWrapping='Wrap' Margin='0,0,0,5'/>"
 
-        L"          <Border Background='#12FFFFFF' CornerRadius='5' Padding='8,5' Margin='0,0,0,5'>"
+        L"          <Border Background='" + std::wstring(cardBgSoft) + L"' CornerRadius='5' Padding='8,5' Margin='0,0,0,5'>"
         L"            <StackPanel>"
         L"              <TextBlock Text='⏰ " + std::wstring(vi ? L"Giờ Hoàng Đạo:" : L"Auspicious Hours:") + L"' FontSize='11.2' FontWeight='SemiBold' Opacity='0.9'/>"
         L"              <TextBlock Text='" + XmlEscape(h.gioHoangDao) + L"' FontSize='11.2' Opacity='0.9' Margin='0,1,0,0' TextWrapping='Wrap'/>"
         L"            </StackPanel>"
         L"          </Border>"
 
-        L"          <TextBlock Text='✅ " + XmlEscape(std::wstring(vi ? L"Nên làm: " : L"Good for: ") + h.goodFor) + L"' FontSize='11.5' Foreground='#FFA5D6A7' TextWrapping='Wrap' Margin='0,0,0,2'/>"
-        L"          <TextBlock Text='⛔ " + XmlEscape(std::wstring(vi ? L"Việc kỵ: " : L"Avoid: ") + h.badFor) + L"' FontSize='11.5' Foreground='#FFEF9A9A' TextWrapping='Wrap' Margin='0,0,0,4'/>"
+        L"          <TextBlock Text='✅ " + XmlEscape(std::wstring(vi ? L"Nên làm: " : L"Good for: ") + h.goodFor) + L"' FontSize='11.5' Foreground='" + goodFg + L"' TextWrapping='Wrap' Margin='0,0,0,2'/>"
+        L"          <TextBlock Text='⛔ " + XmlEscape(std::wstring(vi ? L"Việc kỵ: " : L"Avoid: ") + h.badFor) + L"' FontSize='11.5' Foreground='" + badFg + L"' TextWrapping='Wrap' Margin='0,0,0,4'/>"
         L"          <TextBlock Text='🧭 " + XmlEscape(std::wstring(vi ? L"Tuổi xung: " : L"Clash: ") + h.tuoiXung) + L"' FontSize='11.3' Opacity='0.9' TextWrapping='Wrap' Margin='0,0,0,2'/>"
         L"          <TextBlock Text='✨ " + XmlEscape(std::wstring(vi ? L"Xuất hành: " : L"Directions: ") + directionsLine) + L"' FontSize='11.3' Opacity='0.9' TextWrapping='Wrap'/>"
         L"        </StackPanel>"
@@ -3035,8 +3608,8 @@ wux::FrameworkElement BuildModernHoroscopeCardView(int32_t key, bool vi) {
     try {
         auto parsed = wux::Markup::XamlReader::Load(xaml).try_as<wux::FrameworkElement>();
         if (parsed) {
-            auto backBorder = parsed.FindName(L"BackBannerBorder").try_as<wux::UIElement>();
-            wux::UIElement clickTarget = backBorder ? backBorder : parsed.try_as<wux::UIElement>();
+            auto backBorderEl = parsed.FindName(L"BackBannerBorder").try_as<wux::UIElement>();
+            wux::UIElement clickTarget = backBorderEl ? backBorderEl : parsed.try_as<wux::UIElement>();
             if (clickTarget) {
                 clickTarget.AddHandler(
                     wux::UIElement::PointerPressedEvent(),
@@ -3206,7 +3779,8 @@ void UpdateHoroscopePageOnCurrentThread() {
 
         if (showDetail) {
             bool vi = UseVietnameseLabels(settings);
-            auto newCardRoot = BuildModernHoroscopeCardView(t_selectedHoroscopeKey, vi);
+            bool isLightTheme = DetectPanelLightTheme(hostPanel);
+            auto newCardRoot = BuildModernHoroscopeCardView(t_selectedHoroscopeKey, vi, isLightTheme);
             if (newCardRoot) {
                 SyncHoroscopePagePosition(hostPanel, calendarSlot, newCardRoot);
                 hostPanel.Children().Append(newCardRoot);
@@ -3396,6 +3970,11 @@ void SyncCalendarMonthYearHeader(bool vi) {
             }
         }
 
+        if (t_lastKnownCalendarYear < 1900) {
+            SYSTEMTIME stCur{};
+            GetLocalTime(&stCur);
+            t_lastKnownCalendarYear = stCur.wYear;
+        }
         WCHAR yearHeaderBuf[64]{};
         if (vi) {
             _snwprintf_s(yearHeaderBuf, _TRUNCATE, L"Năm %d", t_lastKnownCalendarYear);
@@ -3591,7 +4170,7 @@ void UpdateHeaderLabelOnCurrentThread() {
         std::wstring canChi;
         GetVietnameseLunarDate(st.wYear, st.wMonth, st.wDay, lDay, lMonth, lYear, isLeap, canChi);
 
-        SolarTermInfo stInfo = EvaluateSolarTerm(st.wYear == 0 ? 1 : st.wDay, st.wMonth, st.wYear, vi);
+        SolarTermInfo stInfo = EvaluateSolarTerm(st.wDay == 0 ? 1 : st.wDay, st.wMonth, st.wYear, vi);
 
         WCHAR buffer[160]{};
         if (vi) {
@@ -3789,36 +4368,44 @@ void CollectDayItemsFromElement(wux::DependencyObject const& root,
     if (auto cv = root.try_as<wuxc::CalendarView>()) {
         insideCalendarCenter = true;
         insideCalendarView = true;
-        if (t_calendarView.get() != cv) {
+        auto prevCv = t_calendarView.get();
+        if (prevCv != cv) {
+            if (prevCv && t_calendarViewHandlersAdded) {
+                try {
+                    if (t_cvPressedHandler) prevCv.RemoveHandler(wux::UIElement::PointerPressedEvent(), t_cvPressedHandler);
+                    if (t_cvReleasedHandler) prevCv.RemoveHandler(wux::UIElement::PointerReleasedEvent(), t_cvReleasedHandler);
+                    if (t_cvWheelHandler) prevCv.RemoveHandler(wux::UIElement::PointerWheelChangedEvent(), t_cvWheelHandler);
+                } catch (...) {}
+            }
+            t_cvPressedHandler = nullptr;
+            t_cvReleasedHandler = nullptr;
+            t_cvWheelHandler = nullptr;
             t_calendarView = winrt::make_weak(cv);
             t_calendarViewHandlersAdded = false;
         }
         if (!t_calendarViewHandlersAdded) {
             try {
-                cv.AddHandler(
-                    wux::UIElement::PointerPressedEvent(),
-                    winrt::box_value(wuxi::PointerEventHandler(
-                        [](wf::IInspectable const&, wuxi::PointerRoutedEventArgs const&) {
-                            StartSweepTimer();
-                            WatchCalendarLayoutOnCurrentThread();
-                        })),
-                    true);
-                cv.AddHandler(
-                    wux::UIElement::PointerReleasedEvent(),
-                    winrt::box_value(wuxi::PointerEventHandler(
-                        [](wf::IInspectable const&, wuxi::PointerRoutedEventArgs const&) {
-                            StartSweepTimer();
-                            WatchCalendarLayoutOnCurrentThread();
-                        })),
-                    true);
-                cv.AddHandler(
-                    wux::UIElement::PointerWheelChangedEvent(),
-                    winrt::box_value(wuxi::PointerEventHandler(
-                        [](wf::IInspectable const&, wuxi::PointerRoutedEventArgs const&) {
-                            StartSweepTimer();
-                            WatchCalendarLayoutOnCurrentThread();
-                        })),
-                    true);
+                t_cvPressedHandler = winrt::box_value(wuxi::PointerEventHandler(
+                    [](wf::IInspectable const&, wuxi::PointerRoutedEventArgs const&) {
+                        if (g_shuttingDown) return;
+                        StartSweepTimer();
+                        WatchCalendarLayoutOnCurrentThread();
+                    }));
+                t_cvReleasedHandler = winrt::box_value(wuxi::PointerEventHandler(
+                    [](wf::IInspectable const&, wuxi::PointerRoutedEventArgs const&) {
+                        if (g_shuttingDown) return;
+                        StartSweepTimer();
+                        WatchCalendarLayoutOnCurrentThread();
+                    }));
+                t_cvWheelHandler = winrt::box_value(wuxi::PointerEventHandler(
+                    [](wf::IInspectable const&, wuxi::PointerRoutedEventArgs const&) {
+                        if (g_shuttingDown) return;
+                        StartSweepTimer();
+                        WatchCalendarLayoutOnCurrentThread();
+                    }));
+                cv.AddHandler(wux::UIElement::PointerPressedEvent(), t_cvPressedHandler, true);
+                cv.AddHandler(wux::UIElement::PointerReleasedEvent(), t_cvReleasedHandler, true);
+                cv.AddHandler(wux::UIElement::PointerWheelChangedEvent(), t_cvWheelHandler, true);
                 t_calendarViewHandlersAdded = true;
             } catch (...) {}
         }
@@ -3867,6 +4454,7 @@ void CollectDayItemsOnCurrentThread() {
 }
 
 void OnCalendarOpenedOnCurrentThread() {
+    if (g_shuttingDown) return;
     InitializeForCurrentThread();
     const ULONGLONG now = GetTickCount64();
     if (now - t_lastCalendarOpenedTick < kCalendarOpenedDebounceMs) return;
@@ -3937,6 +4525,18 @@ void SweepDayItems() {
 }
 
 void UninitializeDayItemsForCurrentThread() {
+    if (auto cv = t_calendarView.get()) {
+        if (t_calendarViewHandlersAdded) {
+            try {
+                if (t_cvPressedHandler) cv.RemoveHandler(wux::UIElement::PointerPressedEvent(), t_cvPressedHandler);
+                if (t_cvReleasedHandler) cv.RemoveHandler(wux::UIElement::PointerReleasedEvent(), t_cvReleasedHandler);
+                if (t_cvWheelHandler) cv.RemoveHandler(wux::UIElement::PointerWheelChangedEvent(), t_cvWheelHandler);
+            } catch (...) {}
+        }
+    }
+    t_cvPressedHandler = nullptr;
+    t_cvReleasedHandler = nullptr;
+    t_cvWheelHandler = nullptr;
     t_calendarView = nullptr;
     t_calendarViewHandlersAdded = false;
 
@@ -3949,6 +4549,10 @@ void UninitializeDayItemsForCurrentThread() {
             if (cell.dateChangedToken != 0) {
                 try { item.UnregisterPropertyChangedCallback(wuxc::CalendarViewDayItem::DateProperty(), cell.dateChangedToken); } catch (...) {}
                 cell.dateChangedToken = 0;
+            }
+            if (cell.pointerPressedHandler) {
+                try { item.RemoveHandler(wux::UIElement::PointerPressedEvent(), cell.pointerPressedHandler); } catch (...) {}
+                cell.pointerPressedHandler = nullptr;
             }
             try {
                 if (cell.itemColor.hadColor) RestoreControlForeground(item, cell.itemColor);
@@ -4120,13 +4724,15 @@ void EnableWin10TooltipTransparency(HWND hTooltipWnd) {
     }
 }
 
+using RunFromWindowThreadProc_t = void(WINAPI*)(PVOID parameter);
+bool RunFromWindowThread(HWND hWnd, RunFromWindowThreadProc_t proc, PVOID procParam);
+
 ID2D1Factory* g_d2dFactory = nullptr;
 IDWriteFactory* g_dwriteFactory = nullptr;
 IDWriteTextFormat* g_dwriteTextFormat = nullptr;
 std::mutex g_d2dInitMutex;
 
-bool EnsureD2DAndDWriteInitialized() {
-    std::lock_guard<std::mutex> lock(g_d2dInitMutex);
+bool EnsureD2DAndDWriteInitializedLocked() {
     if (g_d2dFactory && g_dwriteFactory && g_dwriteTextFormat) return true;
 
     if (!g_d2dFactory) {
@@ -4170,6 +4776,38 @@ void ReleaseD2DAndDWriteResources() {
     }
 }
 
+UINT GetWindowDpiSafe(HWND hWnd) {
+    using GetDpiForWindow_t = UINT(WINAPI*)(HWND);
+    static auto pGetDpiForWindow = reinterpret_cast<GetDpiForWindow_t>(
+        GetProcAddress(GetModuleHandleW(L"user32.dll"), "GetDpiForWindow"));
+    if (pGetDpiForWindow && hWnd) {
+        UINT dpi = pGetDpiForWindow(hWnd);
+        if (dpi >= 96 && dpi <= 480) return dpi;
+    }
+    HDC hdc = GetDC(hWnd);
+    UINT dpi = 96;
+    if (hdc) {
+        int px = GetDeviceCaps(hdc, LOGPIXELSX);
+        if (px >= 96 && px <= 480) dpi = static_cast<UINT>(px);
+        ReleaseDC(hWnd, hdc);
+    }
+    return dpi;
+}
+
+RECT GetMonitorWorkAreaForWindow(HWND hWnd) {
+    RECT workArea{};
+    HMONITOR hMon = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+    if (hMon) {
+        MONITORINFO mi{};
+        mi.cbSize = sizeof(mi);
+        if (GetMonitorInfoW(hMon, &mi)) {
+            return mi.rcWork;
+        }
+    }
+    SystemParametersInfoW(SPI_GETWORKAREA, 0, &workArea, 0);
+    return workArea;
+}
+
 std::mutex g_win10SubclassedClocksMutex;
 std::vector<HWND> g_win10SubclassedClocks;
 std::vector<HWND> g_win10SubclassedTooltips;
@@ -4178,9 +4816,16 @@ thread_local std::wstring t_win10TooltipBuffer;
 constexpr UINT_PTR kWin10ClockSubclassId = 0x20261022;
 constexpr UINT_PTR kWin10TooltipSubclassId = 0x20261023;
 
-// Đo chính xác kích thước chữ bằng DirectWrite TextLayout để cửa sổ Tooltip không bao giờ cắt chữ ở đáy
-bool MeasureTooltipTextWithDWrite(std::wstring const& text, int& outWidth, int& outHeight) {
-    if (text.empty() || !EnsureD2DAndDWriteInitialized()) return false;
+void ForgetWin10SubclassedHwnd(std::vector<HWND>& list, HWND hWnd) {
+    std::lock_guard<std::mutex> lock(g_win10SubclassedClocksMutex);
+    list.erase(std::remove(list.begin(), list.end(), hWnd), list.end());
+}
+
+// Đo chính xác kích thước chữ bằng DirectWrite TextLayout (có quy đổi theo DPI thực tế của màn hình)
+bool MeasureTooltipTextWithDWrite(HWND hWnd, std::wstring const& text, int& outWidth, int& outHeight) {
+    if (text.empty()) return false;
+    std::lock_guard<std::mutex> lock(g_d2dInitMutex);
+    if (!EnsureD2DAndDWriteInitializedLocked()) return false;
 
     IDWriteTextLayout* textLayout = nullptr;
     HRESULT hr = g_dwriteFactory->CreateTextLayout(
@@ -4194,8 +4839,9 @@ bool MeasureTooltipTextWithDWrite(std::wstring const& text, int& outWidth, int& 
     if (SUCCEEDED(hr) && textLayout) {
         DWRITE_TEXT_METRICS metrics{};
         if (SUCCEEDED(textLayout->GetMetrics(&metrics))) {
-            outWidth = static_cast<int>(std::ceil(metrics.widthIncludingTrailingWhitespace)) + 24;
-            outHeight = static_cast<int>(std::ceil(metrics.height)) + 20;
+            float scale = static_cast<float>(GetWindowDpiSafe(hWnd)) / 96.0f;
+            outWidth = static_cast<int>(std::ceil((metrics.widthIncludingTrailingWhitespace + 24.0f) * scale));
+            outHeight = static_cast<int>(std::ceil((metrics.height + 20.0f) * scale));
             textLayout->Release();
             return true;
         }
@@ -4206,11 +4852,12 @@ bool MeasureTooltipTextWithDWrite(std::wstring const& text, int& outWidth, int& 
 
 LRESULT CALLBACK Win10TooltipSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
                                           UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+    (void)dwRefData;
     if (!g_shuttingDown && GetSettings().enableTaskbarTooltip && !t_win10TooltipBuffer.empty()) {
         if (uMsg == WM_WINDOWPOSCHANGING && lParam != 0) {
             auto* wp = reinterpret_cast<WINDOWPOS*>(lParam);
             int reqW = 0, reqH = 0;
-            if (MeasureTooltipTextWithDWrite(t_win10TooltipBuffer, reqW, reqH)) {
+            if (MeasureTooltipTextWithDWrite(hWnd, t_win10TooltipBuffer, reqW, reqH)) {
                 if (!(wp->flags & SWP_NOSIZE)) {
                     if (wp->cx < reqW) wp->cx = reqW;
                     if (wp->cy < reqH) wp->cy = reqH;
@@ -4226,9 +4873,8 @@ LRESULT CALLBACK Win10TooltipSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
                     }
                 }
 
-                // Tự động căn lại toạ độ X, Y để hộp Tooltip nằm ngay trên thanh Taskbar mà không bị tràn ra ngoài màn hình
-                RECT workArea{};
-                SystemParametersInfoW(SPI_GETWORKAREA, 0, &workArea, 0);
+                // Căn tọa độ theo đúng màn hình chứa Tooltip và kẹp đủ 4 cạnh (Taskbar dưới/trên/trái/phải)
+                RECT workArea = GetMonitorWorkAreaForWindow(hWnd);
                 if (workArea.bottom > workArea.top && workArea.right > workArea.left) {
                     int finalW = (wp->flags & SWP_NOSIZE) ? reqW : wp->cx;
                     int finalH = (wp->flags & SWP_NOSIZE) ? reqH : wp->cy;
@@ -4245,8 +4891,16 @@ LRESULT CALLBACK Win10TooltipSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
                         curY = workArea.bottom - finalH - 6;
                         moved = true;
                     }
+                    if (curY < workArea.top + 4) {
+                        curY = workArea.top + 6;
+                        moved = true;
+                    }
                     if (curX + finalW > workArea.right - 4) {
                         curX = workArea.right - finalW - 6;
+                        moved = true;
+                    }
+                    if (curX < workArea.left + 4) {
+                        curX = workArea.left + 6;
                         moved = true;
                     }
                     if (moved) {
@@ -4259,70 +4913,75 @@ LRESULT CALLBACK Win10TooltipSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
         } else if (uMsg == WM_SHOWWINDOW && wParam == TRUE) {
             EnableWin10TooltipTransparency(hWnd);
             int reqW = 0, reqH = 0;
-            if (MeasureTooltipTextWithDWrite(t_win10TooltipBuffer, reqW, reqH)) {
+            if (MeasureTooltipTextWithDWrite(hWnd, t_win10TooltipBuffer, reqW, reqH)) {
                 RECT rcWnd{};
                 GetWindowRect(hWnd, &rcWnd);
-                RECT workArea{};
-                SystemParametersInfoW(SPI_GETWORKAREA, 0, &workArea, 0);
+                RECT workArea = GetMonitorWorkAreaForWindow(hWnd);
                 int newX = rcWnd.left;
                 int newY = rcWnd.top;
-                if (workArea.bottom > workArea.top) {
+                if (workArea.bottom > workArea.top && workArea.right > workArea.left) {
                     if (newY + reqH > workArea.bottom - 4) newY = workArea.bottom - reqH - 6;
+                    if (newY < workArea.top + 4) newY = workArea.top + 6;
                     if (newX + reqW > workArea.right - 4) newX = workArea.right - reqW - 6;
+                    if (newX < workArea.left + 4) newX = workArea.left + 6;
                 }
                 SetWindowPos(hWnd, nullptr, newX, newY, reqW, reqH,
-                             SWP_NOZORDER | SWP_NOACTIVATE);
+                             SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSENDCHANGING);
             }
         } else if (uMsg == WM_ERASEBKGND) {
             return 1;
         } else if (uMsg == WM_PAINT) {
-            if (EnsureD2DAndDWriteInitialized()) {
+            std::lock_guard<std::mutex> d2dLock(g_d2dInitMutex);
+            if (EnsureD2DAndDWriteInitializedLocked()) {
                 PAINTSTRUCT ps{};
                 HDC hdc = BeginPaint(hWnd, &ps);
                 if (hdc) {
                     RECT rc{};
                     GetClientRect(hWnd, &rc);
+                    float dpi = static_cast<float>(GetWindowDpiSafe(hWnd));
+                    float scale = dpi / 96.0f;
+                    float dipW = static_cast<float>(rc.right - rc.left) / scale;
+                    float dipH = static_cast<float>(rc.bottom - rc.top) / scale;
 
                     D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties(
                         D2D1_RENDER_TARGET_TYPE_DEFAULT,
                         D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-                        96.0f, 96.0f);
+                        dpi, dpi);
 
                     ID2D1DCRenderTarget* dcTarget = nullptr;
                     if (SUCCEEDED(g_d2dFactory->CreateDCRenderTarget(&rtProps, &dcTarget)) && dcTarget) {
-                        dcTarget->BindDC(hdc, &rc);
-                        dcTarget->BeginDraw();
+                        if (SUCCEEDED(dcTarget->BindDC(hdc, &rc))) {
+                            dcTarget->BeginDraw();
 
-                        dcTarget->Clear(D2D1::ColorF(0.10f, 0.11f, 0.13f, 1.0f));
+                            dcTarget->Clear(D2D1::ColorF(0.10f, 0.11f, 0.13f, 1.0f));
 
-                        ID2D1SolidColorBrush* borderBrush = nullptr;
-                        if (SUCCEEDED(dcTarget->CreateSolidColorBrush(D2D1::ColorF(0.35f, 0.38f, 0.42f, 1.0f), &borderBrush)) && borderBrush) {
-                            D2D1_RECT_F borderRect = D2D1::RectF(0.5f, 0.5f,
-                                static_cast<float>(rc.right - rc.left) - 0.5f,
-                                static_cast<float>(rc.bottom - rc.top) - 0.5f);
-                            dcTarget->DrawRectangle(borderRect, borderBrush, 1.0f);
-                            borderBrush->Release();
+                            ID2D1SolidColorBrush* borderBrush = nullptr;
+                            if (SUCCEEDED(dcTarget->CreateSolidColorBrush(D2D1::ColorF(0.35f, 0.38f, 0.42f, 1.0f), &borderBrush)) && borderBrush) {
+                                D2D1_RECT_F borderRect = D2D1::RectF(0.5f, 0.5f, dipW - 0.5f, dipH - 0.5f);
+                                dcTarget->DrawRectangle(borderRect, borderBrush, 1.0f);
+                                borderBrush->Release();
+                            }
+
+                            ID2D1SolidColorBrush* textBrush = nullptr;
+                            if (SUCCEEDED(dcTarget->CreateSolidColorBrush(D2D1::ColorF(0.96f, 0.96f, 0.97f, 1.0f), &textBrush)) && textBrush) {
+                                D2D1_RECT_F layoutRect = D2D1::RectF(
+                                    11.0f, 8.0f,
+                                    std::max(20.0f, dipW - 10.0f),
+                                    std::max(20.0f, dipH - 6.0f));
+
+                                dcTarget->DrawText(
+                                    t_win10TooltipBuffer.c_str(),
+                                    static_cast<UINT32>(t_win10TooltipBuffer.size()),
+                                    g_dwriteTextFormat,
+                                    layoutRect,
+                                    textBrush,
+                                    D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT);
+
+                                textBrush->Release();
+                            }
+
+                            dcTarget->EndDraw();
                         }
-
-                        ID2D1SolidColorBrush* textBrush = nullptr;
-                        if (SUCCEEDED(dcTarget->CreateSolidColorBrush(D2D1::ColorF(0.96f, 0.96f, 0.97f, 1.0f), &textBrush)) && textBrush) {
-                            D2D1_RECT_F layoutRect = D2D1::RectF(
-                                11.0f, 8.0f,
-                                static_cast<float>(std::max<LONG>(20, rc.right - rc.left - 10)),
-                                static_cast<float>(std::max<LONG>(20, rc.bottom - rc.top - 6)));
-
-                            dcTarget->DrawText(
-                                t_win10TooltipBuffer.c_str(),
-                                static_cast<UINT32>(t_win10TooltipBuffer.size()),
-                                g_dwriteTextFormat,
-                                layoutRect,
-                                textBrush,
-                                D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT);
-
-                            textBrush->Release();
-                        }
-
-                        dcTarget->EndDraw();
                         dcTarget->Release();
                     }
                     EndPaint(hWnd, &ps);
@@ -4332,6 +4991,7 @@ LRESULT CALLBACK Win10TooltipSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
         }
     }
     if (uMsg == WM_NCDESTROY) {
+        ForgetWin10SubclassedHwnd(g_win10SubclassedTooltips, hWnd);
         RemoveWindowSubclass(hWnd, Win10TooltipSubclassProc, uIdSubclass);
     }
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);
@@ -4353,6 +5013,7 @@ void EnsureWin10TooltipSubclassed(HWND hTooltipWnd) {
 
 LRESULT CALLBACK Win10ClockSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam,
                                         UINT_PTR uIdSubclass, DWORD_PTR dwRefData) {
+    (void)dwRefData;
     if (uMsg == WM_NOTIFY && !g_shuttingDown) {
         NMHDR* nmhdr = reinterpret_cast<NMHDR*>(lParam);
         if (nmhdr && (nmhdr->code == TTN_GETDISPINFOW || nmhdr->code == TTN_NEEDTEXTW)) {
@@ -4390,21 +5051,15 @@ LRESULT CALLBACK Win10ClockSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPA
             }
         }
     } else if (uMsg == WM_NCDESTROY) {
+        ForgetWin10SubclassedHwnd(g_win10SubclassedClocks, hWnd);
         RemoveWindowSubclass(hWnd, Win10ClockSubclassProc, uIdSubclass);
     }
     return DefSubclassProc(hWnd, uMsg, wParam, lParam);
 }
 
-void EnsureWin10TrayClockSubclassedOnTrayThread() {
-    HWND hTrayWnd = FindWindowW(L"Shell_TrayWnd", nullptr);
-    if (!hTrayWnd) return;
-    HWND hNotifyWnd = FindWindowExW(hTrayWnd, nullptr, L"TrayNotifyWnd", nullptr);
-    if (!hNotifyWnd) return;
-    HWND hClockWnd = FindWindowExW(hNotifyWnd, nullptr, L"TrayClockWClass", nullptr);
-    if (!hClockWnd) return;
-
-    DWORD clockThreadId = GetWindowThreadProcessId(hClockWnd, nullptr);
-    if (clockThreadId != GetCurrentThreadId()) return;
+void EnsureWin10ClockHwndSubclassedOnOwnThread(HWND hClockWnd) {
+    if (!hClockWnd || !IsWindow(hClockWnd)) return;
+    if (GetWindowThreadProcessId(hClockWnd, nullptr) != GetCurrentThreadId()) return;
 
     std::lock_guard<std::mutex> lock(g_win10SubclassedClocksMutex);
     for (HWND h : g_win10SubclassedClocks) {
@@ -4412,6 +5067,23 @@ void EnsureWin10TrayClockSubclassedOnTrayThread() {
     }
     if (SetWindowSubclass(hClockWnd, Win10ClockSubclassProc, kWin10ClockSubclassId, 0)) {
         g_win10SubclassedClocks.push_back(hClockWnd);
+    }
+}
+
+void EnsureWin10TrayClockSubclassedOnTrayThread() {
+    HWND hTrayWnd = FindWindowW(L"Shell_TrayWnd", nullptr);
+    if (hTrayWnd) {
+        HWND hNotifyWnd = FindWindowExW(hTrayWnd, nullptr, L"TrayNotifyWnd", nullptr);
+        if (hNotifyWnd) {
+            HWND hClockWnd = FindWindowExW(hNotifyWnd, nullptr, L"TrayClockWClass", nullptr);
+            EnsureWin10ClockHwndSubclassedOnOwnThread(hClockWnd);
+        }
+    }
+
+    HWND hSecTray = nullptr;
+    while ((hSecTray = FindWindowExW(nullptr, hSecTray, L"Shell_SecondaryTrayWnd", nullptr)) != nullptr) {
+        HWND hSecClock = FindWindowExW(hSecTray, nullptr, L"ClockButton", nullptr);
+        EnsureWin10ClockHwndSubclassedOnOwnThread(hSecClock);
     }
 }
 
@@ -4425,12 +5097,28 @@ void RemoveAllWin10TrayClockSubclasses() {
     }
     for (HWND hTooltipWnd : tooltips) {
         if (IsWindow(hTooltipWnd)) {
-            RemoveWindowSubclass(hTooltipWnd, Win10TooltipSubclassProc, kWin10TooltipSubclassId);
+            RunFromWindowThread(
+                hTooltipWnd,
+                [](PVOID p) {
+                    HWND hw = reinterpret_cast<HWND>(p);
+                    if (IsWindow(hw)) {
+                        RemoveWindowSubclass(hw, Win10TooltipSubclassProc, kWin10TooltipSubclassId);
+                    }
+                },
+                hTooltipWnd);
         }
     }
     for (HWND hClockWnd : clocks) {
         if (IsWindow(hClockWnd)) {
-            RemoveWindowSubclass(hClockWnd, Win10ClockSubclassProc, kWin10ClockSubclassId);
+            RunFromWindowThread(
+                hClockWnd,
+                [](PVOID p) {
+                    HWND hw = reinterpret_cast<HWND>(p);
+                    if (IsWindow(hw)) {
+                        RemoveWindowSubclass(hw, Win10ClockSubclassProc, kWin10ClockSubclassId);
+                    }
+                },
+                hClockWnd);
         }
     }
 }
@@ -4473,18 +5161,21 @@ int WINAPI GetTimeFormatEx_Hook(LPCWSTR lpLocaleName,
                                      origTime, ARRAYSIZE(origTime));
 
             SYSTEMTIME st{};
-            if (lpTime) {
+            if (lpTime && IsValidDate(lpTime->wYear, lpTime->wMonth, lpTime->wDay)) {
                 st = *lpTime;
             } else {
                 GetLocalTime(&st);
             }
+            int jdn = CalculateJDN(st.wDay, st.wMonth, st.wYear);
+            int weekdayIdx = ((jdn % 7) + 7) % 7; // 0=Mon .. 6=Sun
+            st.wDayOfWeek = static_cast<WORD>((weekdayIdx + 1) % 7);
 
             WCHAR weekdayBuf[32]{};
             if (UseVietnameseLabels(settings)) {
-                static const PCWSTR kWeekdaysVi[] = {
-                    L"CN", L"T2", L"T3", L"T4", L"T5", L"T6", L"T7"
+                static const PCWSTR kWeekdaysViShort[] = {
+                    L"T2", L"T3", L"T4", L"T5", L"T6", L"T7", L"CN"
                 };
-                wcscpy_s(weekdayBuf, (st.wDayOfWeek < 7) ? kWeekdaysVi[st.wDayOfWeek] : L"");
+                wcscpy_s(weekdayBuf, kWeekdaysViShort[weekdayIdx]);
             } else {
                 GetDateFormatEx_Original(lpLocaleName, DATE_AUTOLAYOUT, &st, L"ddd",
                                          weekdayBuf, ARRAYSIZE(weekdayBuf), nullptr);
@@ -4524,7 +5215,7 @@ int WINAPI GetDateFormatEx_Hook(LPCWSTR lpLocaleName,
             }
 
             SYSTEMTIME st{};
-            if (lpDate) {
+            if (lpDate && IsValidDate(lpDate->wYear, lpDate->wMonth, lpDate->wDay)) {
                 st = *lpDate;
             } else {
                 GetLocalTime(&st);
@@ -4549,9 +5240,6 @@ int WINAPI GetDateFormatEx_Hook(LPCWSTR lpLocaleName,
     return GetDateFormatEx_Original(lpLocaleName, dwFlags, lpDate, lpFormat, lpDateStr, cchDate, lpCalendar);
 }
 
-using RunFromWindowThreadProc_t = void(WINAPI*)(PVOID parameter);
-bool RunFromWindowThread(HWND hWnd, RunFromWindowThreadProc_t proc, PVOID procParam);
-
 void RefreshTaskbarClock() {
     HWND hTrayWnd = FindWindowW(L"Shell_TrayWnd", nullptr);
     if (hTrayWnd) {
@@ -4571,6 +5259,4604 @@ void RefreshTaskbarClock() {
         }
     }
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+// Taskbar System Monitor Widget (CPU, GPU, RAM, Network - explorer.exe)
+
+namespace SysMonitor {
+
+using PDH_HQUERY_T = HANDLE;
+using PDH_HCOUNTER_T = HANDLE;
+using PDH_STATUS_T = LONG;
+constexpr LONG kPdhMoreData = static_cast<LONG>(0x800007D2L);
+constexpr DWORD kPdhFmtDouble = 0x00000200;
+
+struct PdhFmtCounterValueDbl {
+    DWORD CStatus;
+    double doubleValue;
+};
+
+struct PdhFmtCounterValueItemW {
+    LPWSTR szName;
+    PdhFmtCounterValueDbl FmtValue;
+};
+
+using PdhOpenQueryW_t = PDH_STATUS_T(WINAPI*)(LPCWSTR, DWORD_PTR, PDH_HQUERY_T*);
+using PdhAddEnglishCounterW_t = PDH_STATUS_T(WINAPI*)(PDH_HQUERY_T, LPCWSTR, DWORD_PTR, PDH_HCOUNTER_T*);
+using PdhCollectQueryData_t = PDH_STATUS_T(WINAPI*)(PDH_HQUERY_T);
+using PdhGetFormattedCounterValue_t = PDH_STATUS_T(WINAPI*)(PDH_HCOUNTER_T, DWORD, LPDWORD, PdhFmtCounterValueDbl*);
+using PdhGetFormattedCounterArrayW_t = PDH_STATUS_T(WINAPI*)(PDH_HCOUNTER_T, DWORD, LPDWORD, LPDWORD, PdhFmtCounterValueItemW*);
+using PdhCloseQuery_t = PDH_STATUS_T(WINAPI*)(PDH_HQUERY_T);
+
+// Exact x64 ABI offsets of MIB_IF_TABLE2 / MIB_IF_ROW2 / ICMP_ECHO_REPLY (iphlpapi.dll)
+using GetIfTable2_t = ULONG(WINAPI*)(PVOID* Table);
+using FreeMibTable_t = void(WINAPI*)(PVOID Memory);
+using IcmpCreateFile_t = HANDLE(WINAPI*)();
+using IcmpSendEcho_t = DWORD(WINAPI*)(HANDLE, DWORD, LPVOID, WORD, LPVOID, LPVOID, DWORD, DWORD);
+using IcmpCloseHandle_t = BOOL(WINAPI*)(HANDLE);
+
+constexpr size_t kMibIfTable2TableOffset    = 8;
+constexpr size_t kMibIfRow2Size             = 1352;
+constexpr size_t kMibIfRow2TypeOffset       = 1128;
+constexpr size_t kMibIfRow2FlagsOffset      = 1152;
+constexpr size_t kMibIfRow2OperStatusOffset = 1156;
+constexpr size_t kMibIfRow2MediaConnOffset  = 1164;
+constexpr size_t kMibIfRow2InOctetsOffset   = 1208;
+constexpr size_t kMibIfRow2OutOctetsOffset  = 1280;
+
+constexpr size_t kIcmpReplySize             = 40;
+constexpr size_t kIcmpReplyStatusOffset     = 4;
+constexpr size_t kIcmpReplyRttOffset        = 8;
+
+struct LiveSystemMetrics {
+    int cpuPercent = 0;
+    int gpuPercent = 0;
+    int ramPercent = 0;
+    double ramUsedGb = 0.0;
+    double ramTotalGb = 0.0;
+    double netDownBytesPerSec = 0.0;
+    double netUpBytesPerSec = 0.0;
+    int pingMs = -1; // -1 = offline / scanning
+};
+
+struct StatsColumn {
+    std::wstring topLabel;
+    std::wstring topValue;
+    D2D1_COLOR_F topLabelColor;
+    D2D1_COLOR_F topValueColor;
+    std::wstring botLabel;
+    std::wstring botValue;
+    D2D1_COLOR_F botLabelColor;
+    D2D1_COLOR_F botValueColor;
+    bool singleRow = false;
+    bool topCentered = false;
+    bool botCentered = false;
+    bool valueLeading = false;
+    float widthDip = 60.0f;
+};
+
+std::mutex g_sysMonitorMutex;
+std::thread g_sysMonitorThread;
+std::thread g_pingScannerThread;
+HANDLE g_sysMonitorStopEvent = nullptr;
+HANDLE g_sysMonitorWakeEvent = nullptr;
+std::atomic<bool> g_sysMonitorRunning{false};
+std::atomic<HWND> g_statsWidgetHwnd{nullptr};
+std::atomic<int> g_userOffsetX{0};
+std::atomic<int> g_secUserOffsetX{0};
+std::atomic<HWND> g_draggedHwnd{nullptr};
+std::atomic<int> g_cachedBaseDefaultSecX{0};
+std::atomic<int> g_cachedMinAllowedSecX{0};
+std::atomic<int> g_cachedMaxAllowedSecX{0};
+std::atomic<int> g_livePingMs{-1};
+std::atomic<DWORD> g_activePingTargetIp{0};
+std::atomic<bool> g_isDraggingWidget{false};
+std::atomic<bool> g_isContextMenuOpen{false};
+std::atomic<int> g_cachedBaseDefaultX{0};
+std::atomic<int> g_cachedMinAllowedX{0};
+std::atomic<int> g_cachedMaxAllowedX{0};
+POINT g_dragStartCursor{};
+int g_dragStartOffsetX = 0;
+
+constexpr PCWSTR kStatsWidgetClassName = L"VnLunarTaskbarStatsWidgetWnd";
+constexpr PCWSTR kStandaloneRegKey = L"Software\\VnLunarAlmanac\\Settings";
+
+int LoadPersistedOffsetX() {
+    HKEY hKey = nullptr;
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, kStandaloneRegKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+        int val = 0;
+        DWORD sz = sizeof(val), type = 0;
+        if (RegQueryValueExW(hKey, L"StatsOffsetX", nullptr, &type, reinterpret_cast<LPBYTE>(&val), &sz) == ERROR_SUCCESS &&
+            type == REG_DWORD) {
+            RegCloseKey(hKey);
+            return std::clamp(val, -8000, 8000);
+        }
+        RegCloseKey(hKey);
+    }
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, kIcsCacheRegSubKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+        int val = 0;
+        DWORD sz = sizeof(val), type = 0;
+        if (RegQueryValueExW(hKey, L"StatsOffsetX", nullptr, &type, reinterpret_cast<LPBYTE>(&val), &sz) == ERROR_SUCCESS &&
+            type == REG_DWORD) {
+            RegCloseKey(hKey);
+            return std::clamp(val, -8000, 8000);
+        }
+        RegCloseKey(hKey);
+    }
+    return 0;
+}
+
+int LoadPersistedSecOffsetX() {
+    HKEY hKey = nullptr;
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, kStandaloneRegKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+        int val = 0;
+        DWORD sz = sizeof(val), type = 0;
+        if (RegQueryValueExW(hKey, L"SecondaryStatsOffsetX", nullptr, &type, reinterpret_cast<LPBYTE>(&val), &sz) == ERROR_SUCCESS &&
+            type == REG_DWORD) {
+            RegCloseKey(hKey);
+            return std::clamp(val, -8000, 8000);
+        }
+        RegCloseKey(hKey);
+    }
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, kIcsCacheRegSubKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+        int val = 0;
+        DWORD sz = sizeof(val), type = 0;
+        if (RegQueryValueExW(hKey, L"SecondaryStatsOffsetX", nullptr, &type, reinterpret_cast<LPBYTE>(&val), &sz) == ERROR_SUCCESS &&
+            type == REG_DWORD) {
+            RegCloseKey(hKey);
+            return std::clamp(val, -8000, 8000);
+        }
+        RegCloseKey(hKey);
+    }
+    return 0;
+}
+
+void SavePersistedSecOffsetX(int offsetX) {
+    HKEY hKey = nullptr;
+    if (RegCreateKeyExW(HKEY_CURRENT_USER, kStandaloneRegKey, 0, nullptr, 0, KEY_WRITE, nullptr, &hKey, nullptr) == ERROR_SUCCESS) {
+        DWORD dw = static_cast<DWORD>(offsetX);
+        RegSetValueExW(hKey, L"SecondaryStatsOffsetX", 0, REG_DWORD, reinterpret_cast<const BYTE*>(&dw), sizeof(dw));
+        RegCloseKey(hKey);
+    }
+}
+
+void SavePersistedOffsetX(int offsetX) {
+    HKEY hKey = nullptr;
+    if (RegCreateKeyExW(HKEY_CURRENT_USER, kStandaloneRegKey, 0, nullptr, 0, KEY_WRITE, nullptr, &hKey, nullptr) == ERROR_SUCCESS) {
+        DWORD dw = static_cast<DWORD>(offsetX);
+        RegSetValueExW(hKey, L"StatsOffsetX", 0, REG_DWORD, reinterpret_cast<const BYTE*>(&dw), sizeof(dw));
+        RegCloseKey(hKey);
+    }
+}
+
+void PersistToggleToStandaloneRegistry(PCWSTR name, bool enabled) {
+    HKEY hKey = nullptr;
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, kStandaloneRegKey, 0, KEY_WRITE, &hKey) == ERROR_SUCCESS) {
+        DWORD dw = enabled ? 1u : 0u;
+        RegSetValueExW(hKey, name, 0, REG_DWORD, reinterpret_cast<const BYTE*>(&dw), sizeof(dw));
+        RegCloseKey(hKey);
+    }
+}
+
+uint64_t FileTimeToU64(FILETIME const& ft) {
+    return (static_cast<uint64_t>(ft.dwHighDateTime) << 32) | ft.dwLowDateTime;
+}
+
+std::wstring FormatNetSpeedCompact(double bytesPerSec) {
+    if (bytesPerSec < 0.0) bytesPerSec = 0.0;
+    double kb = bytesPerSec / 1024.0;
+    WCHAR buf[32]{};
+    if (kb < 999.95) {
+        _snwprintf_s(buf, _TRUNCATE, L"%.1f KB/s", kb);
+    } else {
+        double mb = kb / 1024.0;
+        if (mb < 999.95) {
+            _snwprintf_s(buf, _TRUNCATE, L"%.1f MB/s", mb);
+        } else {
+            double gb = mb / 1024.0;
+            _snwprintf_s(buf, _TRUNCATE, L"%.1f GB/s", gb);
+        }
+    }
+    return buf;
+}
+
+std::wstring FormatPingMsCompact(int pingMs) {
+    if (pingMs < 0) return L"-- ms";
+    WCHAR buf[32]{};
+    if (pingMs > 999) {
+        wcscpy_s(buf, L"999+ms");
+    } else {
+        _snwprintf_s(buf, _TRUNCATE, L"%d ms", pingMs);
+    }
+    return buf;
+}
+
+D2D1_COLOR_F PickLoadValueColor(int percent, bool lightTheme) {
+    if (percent >= 90) {
+        return lightTheme ? D2D1::ColorF(0.80f, 0.12f, 0.12f, 1.0f)
+                          : D2D1::ColorF(1.00f, 0.48f, 0.45f, 1.0f);
+    }
+    if (percent >= 75) {
+        return lightTheme ? D2D1::ColorF(0.82f, 0.42f, 0.00f, 1.0f)
+                          : D2D1::ColorF(1.00f, 0.75f, 0.35f, 1.0f);
+    }
+    return lightTheme ? D2D1::ColorF(0.10f, 0.11f, 0.13f, 1.0f)
+                      : D2D1::ColorF(0.97f, 0.98f, 0.99f, 1.0f);
+}
+
+D2D1_COLOR_F PickPingValueColor(int pingMs, bool lightTheme) {
+    if (pingMs < 0 || pingMs > 120) {
+        return lightTheme ? D2D1::ColorF(0.80f, 0.12f, 0.12f, 1.0f)
+                          : D2D1::ColorF(1.00f, 0.48f, 0.45f, 1.0f);
+    }
+    if (pingMs >= 50) {
+        return lightTheme ? D2D1::ColorF(0.80f, 0.44f, 0.00f, 1.0f)
+                          : D2D1::ColorF(1.00f, 0.82f, 0.40f, 1.0f);
+    }
+    return lightTheme ? D2D1::ColorF(0.10f, 0.54f, 0.18f, 1.0f)
+                      : D2D1::ColorF(0.49f, 0.91f, 0.53f, 1.0f);
+}
+
+std::vector<StatsColumn> BuildActiveColumns(ModSettings const& settings,
+                                            LiveSystemMetrics const& m,
+                                            bool lightTheme) {
+    std::vector<StatsColumn> cols;
+    if (!settings.enableTaskbarSystemStats) return cols;
+
+    D2D1_COLOR_F normalValColor = PickLoadValueColor(0, lightTheme);
+    D2D1_COLOR_F subValColor = lightTheme ? D2D1::ColorF(0.24f, 0.26f, 0.30f, 0.95f)
+                                          : D2D1::ColorF(0.84f, 0.87f, 0.90f, 0.95f);
+
+    D2D1_COLOR_F cpuLblColor  = lightTheme ? D2D1::ColorF(0.05f, 0.42f, 0.78f, 1.0f)
+                                           : D2D1::ColorF(0.49f, 0.80f, 1.00f, 1.0f);
+    D2D1_COLOR_F gpuLblColor  = lightTheme ? D2D1::ColorF(0.08f, 0.54f, 0.34f, 1.0f)
+                                           : D2D1::ColorF(0.51f, 0.90f, 0.72f, 1.0f);
+    D2D1_COLOR_F ramLblColor  = lightTheme ? D2D1::ColorF(0.68f, 0.40f, 0.00f, 1.0f)
+                                           : D2D1::ColorF(1.00f, 0.84f, 0.50f, 1.0f);
+    D2D1_COLOR_F dnLblColor   = lightTheme ? D2D1::ColorF(0.12f, 0.55f, 0.18f, 1.0f)
+                                           : D2D1::ColorF(0.49f, 0.91f, 0.53f, 1.0f);
+    D2D1_COLOR_F upLblColor   = lightTheme ? D2D1::ColorF(0.08f, 0.44f, 0.78f, 1.0f)
+                                           : D2D1::ColorF(0.47f, 0.75f, 1.00f, 1.0f);
+    D2D1_COLOR_F pingLblColor = lightTheme ? D2D1::ColorF(0.38f, 0.22f, 0.70f, 1.0f)
+                                           : D2D1::ColorF(0.76f, 0.68f, 1.00f, 1.0f);
+
+    struct ScalarItem {
+        std::wstring label;
+        std::wstring value;
+        D2D1_COLOR_F labelColor;
+        D2D1_COLOR_F valueColor;
+        bool isRam = false;
+    };
+
+    std::vector<ScalarItem> scalars;
+    WCHAR buf[32]{};
+    if (settings.showCpuStats) {
+        _snwprintf_s(buf, _TRUNCATE, L"%d%%", std::clamp(m.cpuPercent, 0, 100));
+        scalars.push_back({ L"CPU", buf, cpuLblColor, PickLoadValueColor(m.cpuPercent, lightTheme), false });
+    }
+    if (settings.showGpuStats) {
+        _snwprintf_s(buf, _TRUNCATE, L"%d%%", std::clamp(m.gpuPercent, 0, 100));
+        scalars.push_back({ L"GPU", buf, gpuLblColor, PickLoadValueColor(m.gpuPercent, lightTheme), false });
+    }
+    if (settings.showRamStats) {
+        _snwprintf_s(buf, _TRUNCATE, L"%d%%", std::clamp(m.ramPercent, 0, 100));
+        scalars.push_back({ L"RAM", buf, ramLblColor, PickLoadValueColor(m.ramPercent, lightTheme), true });
+    }
+
+    WCHAR ramGbBuf[32]{};
+    _snwprintf_s(ramGbBuf, _TRUNCATE, L"%.1f/%.0fGB", m.ramUsedGb, std::max(1.0, m.ramTotalGb));
+
+    if (scalars.size() == 3) {
+        cols.push_back({
+            scalars[0].label, scalars[0].value, scalars[0].labelColor, scalars[0].valueColor,
+            scalars[1].label, scalars[1].value, scalars[1].labelColor, scalars[1].valueColor,
+            false, false, false, false, 58.0f
+        });
+        cols.push_back({
+            scalars[2].label, scalars[2].value, scalars[2].labelColor, scalars[2].valueColor,
+            L"", ramGbBuf, subValColor, subValColor,
+            false, false, true, false, 68.0f
+        });
+    } else if (scalars.size() == 2) {
+        if (scalars[0].isRam || scalars[1].isRam) {
+            const auto& nonRam = scalars[0].isRam ? scalars[1] : scalars[0];
+            const auto& ram = scalars[0].isRam ? scalars[0] : scalars[1];
+            cols.push_back({
+                nonRam.label, nonRam.value, nonRam.labelColor, nonRam.valueColor,
+                L"", L"", normalValColor, normalValColor,
+                true, false, false, false, 58.0f
+            });
+            cols.push_back({
+                ram.label, ram.value, ram.labelColor, ram.valueColor,
+                L"", ramGbBuf, subValColor, subValColor,
+                false, false, true, false, 68.0f
+            });
+        } else {
+            cols.push_back({
+                scalars[0].label, scalars[0].value, scalars[0].labelColor, scalars[0].valueColor,
+                scalars[1].label, scalars[1].value, scalars[1].labelColor, scalars[1].valueColor,
+                false, false, false, false, 58.0f
+            });
+        }
+    } else if (scalars.size() == 1) {
+        if (scalars[0].isRam) {
+            cols.push_back({
+                scalars[0].label, scalars[0].value, scalars[0].labelColor, scalars[0].valueColor,
+                L"", ramGbBuf, subValColor, subValColor,
+                false, false, true, false, 68.0f
+            });
+        } else {
+            cols.push_back({
+                scalars[0].label, scalars[0].value, scalars[0].labelColor, scalars[0].valueColor,
+                L"", L"", normalValColor, normalValColor,
+                true, false, false, false, 58.0f
+            });
+        }
+    }
+
+    if (settings.showNetStats) {
+        cols.push_back({
+            L"↓", FormatNetSpeedCompact(m.netDownBytesPerSec), dnLblColor, normalValColor,
+            L"↑", FormatNetSpeedCompact(m.netUpBytesPerSec),   upLblColor, normalValColor,
+            false, false, false, true, 66.0f
+        });
+    }
+
+    if (settings.showPingStats) {
+        D2D1_COLOR_F pingValColor = PickPingValueColor(m.pingMs, lightTheme);
+        cols.push_back({
+            L"", L"PING", pingLblColor, pingLblColor,
+            L"", FormatPingMsCompact(m.pingMs), pingValColor, pingValColor,
+            false, true, true, false, 48.0f
+        });
+    }
+
+    return cols;
+}
+
+bool SampleNetworkOctetsFromIfTable2(GetIfTable2_t pGetIfTable2,
+                                     FreeMibTable_t pFreeMibTable,
+                                     uint64_t& outInOctets,
+                                     uint64_t& outOutOctets,
+                                     uint32_t& outAdapterSig) {
+    outInOctets = 0;
+    outOutOctets = 0;
+    outAdapterSig = 0;
+    if (!pGetIfTable2 || !pFreeMibTable) return false;
+
+    PVOID rawTable = nullptr;
+    if (pGetIfTable2(&rawTable) != 0 || !rawTable) return false;
+
+    const auto* base = static_cast<const uint8_t*>(rawTable);
+    ULONG numEntries = 0;
+    memcpy(&numEntries, base, sizeof(numEntries));
+
+    auto scanRows = [&](bool requireHardware) {
+        uint64_t sumIn = 0, sumOut = 0;
+        uint32_t sig = 2166136261u;
+        int matched = 0;
+        for (ULONG i = 0; i < numEntries; i++) {
+            const uint8_t* row = base + kMibIfTable2TableOffset + static_cast<size_t>(i) * kMibIfRow2Size;
+            ULONG type = 0, operStatus = 0, mediaConn = 0;
+            uint8_t flags = row[kMibIfRow2FlagsOffset];
+            memcpy(&type, row + kMibIfRow2TypeOffset, sizeof(type));
+            memcpy(&operStatus, row + kMibIfRow2OperStatusOffset, sizeof(operStatus));
+            memcpy(&mediaConn, row + kMibIfRow2MediaConnOffset, sizeof(mediaConn));
+
+            if (type == 24) continue;       // IF_TYPE_SOFTWARE_LOOPBACK
+            if (operStatus != 1) continue;  // IfOperStatusUp
+            if (flags & 0x02) continue;     // FilterInterface (WFP / QoS / NDIS filters)
+
+            if (requireHardware) {
+                if (!(flags & 0x01)) continue; // HardwareInterface
+                if (mediaConn != 1) continue;  // MediaConnectStateConnected
+            } else {
+                if (type == 131) continue;     // IF_TYPE_TUNNEL
+            }
+
+            uint64_t inOct = 0, outOct = 0;
+            memcpy(&inOct, row + kMibIfRow2InOctetsOffset, sizeof(inOct));
+            memcpy(&outOct, row + kMibIfRow2OutOctetsOffset, sizeof(outOct));
+            sumIn += inOct;
+            sumOut += outOct;
+            sig = (sig ^ (i + 1u)) * 16777619u;
+            matched++;
+        }
+        if (matched > 0) {
+            outInOctets = sumIn;
+            outOutOctets = sumOut;
+            outAdapterSig = sig;
+            return true;
+        }
+        return false;
+    };
+
+    bool ok = scanRows(true);
+    if (!ok) {
+        ok = scanRows(false);
+    }
+
+    pFreeMibTable(rawTable);
+    return ok;
+}
+
+bool ProbeSingleIcmpMs(IcmpSendEcho_t pIcmpSendEcho, HANDLE hIcmp, DWORD ipNetOrder, int& outMs) {
+    if (!pIcmpSendEcho || !hIcmp || hIcmp == INVALID_HANDLE_VALUE) return false;
+    char sendData[16] = "VnLunarPing1234";
+    BYTE replyBuf[kIcmpReplySize + 64]{};
+
+    LARGE_INTEGER freq{}, t0{}, t1{};
+    QueryPerformanceFrequency(&freq);
+    QueryPerformanceCounter(&t0);
+    DWORD ret = pIcmpSendEcho(hIcmp, ipNetOrder, sendData, sizeof(sendData),
+                              nullptr, replyBuf, sizeof(replyBuf), 1000);
+    QueryPerformanceCounter(&t1);
+    if (ret == 0) return false;
+
+    ULONG status = 1, rtt = 0;
+    memcpy(&status, replyBuf + kIcmpReplyStatusOffset, sizeof(status));
+    memcpy(&rtt, replyBuf + kIcmpReplyRttOffset, sizeof(rtt));
+    if (status != 0) return false;
+
+    if (rtt > 0) {
+        outMs = static_cast<int>(rtt);
+    } else if (freq.QuadPart > 0) {
+        double qpcMs = static_cast<double>(t1.QuadPart - t0.QuadPart) * 1000.0 / static_cast<double>(freq.QuadPart);
+        outMs = std::max(1, static_cast<int>(qpcMs + 0.5));
+    } else {
+        outMs = 1;
+    }
+    return true;
+}
+
+void RunPingScannerLoop() {
+    HMODULE hIphlp = LoadLibraryExW(L"iphlpapi.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    if (!hIphlp) return;
+
+    auto pIcmpCreateFile = reinterpret_cast<IcmpCreateFile_t>(GetProcAddress(hIphlp, "IcmpCreateFile"));
+    auto pIcmpSendEcho = reinterpret_cast<IcmpSendEcho_t>(GetProcAddress(hIphlp, "IcmpSendEcho"));
+    auto pIcmpCloseHandle = reinterpret_cast<IcmpCloseHandle_t>(GetProcAddress(hIphlp, "IcmpCloseHandle"));
+
+    if (!pIcmpCreateFile || !pIcmpSendEcho || !pIcmpCloseHandle) {
+        FreeLibrary(hIphlp);
+        return;
+    }
+
+    HANDLE hIcmp = pIcmpCreateFile();
+    if (!hIcmp || hIcmp == INVALID_HANDLE_VALUE) {
+        FreeLibrary(hIphlp);
+        return;
+    }
+
+    // Reliable anycast DNS servers with local Vietnam PoPs: 8.8.8.8, 1.1.1.1, 208.67.222.222
+    const DWORD kTargets[3] = {
+        (8u) | (8u << 8) | (8u << 16) | (8u << 24),
+        (1u) | (1u << 8) | (1u << 16) | (1u << 24),
+        (208u) | (67u << 8) | (222u << 16) | (222u << 24),
+    };
+
+    int bestIdx = -1;
+    ULONGLONG lastFullScanTick = 0;
+
+    while (!g_shuttingDown) {
+        ModSettings s = GetSettings();
+        if (s.enableTaskbarSystemStats && s.showPingStats) {
+            ULONGLONG now = GetTickCount64();
+            bool needFullScan = (bestIdx < 0) || (now - lastFullScanTick >= 60000ULL);
+            int measuredMs = -1;
+
+            if (needFullScan) {
+                int bestMs = 999999;
+                int chosen = -1;
+                for (int i = 0; i < 3 && !g_shuttingDown; i++) {
+                    int ms = -1;
+                    if (ProbeSingleIcmpMs(pIcmpSendEcho, hIcmp, kTargets[i], ms)) {
+                        if (ms < bestMs) {
+                            bestMs = ms;
+                            chosen = i;
+                        }
+                    }
+                }
+                if (chosen >= 0) {
+                    bestIdx = chosen;
+                    measuredMs = bestMs;
+                    g_activePingTargetIp.store(kTargets[bestIdx]);
+                    lastFullScanTick = GetTickCount64();
+                } else {
+                    bestIdx = -1;
+                    measuredMs = -1;
+                    g_activePingTargetIp.store(0);
+                }
+            } else {
+                int ms = -1;
+                if (ProbeSingleIcmpMs(pIcmpSendEcho, hIcmp, kTargets[bestIdx], ms)) {
+                    measuredMs = ms;
+                    g_activePingTargetIp.store(kTargets[bestIdx]);
+                } else {
+                    // Immediate failover to another target
+                    bool recovered = false;
+                    for (int i = 0; i < 3 && !g_shuttingDown; i++) {
+                        if (i == bestIdx) continue;
+                        if (ProbeSingleIcmpMs(pIcmpSendEcho, hIcmp, kTargets[i], ms)) {
+                            bestIdx = i;
+                            measuredMs = ms;
+                            g_activePingTargetIp.store(kTargets[bestIdx]);
+                            recovered = true;
+                            break;
+                        }
+                    }
+                    if (!recovered) {
+                        bestIdx = -1;
+                        measuredMs = -1;
+                        g_activePingTargetIp.store(0);
+                    }
+                }
+            }
+
+            if (g_livePingMs.exchange(measuredMs) != measuredMs) {
+                if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+            }
+        }
+
+        HANDLE stopEv = g_sysMonitorStopEvent;
+        if (!stopEv) break;
+        if (WaitForSingleObject(stopEv, 2500) == WAIT_OBJECT_0) break;
+    }
+
+    pIcmpCloseHandle(hIcmp);
+    FreeLibrary(hIphlp);
+}
+
+bool IsWindowCloakedByDwm(HWND hWnd) {
+    using DwmGetWindowAttribute_t = HRESULT(WINAPI*)(HWND, DWORD, PVOID, DWORD);
+    static auto pDwmGetWindowAttribute = []() -> DwmGetWindowAttribute_t {
+        HMODULE hDwm = LoadLibraryExW(L"dwmapi.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+        return hDwm ? reinterpret_cast<DwmGetWindowAttribute_t>(GetProcAddress(hDwm, "DwmGetWindowAttribute")) : nullptr;
+    }();
+    if (!pDwmGetWindowAttribute || !hWnd) return false;
+    DWORD cloaked = 0;
+    if (SUCCEEDED(pDwmGetWindowAttribute(hWnd, 14 /* DWMWA_CLOAKED */, &cloaked, sizeof(cloaked)))) {
+        return cloaked != 0;
+    }
+    return false;
+}
+
+bool IsTrueFullscreenAppActive(HWND hTrayWnd, RECT const& rcMonitor) {
+    HWND hFg = GetForegroundWindow();
+    if (!hFg || hFg == hTrayWnd || hFg == GetDesktopWindow() || hFg == GetShellWindow()) {
+        return false;
+    }
+
+    // 1. Process check: Any Windows Shell, system flyout, or explorer process is NEVER a fullscreen game
+    DWORD fgPid = 0;
+    GetWindowThreadProcessId(hFg, &fgPid);
+    if (fgPid == 0 || fgPid == GetCurrentProcessId()) {
+        return false;
+    }
+
+    HANDLE hProc = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, fgPid);
+    if (hProc) {
+        WCHAR procPath[MAX_PATH]{};
+        DWORD procPathLen = ARRAYSIZE(procPath);
+        if (QueryFullProcessImageNameW(hProc, 0, procPath, &procPathLen)) {
+            PCWSTR exeName = wcsrchr(procPath, L'\\');
+            exeName = exeName ? (exeName + 1) : procPath;
+            if (_wcsicmp(exeName, L"explorer.exe") == 0 ||
+                _wcsicmp(exeName, L"StartMenuExperienceHost.exe") == 0 ||
+                _wcsicmp(exeName, L"SearchHost.exe") == 0 ||
+                _wcsicmp(exeName, L"SearchApp.exe") == 0 ||
+                _wcsicmp(exeName, L"SearchUI.exe") == 0 ||
+                _wcsicmp(exeName, L"Cortana.exe") == 0 ||
+                _wcsicmp(exeName, L"ShellExperienceHost.exe") == 0 ||
+                _wcsicmp(exeName, L"TextInputHost.exe") == 0 ||
+                _wcsicmp(exeName, L"SystemSettings.exe") == 0 ||
+                _wcsicmp(exeName, L"ApplicationFrameHost.exe") == 0 ||
+                _wcsicmp(exeName, L"ScreenClippingHost.exe") == 0 ||
+                _wcsicmp(exeName, L"SnippingTool.exe") == 0 ||
+                _wcsicmp(exeName, L"Widgets.exe") == 0 ||
+                _wcsicmp(exeName, L"LockApp.exe") == 0 ||
+                _wcsicmp(exeName, L"taskmgr.exe") == 0 ||
+                _wcsicmp(exeName, L"WindhawkUI.exe") == 0) {
+                CloseHandle(hProc);
+                return false;
+            }
+        }
+        CloseHandle(hProc);
+    }
+
+    // 2. Class check for Shell / Modern UI / XAML backdrop & popups (both hFg and root ancestor)
+    auto isShellOrPopupClass = [](HWND hWnd) -> bool {
+        if (!hWnd) return false;
+        WCHAR cls[128]{};
+        if (GetClassNameW(hWnd, cls, ARRAYSIZE(cls)) <= 0) return false;
+        if (_wcsicmp(cls, L"Progman") == 0 ||
+            _wcsicmp(cls, L"WorkerW") == 0 ||
+            _wcsicmp(cls, L"Shell_TrayWnd") == 0 ||
+            _wcsicmp(cls, L"Shell_SecondaryTrayWnd") == 0 ||
+            _wcsicmp(cls, L"Windows.UI.Core.CoreWindow") == 0 ||
+            _wcsicmp(cls, L"ControlCenterWindow") == 0 ||
+            _wcsicmp(cls, L"XamlExplorerHostIslandWindow") == 0 ||
+            _wcsicmp(cls, L"Xaml_WindowedPopupClass") == 0 ||
+            _wcsicmp(cls, L"TopLevelWindowForOverflowXamlIsland") == 0 ||
+            _wcsicmp(cls, L"PopupHost") == 0 ||
+            _wcsicmp(cls, L"NativeHWNDHost") == 0 ||
+            wcsstr(cls, L"Xaml") != nullptr ||
+            wcsstr(cls, L"StartMenu") != nullptr ||
+            wcsstr(cls, L"Start") != nullptr ||
+            wcsstr(cls, L"Shell_") != nullptr ||
+            wcsstr(cls, L"CoreWindow") != nullptr ||
+            wcsstr(cls, L"Popup") != nullptr ||
+            wcsstr(cls, L"Flyout") != nullptr ||
+            wcsstr(cls, L"HwndWrapper") != nullptr) {
+            return true;
+        }
+        return false;
+    };
+
+    if (isShellOrPopupClass(hFg)) return false;
+    HWND hRoot = GetAncestor(hFg, GA_ROOT);
+    if (hRoot && hRoot != hFg && isShellOrPopupClass(hRoot)) return false;
+
+    // 3. Taskbar overlap check: If hFg does not physically cover the taskbar rect,
+    // then the taskbar remains visible on screen and the stats widget must NOT be hidden!
+    RECT rcTray{};
+    if (GetWindowRect(hTrayWnd, &rcTray)) {
+        RECT rcFg{};
+        if (GetWindowRect(hFg, &rcFg)) {
+            // Taskbar at bottom: if hFg ends at or above taskbar top, it doesn't cover taskbar
+            if (rcTray.top > rcMonitor.top && rcFg.bottom <= rcTray.top + 2) {
+                return false;
+            }
+            // Taskbar at top: if hFg starts at or below taskbar bottom
+            if (rcTray.top == rcMonitor.top && rcFg.top >= rcTray.bottom - 2) {
+                return false;
+            }
+            // Taskbar at left: if hFg starts at or to the right of taskbar right
+            if (rcTray.left == rcMonitor.left && rcFg.left >= rcTray.right - 2) {
+                return false;
+            }
+            // Taskbar at right: if hFg ends at or to the left of taskbar left
+            if (rcTray.left > rcMonitor.left && rcFg.right <= rcTray.left + 2) {
+                return false;
+            }
+        }
+    }
+
+    // 4. Verify foreground window actually resides on THIS monitor before fullscreen checks
+    //    (prevents a fullscreen game on Monitor 1 from hiding Monitor 2's taskbar widgets)
+    HMONITOR monTray = MonitorFromWindow(hTrayWnd, MONITOR_DEFAULTTONEAREST);
+    HMONITOR monFg = MonitorFromWindow(hFg, MONITOR_DEFAULTTONULL);
+    if (!monFg || monFg != monTray) return false;
+
+    // 5. Direct3D Fullscreen check (exclusive mode on this monitor)
+    QUERY_USER_NOTIFICATION_STATE quns = QUNS_ACCEPTS_NOTIFICATIONS;
+    if (SUCCEEDED(SHQueryUserNotificationState(&quns))) {
+        if (quns == QUNS_RUNNING_D3D_FULL_SCREEN) {
+            return true;
+        }
+    }
+
+    // 6. Normal maximized windows (with caption or resizable border) cover 100% of rcMonitor when
+    // Taskbar Auto-Hide is enabled; NEVER treat them as fullscreen games!
+    LONG_PTR style = GetWindowLongPtrW(hFg, GWL_STYLE);
+    if ((style & WS_CAPTION) == WS_CAPTION || (style & WS_THICKFRAME) != 0) {
+        return false;
+    }
+
+    RECT rcFg{};
+    if (!GetWindowRect(hFg, &rcFg)) return false;
+    if (rcFg.left <= rcMonitor.left && rcFg.top <= rcMonitor.top &&
+        rcFg.right >= rcMonitor.right && rcFg.bottom >= rcMonitor.bottom) {
+        for (HWND hCur = hFg; hCur != nullptr; hCur = GetWindow(hCur, GW_HWNDNEXT)) {
+            if (hCur == hTrayWnd) return true;
+        }
+    }
+    return false;
+}
+
+bool IsTrayCoveringWidget(HWND hTrayWnd, HWND hWidget) {
+    if (!hTrayWnd || !hWidget) return false;
+    HWND hCur = GetWindow(hTrayWnd, GW_HWNDNEXT);
+    for (int i = 0; i < 48 && hCur != nullptr; i++, hCur = GetWindow(hCur, GW_HWNDNEXT)) {
+        if (hCur == hWidget) return true;
+    }
+    return false;
+}
+
+void CALLBACK TrayWinEventProc(HWINEVENTHOOK, DWORD, HWND hwnd, LONG idObject, LONG, DWORD, DWORD) {
+    if (g_shuttingDown) return;
+    if (idObject == OBJID_WINDOW && hwnd) {
+        HWND hTray = FindWindowW(L"Shell_TrayWnd", nullptr);
+        if (hwnd == hTray && g_sysMonitorWakeEvent) {
+            SetEvent(g_sysMonitorWakeEvent);
+        }
+    }
+}
+
+LRESULT CALLBACK StatsWidgetWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    switch (uMsg) {
+        case WM_MOUSEACTIVATE:
+            return MA_NOACTIVATE;
+
+        case WM_LBUTTONDOWN: {
+            SetCapture(hWnd);
+            g_isDraggingWidget = true;
+            g_draggedHwnd = hWnd;
+            GetCursorPos(&g_dragStartCursor);
+            if (hWnd == g_statsWidgetHwnd.load()) {
+                g_dragStartOffsetX = g_userOffsetX.load();
+            } else {
+                g_dragStartOffsetX = g_secUserOffsetX.load();
+            }
+            return 0;
+        }
+
+        case WM_MOUSEMOVE: {
+            if (g_isDraggingWidget && (wParam & MK_LBUTTON)) {
+                POINT pt{};
+                GetCursorPos(&pt);
+                int deltaX = pt.x - g_dragStartCursor.x;
+                if (g_draggedHwnd == g_statsWidgetHwnd.load()) {
+                    int baseX = g_cachedBaseDefaultX.load();
+                    int minX = g_cachedMinAllowedX.load();
+                    int maxX = g_cachedMaxAllowedX.load();
+                    int newOffset = g_dragStartOffsetX + deltaX;
+                    if (maxX >= minX && baseX > 0) {
+                        newOffset = std::clamp(newOffset, minX - baseX, maxX - baseX);
+                    } else {
+                        newOffset = std::clamp(newOffset, -8000, 8000);
+                    }
+                    if (newOffset != g_userOffsetX.exchange(newOffset)) {
+                        if (maxX >= minX && baseX > 0) {
+                            RECT rcWidget{};
+                            GetWindowRect(hWnd, &rcWidget);
+                            SetWindowPos(hWnd, nullptr, baseX + newOffset, rcWidget.top, 0, 0,
+                                         SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+                        }
+                        if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+                    }
+                } else {
+                    int baseX = g_cachedBaseDefaultSecX.load();
+                    int minX = g_cachedMinAllowedSecX.load();
+                    int maxX = g_cachedMaxAllowedSecX.load();
+                    int newOffset = g_dragStartOffsetX + deltaX;
+                    if (maxX >= minX) {
+                        newOffset = std::clamp(newOffset, minX - baseX, maxX - baseX);
+                    } else {
+                        newOffset = std::clamp(newOffset, -8000, 8000);
+                    }
+                    if (newOffset != g_secUserOffsetX.exchange(newOffset)) {
+                        RECT rcWidget{};
+                        GetWindowRect(hWnd, &rcWidget);
+                        SetWindowPos(hWnd, nullptr, baseX + newOffset, rcWidget.top, 0, 0,
+                                     SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+                        if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+                    }
+                }
+            }
+            return 0;
+        }
+
+        case WM_LBUTTONUP: {
+            if (g_isDraggingWidget) {
+                ReleaseCapture();
+                g_isDraggingWidget = false;
+                if (g_draggedHwnd == g_statsWidgetHwnd.load()) {
+                    SavePersistedOffsetX(g_userOffsetX.load());
+                } else {
+                    SavePersistedSecOffsetX(g_secUserOffsetX.load());
+                }
+                g_draggedHwnd = nullptr;
+            }
+            return 0;
+        }
+
+        case WM_CAPTURECHANGED: {
+            if (g_isDraggingWidget) {
+                g_isDraggingWidget = false;
+                if (g_draggedHwnd == g_statsWidgetHwnd.load()) {
+                    SavePersistedOffsetX(g_userOffsetX.load());
+                } else if (g_draggedHwnd) {
+                    SavePersistedSecOffsetX(g_secUserOffsetX.load());
+                }
+                g_draggedHwnd = nullptr;
+            }
+            return 0;
+        }
+
+        case WM_LBUTTONDBLCLK: {
+            ShellExecuteW(nullptr, L"open", L"taskmgr.exe", nullptr, nullptr, SW_SHOWNORMAL);
+            return 0;
+        }
+
+        case WM_RBUTTONUP: {
+            ModSettings s = GetSettings();
+            bool vi = UseVietnameseLabels(s);
+            HMENU hMenu = CreatePopupMenu();
+            if (hMenu) {
+                AppendMenuW(hMenu, MF_STRING | (s.showCpuStats ? MF_CHECKED : MF_UNCHECKED), 101,
+                            vi ? L"Hiển thị % CPU" : L"Show CPU %");
+                AppendMenuW(hMenu, MF_STRING | (s.showGpuStats ? MF_CHECKED : MF_UNCHECKED), 102,
+                            vi ? L"Hiển thị % GPU" : L"Show GPU %");
+                AppendMenuW(hMenu, MF_STRING | (s.showRamStats ? MF_CHECKED : MF_UNCHECKED), 103,
+                            vi ? L"Hiển thị RAM" : L"Show RAM");
+                AppendMenuW(hMenu, MF_STRING | (s.showNetStats ? MF_CHECKED : MF_UNCHECKED), 104,
+                            vi ? L"Hiển thị tốc độ Mạng (↓/↑)" : L"Show Network Speed (↓/↑)");
+                WCHAR pingMenuText[80]{};
+                DWORD activeIp = g_activePingTargetIp.load();
+                WCHAR ipStr[32] = L"Google 8.8.8.8";
+                if (activeIp == ((1u) | (1u << 8) | (1u << 16) | (1u << 24))) {
+                    wcscpy_s(ipStr, L"Cloudflare 1.1.1.1");
+                } else if (activeIp == ((8u) | (8u << 8) | (8u << 16) | (8u << 24))) {
+                    wcscpy_s(ipStr, L"Google 8.8.8.8");
+                } else if (activeIp == ((208u) | (67u << 8) | (222u << 16) | (222u << 24))) {
+                    wcscpy_s(ipStr, L"OpenDNS 208.67.222.222");
+                }
+                int curPing = g_livePingMs.load();
+                if (curPing >= 0) {
+                    _snwprintf_s(pingMenuText, _TRUNCATE, vi ? L"Hiển thị Ping mạng (%d ms - %s)" : L"Show Network Ping (%d ms - %s)", curPing, ipStr);
+                } else {
+                    _snwprintf_s(pingMenuText, _TRUNCATE, vi ? L"Hiển thị Ping mạng (%s)" : L"Show Network Ping (%s)", ipStr);
+                }
+                AppendMenuW(hMenu, MF_STRING | (s.showPingStats ? MF_CHECKED : MF_UNCHECKED), 108, pingMenuText);
+                AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
+                AppendMenuW(hMenu, MF_STRING, 105,
+                            vi ? L"↺ Đặt lại vị trí mặc định" : L"↺ Reset Default Position");
+                AppendMenuW(hMenu, MF_STRING, 106,
+                            vi ? L"🖥 Mở Task Manager (Nhấp đúp)" : L"🖥 Open Task Manager (Double-click)");
+                AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
+                AppendMenuW(hMenu, MF_STRING, 107,
+                            vi ? L"✕ Ẩn khung thông số hệ thống" : L"✕ Hide System Monitor");
+
+                POINT pt{};
+                GetCursorPos(&pt);
+                g_isContextMenuOpen = true;
+                SetForegroundWindow(hWnd);
+                UINT cmd = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_RIGHTBUTTON | TPM_NONOTIFY,
+                                          pt.x, pt.y, 0, hWnd, nullptr);
+                PostMessageW(hWnd, WM_NULL, 0, 0);
+                DestroyMenu(hMenu);
+                g_isContextMenuOpen = false;
+
+                if (cmd >= 101 && cmd <= 108) {
+                    if (cmd == 105) {
+                        if (hWnd == g_statsWidgetHwnd.load()) {
+                            g_userOffsetX = 0;
+                            SavePersistedOffsetX(0);
+                        } else {
+                            g_secUserOffsetX = 0;
+                            SavePersistedSecOffsetX(0);
+                        }
+                    } else if (cmd == 106) {
+                        ShellExecuteW(nullptr, L"open", L"taskmgr.exe", nullptr, nullptr, SW_SHOWNORMAL);
+                    } else {
+                        std::lock_guard<std::mutex> lock(g_settingsMutex);
+                        if (cmd == 101) {
+                            g_settings.showCpuStats = !g_settings.showCpuStats;
+                            PersistToggleToStandaloneRegistry(L"showCpuStats", g_settings.showCpuStats);
+                        } else if (cmd == 102) {
+                            g_settings.showGpuStats = !g_settings.showGpuStats;
+                            PersistToggleToStandaloneRegistry(L"showGpuStats", g_settings.showGpuStats);
+                        } else if (cmd == 103) {
+                            g_settings.showRamStats = !g_settings.showRamStats;
+                            PersistToggleToStandaloneRegistry(L"showRamStats", g_settings.showRamStats);
+                        } else if (cmd == 104) {
+                            g_settings.showNetStats = !g_settings.showNetStats;
+                            PersistToggleToStandaloneRegistry(L"showNetStats", g_settings.showNetStats);
+                        } else if (cmd == 108) {
+                            g_settings.showPingStats = !g_settings.showPingStats;
+                            PersistToggleToStandaloneRegistry(L"showPingStats", g_settings.showPingStats);
+                        } else if (cmd == 107) {
+                            g_settings.enableTaskbarSystemStats = false;
+                            PersistToggleToStandaloneRegistry(L"enableTaskbarSystemStats", false);
+                        }
+                    }
+                    if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+                }
+            }
+            return 0;
+        }
+    }
+    return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
+
+constexpr PCWSTR kSecondaryTrayWidgetClassName = L"VnLunarSecondaryTaskbarTrayWnd";
+
+std::atomic<float> g_liveMasterVolume{0.5f};
+std::atomic<bool> g_liveMasterMuted{false};
+std::atomic<ULONGLONG> g_volumeOsdExpiryTick{0};
+std::atomic<bool> g_hasActiveWifi{false};
+std::atomic<bool> g_hasActiveEthernet{false};
+std::atomic<bool> g_hasActiveNetwork{false};
+
+class AudioVolumeNotificationCallback final : public IAudioEndpointVolumeCallback {
+    std::atomic<LONG> m_refCount{1};
+public:
+    ULONG STDMETHODCALLTYPE AddRef() override {
+        return static_cast<ULONG>(++m_refCount);
+    }
+    ULONG STDMETHODCALLTYPE Release() override {
+        LONG r = --m_refCount;
+        if (r == 0) delete this;
+        return static_cast<ULONG>(r);
+    }
+    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppv) override {
+        if (riid == __uuidof(IUnknown) || riid == __uuidof(IAudioEndpointVolumeCallback)) {
+            *ppv = static_cast<IAudioEndpointVolumeCallback*>(this);
+            AddRef();
+            return S_OK;
+        }
+        *ppv = nullptr;
+        return E_NOINTERFACE;
+    }
+    HRESULT STDMETHODCALLTYPE OnNotify(PAUDIO_VOLUME_NOTIFICATION_DATA pNotify) override {
+        if (pNotify) {
+            g_liveMasterVolume.store(pNotify->fMasterVolume);
+            g_liveMasterMuted.store(pNotify->bMuted != FALSE);
+            if (g_sysMonitorWakeEvent) {
+                SetEvent(g_sysMonitorWakeEvent);
+            }
+        }
+        return S_OK;
+    }
+};
+
+IAudioEndpointVolume* g_audioEndpointVolume = nullptr;
+AudioVolumeNotificationCallback* g_audioCallback = nullptr;
+
+std::atomic<bool> g_audioDefaultDeviceChanged{false};
+
+class AudioDeviceNotificationClient final : public IMMNotificationClient {
+    LONG m_refCount = 1;
+public:
+    ULONG STDMETHODCALLTYPE AddRef() override { return InterlockedIncrement(&m_refCount); }
+    ULONG STDMETHODCALLTYPE Release() override {
+        ULONG r = InterlockedDecrement(&m_refCount);
+        if (r == 0) delete this;
+        return r;
+    }
+    HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, VOID** ppv) override {
+        if (riid == __uuidof(IUnknown) || riid == __uuidof(IMMNotificationClient)) {
+            AddRef();
+            *ppv = static_cast<IMMNotificationClient*>(this);
+            return S_OK;
+        }
+        *ppv = nullptr;
+        return E_NOINTERFACE;
+    }
+    HRESULT STDMETHODCALLTYPE OnDeviceStateChanged(LPCWSTR, DWORD) override {
+        g_audioDefaultDeviceChanged.store(true);
+        if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+        return S_OK;
+    }
+    HRESULT STDMETHODCALLTYPE OnDeviceAdded(LPCWSTR) override {
+        g_audioDefaultDeviceChanged.store(true);
+        if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+        return S_OK;
+    }
+    HRESULT STDMETHODCALLTYPE OnDeviceRemoved(LPCWSTR) override {
+        g_audioDefaultDeviceChanged.store(true);
+        if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+        return S_OK;
+    }
+    HRESULT STDMETHODCALLTYPE OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR) override {
+        if (flow == eRender && role == eConsole) {
+            g_audioDefaultDeviceChanged.store(true);
+            if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+        }
+        return S_OK;
+    }
+    HRESULT STDMETHODCALLTYPE OnPropertyValueChanged(LPCWSTR, const PROPERTYKEY) override {
+        return S_OK;
+    }
+};
+
+IMMDeviceEnumerator* g_audioDeviceEnum = nullptr;
+AudioDeviceNotificationClient* g_audioDevClient = nullptr;
+
+void RebindAudioEndpointVolume() {
+    if (g_audioEndpointVolume) {
+        if (g_audioCallback) {
+            g_audioEndpointVolume->UnregisterControlChangeNotify(g_audioCallback);
+            g_audioCallback->Release();
+            g_audioCallback = nullptr;
+        }
+        g_audioEndpointVolume->Release();
+        g_audioEndpointVolume = nullptr;
+    }
+    if (!g_audioDeviceEnum) return;
+
+    IMMDevice* pDev = nullptr;
+    if (SUCCEEDED(g_audioDeviceEnum->GetDefaultAudioEndpoint(eRender, eConsole, &pDev)) && pDev) {
+        IAudioEndpointVolume* pVol = nullptr;
+        if (SUCCEEDED(pDev->Activate(__uuidof(IAudioEndpointVolume), CLSCTX_INPROC_SERVER, nullptr, (void**)&pVol)) && pVol) {
+            float cur = 0.0f;
+            BOOL muted = FALSE;
+            pVol->GetMasterVolumeLevelScalar(&cur);
+            pVol->GetMute(&muted);
+            g_liveMasterVolume.store(cur);
+            g_liveMasterMuted.store(muted != FALSE);
+
+            g_audioCallback = new AudioVolumeNotificationCallback();
+            pVol->RegisterControlChangeNotify(g_audioCallback);
+            g_audioEndpointVolume = pVol;
+        }
+        pDev->Release();
+    }
+}
+
+void InitAudioEndpoint() {
+    if (!g_audioDeviceEnum) {
+        if (SUCCEEDED(CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER,
+                                       __uuidof(IMMDeviceEnumerator), (void**)&g_audioDeviceEnum)) && g_audioDeviceEnum) {
+            g_audioDevClient = new AudioDeviceNotificationClient();
+            g_audioDeviceEnum->RegisterEndpointNotificationCallback(g_audioDevClient);
+        }
+    }
+    if (!g_audioEndpointVolume) {
+        RebindAudioEndpointVolume();
+    }
+}
+
+void UninitAudioEndpoint() {
+    if (g_audioEndpointVolume) {
+        if (g_audioCallback) {
+            g_audioEndpointVolume->UnregisterControlChangeNotify(g_audioCallback);
+            g_audioCallback->Release();
+            g_audioCallback = nullptr;
+        }
+        g_audioEndpointVolume->Release();
+        g_audioEndpointVolume = nullptr;
+    }
+    if (g_audioDeviceEnum) {
+        if (g_audioDevClient) {
+            g_audioDeviceEnum->UnregisterEndpointNotificationCallback(g_audioDevClient);
+            g_audioDevClient->Release();
+            g_audioDevClient = nullptr;
+        }
+        g_audioDeviceEnum->Release();
+        g_audioDeviceEnum = nullptr;
+    }
+}
+
+void AdjustMasterVolume(float delta) {
+    if (!g_audioEndpointVolume) InitAudioEndpoint();
+    if (g_audioEndpointVolume) {
+        float cur = 0.0f;
+        if (SUCCEEDED(g_audioEndpointVolume->GetMasterVolumeLevelScalar(&cur))) {
+            float next = std::clamp(cur + delta, 0.0f, 1.0f);
+            g_audioEndpointVolume->SetMasterVolumeLevelScalar(next, nullptr);
+            if (next > 0.001f && g_liveMasterMuted.load()) {
+                g_audioEndpointVolume->SetMute(FALSE, nullptr);
+                g_liveMasterMuted.store(false);
+            }
+            g_liveMasterVolume.store(next);
+        }
+    }
+}
+
+void SetMasterVolumeScalar(float scalar) {
+    if (!g_audioEndpointVolume) InitAudioEndpoint();
+    if (g_audioEndpointVolume) {
+        float next = std::clamp(scalar, 0.0f, 1.0f);
+        g_audioEndpointVolume->SetMasterVolumeLevelScalar(next, nullptr);
+        if (next > 0.001f && g_liveMasterMuted.load()) {
+            g_audioEndpointVolume->SetMute(FALSE, nullptr);
+            g_liveMasterMuted.store(false);
+        }
+        g_liveMasterVolume.store(next);
+    }
+}
+
+void ToggleMasterMute() {
+    if (!g_audioEndpointVolume) InitAudioEndpoint();
+    if (g_audioEndpointVolume) {
+        BOOL curMuted = FALSE;
+        if (SUCCEEDED(g_audioEndpointVolume->GetMute(&curMuted))) {
+            BOOL nextMuted = !curMuted;
+            g_audioEndpointVolume->SetMute(nextMuted, nullptr);
+            g_liveMasterMuted.store(nextMuted != FALSE);
+        }
+    }
+}
+
+// Inline DEVPKEY_Device_FriendlyName & undocumented Windows IPolicyConfig for switching default speaker/headset
+static constexpr PROPERTYKEY kPkeyDeviceFriendlyName = {
+    { 0xa45c254e, 0xdf1c, 0x4efd, { 0x80, 0x20, 0x67, 0xd1, 0x46, 0xa8, 0x50, 0xe0 } }, 14
+};
+static constexpr GUID kClsidPolicyConfigClient =
+    { 0x870af99c, 0x171d, 0x4f9e, { 0xaf, 0x0d, 0xe6, 0x3d, 0xf4, 0x0c, 0x2b, 0xc9 } };
+static constexpr GUID kIidIPolicyConfig =
+    { 0xf8679f50, 0x850a, 0x41cf, { 0x9c, 0x72, 0x43, 0x0f, 0x29, 0x02, 0x90, 0xc8 } };
+
+struct IPolicyConfig : public IUnknown {
+    virtual HRESULT STDMETHODCALLTYPE GetMixFormat(PCWSTR, void**) = 0;
+    virtual HRESULT STDMETHODCALLTYPE GetDeviceFormat(PCWSTR, INT, void**) = 0;
+    virtual HRESULT STDMETHODCALLTYPE ResetDeviceFormat(PCWSTR) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetDeviceFormat(PCWSTR, void*, void*) = 0;
+    virtual HRESULT STDMETHODCALLTYPE GetProcessingPeriod(PCWSTR, INT, void*, void*) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetProcessingPeriod(PCWSTR, void*) = 0;
+    virtual HRESULT STDMETHODCALLTYPE GetShareMode(PCWSTR, void*) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetShareMode(PCWSTR, void*) = 0;
+    virtual HRESULT STDMETHODCALLTYPE GetPropertyValue(PCWSTR, const PROPERTYKEY&, PROPVARIANT*) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetPropertyValue(PCWSTR, const PROPERTYKEY&, PROPVARIANT*) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetDefaultEndpoint(PCWSTR wszDeviceId, ERole role) = 0;
+    virtual HRESULT STDMETHODCALLTYPE SetEndpointVisibility(PCWSTR, INT) = 0;
+};
+
+struct AudioOutputDeviceItem {
+    std::wstring id;
+    std::wstring name;
+    bool isDefault = false;
+    bool isFxVirtual = false;
+    bool isFxTarget = false;
+};
+
+bool ContainsCaseInsensitive(const std::wstring& hay, const std::wstring& needle) {
+    if (needle.empty() || hay.size() < needle.size()) return false;
+    for (size_t i = 0; i + needle.size() <= hay.size(); ++i) {
+        bool ok = true;
+        for (size_t j = 0; j < needle.size(); ++j) {
+            if (towlower(hay[i + j]) != towlower(needle[j])) {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) return true;
+    }
+    return false;
+}
+
+std::wstring FindRunningFxSoundExePath() {
+    HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (hSnap == INVALID_HANDLE_VALUE) return L"";
+    PROCESSENTRY32W pe{};
+    pe.dwSize = sizeof(pe);
+    std::wstring exePath;
+    if (Process32FirstW(hSnap, &pe)) {
+        do {
+            if (_wcsicmp(pe.szExeFile, L"FxSound.exe") == 0) {
+                HANDLE hProc = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pe.th32ProcessID);
+                if (hProc) {
+                    WCHAR buf[MAX_PATH]{};
+                    DWORD sz = ARRAYSIZE(buf);
+                    if (QueryFullProcessImageNameW(hProc, 0, buf, &sz)) {
+                        exePath = buf;
+                    }
+                    CloseHandle(hProc);
+                }
+                break;
+            }
+        } while (Process32NextW(hSnap, &pe));
+    }
+    CloseHandle(hSnap);
+    return exePath;
+}
+
+std::wstring UnescapeBasicXmlEntities(std::wstring s) {
+    auto rep = [&](PCWSTR from, PCWSTR to) {
+        size_t flen = wcslen(from);
+        size_t tlen = wcslen(to);
+        size_t pos = 0;
+        while ((pos = s.find(from, pos)) != std::wstring::npos) {
+            s.replace(pos, flen, to, tlen);
+            pos += tlen;
+        }
+    };
+    rep(L"&quot;", L"\"");
+    rep(L"&apos;", L"'");
+    rep(L"&lt;", L"<");
+    rep(L"&gt;", L">");
+    rep(L"&amp;", L"&");
+    return s;
+}
+
+std::wstring ExtractXmlAttrVal(const std::wstring& xml, const std::wstring& keyName) {
+    std::wstring marker = L"name=\"" + keyName + L"\"";
+    size_t pos = xml.find(marker);
+    if (pos == std::wstring::npos) return L"";
+    size_t valPos = xml.find(L"val=\"", pos);
+    if (valPos == std::wstring::npos) return L"";
+    valPos += 5;
+    size_t endPos = xml.find(L'\"', valPos);
+    if (endPos == std::wstring::npos) return L"";
+    return UnescapeBasicXmlEntities(xml.substr(valPos, endPos - valPos));
+}
+
+void ReadFxSoundActiveOutput(std::wstring& outDeviceId, std::wstring& outDeviceName, bool& outPowerOn) {
+    outDeviceId.clear();
+    outDeviceName.clear();
+    outPowerOn = true;
+    WCHAR path[MAX_PATH]{};
+    if (ExpandEnvironmentStringsW(L"%APPDATA%\\FxSound\\FxSound.settings", path, ARRAYSIZE(path)) == 0) return;
+
+    HANDLE hFile = CreateFileW(path, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE,
+                               nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+    if (hFile == INVALID_HANDLE_VALUE) return;
+
+    LARGE_INTEGER fsz{};
+    if (GetFileSizeEx(hFile, &fsz) && fsz.QuadPart > 0 && fsz.QuadPart < 256 * 1024) {
+        std::string raw(static_cast<size_t>(fsz.QuadPart), '\0');
+        DWORD rd = 0;
+        if (ReadFile(hFile, raw.data(), static_cast<DWORD>(raw.size()), &rd, nullptr) && rd > 0) {
+            int wlen = MultiByteToWideChar(CP_UTF8, 0, raw.data(), static_cast<int>(rd), nullptr, 0);
+            if (wlen > 0) {
+                std::wstring xml(static_cast<size_t>(wlen), L'\0');
+                MultiByteToWideChar(CP_UTF8, 0, raw.data(), static_cast<int>(rd), xml.data(), wlen);
+                outDeviceId = ExtractXmlAttrVal(xml, L"output_device_id");
+                outDeviceName = ExtractXmlAttrVal(xml, L"output_device_name");
+                std::wstring pwr = ExtractXmlAttrVal(xml, L"power");
+                if (pwr == L"0") outPowerOn = false;
+            }
+        }
+    }
+    CloseHandle(hFile);
+}
+
+bool SwitchFxSoundOutputDevice(const std::wstring& fxExePath, const std::wstring& deviceName) {
+    if (fxExePath.empty() || deviceName.empty()) return false;
+    std::wstring cmdLine = L"\"" + fxExePath + L"\" \"--output=" + deviceName + L"\"";
+    STARTUPINFOW si{};
+    si.cb = sizeof(si);
+    si.dwFlags = STARTF_USESHOWWINDOW;
+    si.wShowWindow = SW_HIDE;
+    PROCESS_INFORMATION pi{};
+    if (!CreateProcessW(fxExePath.c_str(), cmdLine.data(), nullptr, nullptr, FALSE,
+                        CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi)) {
+        return false;
+    }
+    CloseHandle(pi.hThread);
+    CloseHandle(pi.hProcess);
+    return true;
+}
+
+void EnumerateAudioOutputDevices(std::vector<AudioOutputDeviceItem>& outDevices,
+                                 bool& outFxSoundManaging,
+                                 std::wstring& outFxExePath) {
+    outDevices.clear();
+    outFxSoundManaging = false;
+    outFxExePath = FindRunningFxSoundExePath();
+
+    IMMDeviceEnumerator* pEnum = nullptr;
+    if (FAILED(CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER,
+                                __uuidof(IMMDeviceEnumerator), (void**)&pEnum)) || !pEnum) {
+        return;
+    }
+
+    std::wstring defaultId;
+    IMMDevice* pDef = nullptr;
+    if (SUCCEEDED(pEnum->GetDefaultAudioEndpoint(eRender, eConsole, &pDef)) && pDef) {
+        LPWSTR pId = nullptr;
+        if (SUCCEEDED(pDef->GetId(&pId)) && pId) {
+            defaultId = pId;
+            CoTaskMemFree(pId);
+        }
+        pDef->Release();
+    }
+
+    IMMDeviceCollection* pColl = nullptr;
+    if (SUCCEEDED(pEnum->EnumAudioEndpoints(eRender, DEVICE_STATE_ACTIVE, &pColl)) && pColl) {
+        UINT count = 0;
+        pColl->GetCount(&count);
+        for (UINT i = 0; i < count; ++i) {
+            IMMDevice* pDev = nullptr;
+            if (SUCCEEDED(pColl->Item(i, &pDev)) && pDev) {
+                AudioOutputDeviceItem item{};
+                LPWSTR pId = nullptr;
+                if (SUCCEEDED(pDev->GetId(&pId)) && pId) {
+                    item.id = pId;
+                    CoTaskMemFree(pId);
+                }
+                item.isDefault = (!defaultId.empty() && item.id == defaultId);
+                IPropertyStore* pProps = nullptr;
+                if (SUCCEEDED(pDev->OpenPropertyStore(STGM_READ, &pProps)) && pProps) {
+                    PROPVARIANT varName;
+                    PropVariantInit(&varName);
+                    if (SUCCEEDED(pProps->GetValue(kPkeyDeviceFriendlyName, &varName)) &&
+                        varName.vt == VT_LPWSTR && varName.pwszVal) {
+                        item.name = varName.pwszVal;
+                    }
+                    PropVariantClear(&varName);
+                    pProps->Release();
+                }
+                if (item.name.empty()) item.name = L"Audio Output";
+                item.isFxVirtual = ContainsCaseInsensitive(item.name, L"fxsound");
+                if (item.isDefault && item.isFxVirtual && !outFxExePath.empty()) {
+                    outFxSoundManaging = true;
+                }
+                outDevices.push_back(std::move(item));
+                pDev->Release();
+            }
+        }
+        pColl->Release();
+    }
+    pEnum->Release();
+
+    if (outFxSoundManaging) {
+        std::wstring fxOutId, fxOutName;
+        bool fxPowerOn = true;
+        ReadFxSoundActiveOutput(fxOutId, fxOutName, fxPowerOn);
+        if (!fxPowerOn) {
+            outFxSoundManaging = false;
+        } else {
+            for (auto& d : outDevices) {
+                if (!d.isFxVirtual) {
+                    if ((!fxOutId.empty() && _wcsicmp(d.id.c_str(), fxOutId.c_str()) == 0) ||
+                        (!fxOutName.empty() && _wcsicmp(d.name.c_str(), fxOutName.c_str()) == 0)) {
+                        d.isFxTarget = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    // Keep stable order: FxSound virtual device (if default/managing) at top, then alphabetical physical speakers
+    std::stable_sort(outDevices.begin(), outDevices.end(),
+                     [&](const AudioOutputDeviceItem& a, const AudioOutputDeviceItem& b) {
+                         if (outFxSoundManaging) {
+                             if (a.isFxVirtual != b.isFxVirtual) return a.isFxVirtual;
+                         }
+                         return _wcsicmp(a.name.c_str(), b.name.c_str()) < 0;
+                     });
+}
+
+bool SetDefaultAudioOutputDevice(const std::wstring& deviceId) {
+    if (deviceId.empty()) return false;
+    IPolicyConfig* pPolicy = nullptr;
+    HRESULT hr = CoCreateInstance(kClsidPolicyConfigClient, nullptr, CLSCTX_ALL,
+                                  kIidIPolicyConfig, reinterpret_cast<void**>(&pPolicy));
+    if (FAILED(hr) || !pPolicy) return false;
+
+    pPolicy->SetDefaultEndpoint(deviceId.c_str(), eConsole);
+    pPolicy->SetDefaultEndpoint(deviceId.c_str(), eMultimedia);
+    pPolicy->Release();
+
+    RebindAudioEndpointVolume();
+    return true;
+}
+
+// Dynamic wlanapi.dll bindings (no link dependency on wlanapi.lib)
+struct WifiNetworkItem {
+    std::wstring ssid;
+    std::wstring profileName;
+    ULONG signalQuality = 0;
+    bool isConnected = false;
+    bool hasProfile = false;
+    bool isSecured = false;
+    GUID ifaceGuid{};
+};
+
+struct WlanApiFuncs {
+    HMODULE hMod = nullptr;
+    using WlanOpenHandle_t = DWORD(WINAPI*)(DWORD, PVOID, PDWORD, PHANDLE);
+    using WlanCloseHandle_t = DWORD(WINAPI*)(HANDLE, PVOID);
+    using WlanEnumInterfaces_t = DWORD(WINAPI*)(HANDLE, PVOID, PWLAN_INTERFACE_INFO_LIST*);
+    using WlanGetAvailableNetworkList_t = DWORD(WINAPI*)(HANDLE, const GUID*, DWORD, PVOID, PWLAN_AVAILABLE_NETWORK_LIST*);
+    using WlanScan_t = DWORD(WINAPI*)(HANDLE, const GUID*, const PDOT11_SSID, const PWLAN_RAW_DATA, PVOID);
+    using WlanConnect_t = DWORD(WINAPI*)(HANDLE, const GUID*, const PWLAN_CONNECTION_PARAMETERS, PVOID);
+    using WlanDisconnect_t = DWORD(WINAPI*)(HANDLE, const GUID*, PVOID);
+    using WlanFreeMemory_t = VOID(WINAPI*)(PVOID);
+
+    WlanOpenHandle_t OpenHandle = nullptr;
+    WlanCloseHandle_t CloseHandle = nullptr;
+    WlanEnumInterfaces_t EnumInterfaces = nullptr;
+    WlanGetAvailableNetworkList_t GetAvailableNetworkList = nullptr;
+    WlanScan_t Scan = nullptr;
+    WlanConnect_t Connect = nullptr;
+    WlanDisconnect_t Disconnect = nullptr;
+    WlanFreeMemory_t FreeMemory = nullptr;
+
+    bool EnsureLoaded() {
+        if (OpenHandle) return true;
+        if (!hMod) {
+            hMod = LoadLibraryExW(L"wlanapi.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+        }
+        if (!hMod) return false;
+        OpenHandle = reinterpret_cast<WlanOpenHandle_t>(GetProcAddress(hMod, "WlanOpenHandle"));
+        CloseHandle = reinterpret_cast<WlanCloseHandle_t>(GetProcAddress(hMod, "WlanCloseHandle"));
+        EnumInterfaces = reinterpret_cast<WlanEnumInterfaces_t>(GetProcAddress(hMod, "WlanEnumInterfaces"));
+        GetAvailableNetworkList = reinterpret_cast<WlanGetAvailableNetworkList_t>(GetProcAddress(hMod, "WlanGetAvailableNetworkList"));
+        Scan = reinterpret_cast<WlanScan_t>(GetProcAddress(hMod, "WlanScan"));
+        Connect = reinterpret_cast<WlanConnect_t>(GetProcAddress(hMod, "WlanConnect"));
+        Disconnect = reinterpret_cast<WlanDisconnect_t>(GetProcAddress(hMod, "WlanDisconnect"));
+        FreeMemory = reinterpret_cast<WlanFreeMemory_t>(GetProcAddress(hMod, "WlanFreeMemory"));
+        return OpenHandle && CloseHandle && EnumInterfaces && GetAvailableNetworkList && FreeMemory;
+    }
+
+    void Unload() {
+        if (hMod) {
+            FreeLibrary(hMod);
+            hMod = nullptr;
+        }
+        OpenHandle = nullptr;
+        CloseHandle = nullptr;
+        EnumInterfaces = nullptr;
+        GetAvailableNetworkList = nullptr;
+        Scan = nullptr;
+        Connect = nullptr;
+        Disconnect = nullptr;
+        FreeMemory = nullptr;
+    }
+};
+
+WlanApiFuncs g_wlanApi;
+
+std::wstring SsidBytesToWstring(const DOT11_SSID& s) {
+    if (s.uSSIDLength == 0) return L"";
+    int len = static_cast<int>(std::min<ULONG>(s.uSSIDLength, DOT11_SSID_MAX_LENGTH));
+    int wlen = MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(s.ucSSID), len, nullptr, 0);
+    if (wlen <= 0) return L"";
+    std::wstring out(static_cast<size_t>(wlen), L'\0');
+    MultiByteToWideChar(CP_UTF8, 0, reinterpret_cast<const char*>(s.ucSSID), len, out.data(), wlen);
+    return out;
+}
+
+void QueryWifiNetworks(bool& outHasAdapter, std::vector<WifiNetworkItem>& outNetworks, bool triggerScan) {
+    outHasAdapter = false;
+    outNetworks.clear();
+    if (!g_wlanApi.EnsureLoaded()) return;
+
+    DWORD negVer = 0;
+    HANDLE hClient = nullptr;
+    if (g_wlanApi.OpenHandle(2, nullptr, &negVer, &hClient) != ERROR_SUCCESS || !hClient) return;
+
+    PWLAN_INTERFACE_INFO_LIST pIfList = nullptr;
+    if (g_wlanApi.EnumInterfaces(hClient, nullptr, &pIfList) == ERROR_SUCCESS && pIfList) {
+        outHasAdapter = (pIfList->dwNumberOfItems > 0);
+        std::unordered_map<std::wstring, WifiNetworkItem> dedup;
+        for (DWORD i = 0; i < pIfList->dwNumberOfItems; ++i) {
+            const GUID& guid = pIfList->InterfaceInfo[i].InterfaceGuid;
+            if (triggerScan && g_wlanApi.Scan) {
+                g_wlanApi.Scan(hClient, &guid, nullptr, nullptr, nullptr);
+            }
+            PWLAN_AVAILABLE_NETWORK_LIST pNetList = nullptr;
+            if (g_wlanApi.GetAvailableNetworkList(hClient, &guid, 0, nullptr, &pNetList) == ERROR_SUCCESS && pNetList) {
+                for (DWORD j = 0; j < pNetList->dwNumberOfItems; ++j) {
+                    const WLAN_AVAILABLE_NETWORK& n = pNetList->Network[j];
+                    std::wstring ssid = SsidBytesToWstring(n.dot11Ssid);
+                    if (ssid.empty()) continue;
+
+                    WifiNetworkItem item{};
+                    item.ssid = ssid;
+                    item.profileName = n.strProfileName;
+                    item.signalQuality = n.wlanSignalQuality;
+                    item.isConnected = (n.dwFlags & WLAN_AVAILABLE_NETWORK_CONNECTED) != 0;
+                    item.hasProfile = (n.dwFlags & WLAN_AVAILABLE_NETWORK_HAS_PROFILE) != 0 || !item.profileName.empty();
+                    item.isSecured = (n.bSecurityEnabled != FALSE);
+                    item.ifaceGuid = guid;
+
+                    auto it = dedup.find(ssid);
+                    if (it == dedup.end()) {
+                        dedup.emplace(ssid, std::move(item));
+                    } else {
+                        auto& cur = it->second;
+                        if (item.isConnected && !cur.isConnected) {
+                            cur = std::move(item);
+                        } else if (item.isConnected == cur.isConnected) {
+                            if (item.hasProfile && !cur.hasProfile) {
+                                cur.hasProfile = true;
+                                if (!item.profileName.empty()) cur.profileName = item.profileName;
+                            }
+                            if (item.signalQuality > cur.signalQuality) {
+                                cur.signalQuality = item.signalQuality;
+                            }
+                        }
+                    }
+                }
+                g_wlanApi.FreeMemory(pNetList);
+            }
+        }
+        g_wlanApi.FreeMemory(pIfList);
+
+        outNetworks.reserve(dedup.size());
+        for (auto& kv : dedup) {
+            outNetworks.push_back(std::move(kv.second));
+        }
+        std::sort(outNetworks.begin(), outNetworks.end(),
+                  [](const WifiNetworkItem& a, const WifiNetworkItem& b) {
+                      if (a.isConnected != b.isConnected) return a.isConnected;
+                      if (a.hasProfile != b.hasProfile) return a.hasProfile;
+                      if (a.signalQuality != b.signalQuality) return a.signalQuality > b.signalQuality;
+                      return a.ssid < b.ssid;
+                  });
+    }
+    g_wlanApi.CloseHandle(hClient, nullptr);
+}
+
+bool ConnectOrDisconnectWifiItem(const WifiNetworkItem& item) {
+    if (!g_wlanApi.EnsureLoaded()) return false;
+    DWORD negVer = 0;
+    HANDLE hClient = nullptr;
+    if (g_wlanApi.OpenHandle(2, nullptr, &negVer, &hClient) != ERROR_SUCCESS || !hClient) return false;
+
+    bool ok = false;
+    if (item.isConnected) {
+        if (g_wlanApi.Disconnect) {
+            ok = (g_wlanApi.Disconnect(hClient, &item.ifaceGuid, nullptr) == ERROR_SUCCESS);
+        }
+    } else if (item.hasProfile && !item.profileName.empty() && g_wlanApi.Connect) {
+        WLAN_CONNECTION_PARAMETERS params{};
+        params.wlanConnectionMode = wlan_connection_mode_profile;
+        params.strProfile = item.profileName.c_str();
+        params.pDot11Ssid = nullptr;
+        params.pDesiredBssidList = nullptr;
+        params.dot11BssType = dot11_BSS_type_any;
+        params.dwFlags = 0;
+        ok = (g_wlanApi.Connect(hClient, &item.ifaceGuid, &params, nullptr) == ERROR_SUCCESS);
+    }
+    g_wlanApi.CloseHandle(hClient, nullptr);
+    return ok;
+}
+
+bool DetectNetworkState(GetIfTable2_t pGetIfTable2, FreeMibTable_t pFreeMibTable,
+                        bool& outWifi, bool& outEthernet, bool& outConnected) {
+    outWifi = false;
+    outEthernet = false;
+    outConnected = false;
+    if (!pGetIfTable2 || !pFreeMibTable) return false;
+
+    PVOID rawTable = nullptr;
+    if (pGetIfTable2(&rawTable) != 0 || !rawTable) return false;
+
+    const auto* base = static_cast<const uint8_t*>(rawTable);
+    ULONG numEntries = 0;
+    memcpy(&numEntries, base, sizeof(numEntries));
+
+    for (ULONG i = 0; i < numEntries; i++) {
+        const uint8_t* row = base + kMibIfTable2TableOffset + static_cast<size_t>(i) * kMibIfRow2Size;
+        ULONG type = 0, operStatus = 0;
+        uint8_t flags = row[kMibIfRow2FlagsOffset];
+        memcpy(&type, row + kMibIfRow2TypeOffset, sizeof(type));
+        memcpy(&operStatus, row + kMibIfRow2OperStatusOffset, sizeof(operStatus));
+
+        if (type == 24) continue;       // IF_TYPE_SOFTWARE_LOOPBACK
+        if ((flags & 0x01) == 0) continue; // Require HardwareInterface (excludes Hyper-V vEthernet, vSwitch, WSL, VPN)
+        if (flags & 0x02) continue;        // Exclude FilterInterface
+        if ((flags & 0x04) == 0) continue; // Require physical ConnectorPresent
+        if (flags & 0x10) continue;        // Exclude NotMediaConnected
+        ULONG mediaConn = 0;
+        memcpy(&mediaConn, row + kMibIfRow2MediaConnOffset, sizeof(mediaConn));
+        if (mediaConn != 1) continue;      // Require MediaConnectStateConnected
+        if (operStatus == 1) {             // IfOperStatusUp
+            outConnected = true;
+            if (type == 71) {              // IF_TYPE_IEEE80211 (Physical Wi-Fi)
+                outWifi = true;
+            } else if (type == 6) {        // IF_TYPE_ETHERNET_CSMACD (Physical Wired Ethernet)
+                outEthernet = true;
+            }
+        }
+    }
+    pFreeMibTable(rawTable);
+    return true;
+}
+
+enum class TrayHoverZone { None, Wifi, Audio };
+
+struct SecondaryTrayInstance {
+    HWND hSecondaryTray = nullptr;  // Shell_SecondaryTrayWnd
+    HWND hTrayWidget = nullptr;     // Independent Wi-Fi + Audio tray cluster
+    HWND hStatsWidget = nullptr;    // Optional system stats (CPU GPU RAM Net Ping)
+    TrayHoverZone hoverZone = TrayHoverZone::None;
+    TrayHoverZone lastHoverZone = TrayHoverZone::None;
+    float wifiHoverAlpha = 0.0f;
+    float audioHoverAlpha = 0.0f;
+    float animTrayX = 0.0f;
+    bool hasAnimTrayX = false;
+    float animStatsX = 0.0f;
+    bool hasAnimStatsX = false;
+    int lastTrayX = -99999, lastTrayY = -99999;
+    int lastTrayW = 0, lastTrayH = 0;
+    int lastStatsX = -99999, lastStatsY = -99999;
+    int lastStatsW = 0, lastStatsH = 0;
+    bool lastLightTheme = false;
+    float lastDpi = 0.0f;
+    int lastVolumePercent = -1;
+    bool lastMuted = false;
+    bool lastHasWifi = false;
+    bool lastHasEthernet = false;
+    bool lastWifiPopupOpen = false;
+    bool lastAudioPopupOpen = false;
+    ULONGLONG lastTrayZTick = 0;
+    ULONGLONG lastStatsZTick = 0;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// Independent Fluent UI Popups for Secondary Monitor (Wi-Fi & Audio)
+// Completely self-contained on the clicked secondary monitor (zero impact on primary monitor)
+
+constexpr PCWSTR kSecAudioPopupClassName = L"VnLunarSecondaryAudioPopupWnd";
+constexpr PCWSTR kSecWifiPopupClassName = L"VnLunarSecondaryWifiPopupWnd";
+
+ID2D1Factory* g_secPopupD2dFactory = nullptr;
+IDWriteTextFormat* g_secPopupFmtTitle = nullptr;
+IDWriteTextFormat* g_secPopupFmtBody = nullptr;
+IDWriteTextFormat* g_secPopupFmtSmall = nullptr;
+IDWriteTextFormat* g_secPopupFmtIcon = nullptr;
+IDWriteTextFormat* g_secPopupFmtCenter = nullptr;
+IDWriteTextFormat* g_secPopupFmtRight = nullptr;
+
+HWND g_secAudioPopupHwnd = nullptr;
+HWND g_secWifiPopupHwnd = nullptr;
+ULONGLONG g_lastPopupDeactivateTick = 0;
+int g_lastDeactivatedPopupKind = 0; // 1 = Wifi, 2 = Audio
+HWND g_lastDeactivatedAnchor = nullptr;
+
+struct TaskbarPopupPalette {
+    D2D1_COLOR_F bg{};
+    D2D1_COLOR_F border{};
+    D2D1_COLOR_F card{};
+    D2D1_COLOR_F hover{};
+    D2D1_COLOR_F text{};
+    D2D1_COLOR_F sub{};
+    D2D1_COLOR_F accent{};
+    D2D1_COLOR_F trackBg{};
+    D2D1_COLOR_F ok{};
+    D2D1_COLOR_F mute{};
+    bool isLight = false;
+};
+
+struct AudioPopupState {
+    HWND anchorWidget = nullptr;
+    HWND anchorTaskbar = nullptr;
+    RECT lockedWidgetRect{};
+    RECT lockedTaskbarRect{};
+    RECT lockedMonitorRect{};
+    float dpi = 96.0f;
+    bool lightTheme = false;
+    TaskbarPopupPalette palette{};
+    bool draggingSlider = false;
+    int hoverId = 0; // 1=settings, 2=mute, 3=slider, 4=mixer, 5=soundSettings, 100+i=device row
+    int scrollOffset = 0;
+    bool fxSoundManaging = false;
+    std::wstring fxExePath;
+    std::vector<AudioOutputDeviceItem> devices;
+    // Cached layout rects in DIPs
+    float dipW = 320.0f;
+    float dipH = 220.0f;
+    D2D1_RECT_F rcHeaderSettings{};
+    D2D1_RECT_F rcMuteBtn{};
+    D2D1_RECT_F rcSliderHit{};
+    D2D1_RECT_F rcSliderTrack{};
+    D2D1_RECT_F rcFooterLeft{};
+    D2D1_RECT_F rcFooterRight{};
+    float devicesTopDip = 132.0f;
+    float deviceRowHDip = 36.0f;
+    int maxVisibleDevices = 5;
+};
+
+struct WifiPopupState {
+    HWND anchorWidget = nullptr;
+    HWND anchorTaskbar = nullptr;
+    RECT lockedWidgetRect{};
+    RECT lockedTaskbarRect{};
+    RECT lockedMonitorRect{};
+    float dpi = 96.0f;
+    bool lightTheme = false;
+    TaskbarPopupPalette palette{};
+    bool hasAdapter = false;
+    bool hasEthernet = false;
+    int hoverId = 0; // 1=refresh, 2=settings, 3=netSettings, 4=wifiSettings, 100+i=wifi row
+    int scrollOffset = 0;
+    std::wstring statusNotice;
+    ULONGLONG statusNoticeExpireTick = 0;
+    std::vector<WifiNetworkItem> networks;
+    // Cached layout rects in DIPs
+    float dipW = 320.0f;
+    float dipH = 260.0f;
+    D2D1_RECT_F rcRefreshBtn{};
+    D2D1_RECT_F rcSettingsBtn{};
+    D2D1_RECT_F rcFooterLeft{};
+    D2D1_RECT_F rcFooterRight{};
+    float listTopDip = 52.0f;
+    float rowHDip = 46.0f;
+    int maxVisibleRows = 6;
+};
+
+AudioPopupState g_audioPopupState;
+WifiPopupState g_wifiPopupState;
+
+bool IsLightTaskbarThemeForPopup() {
+    HKEY hKey = nullptr;
+    DWORD val = 0;
+    if (RegOpenKeyExW(HKEY_CURRENT_USER,
+                      L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                      0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+        DWORD sz = sizeof(val), type = 0;
+        if (RegQueryValueExW(hKey, L"SystemUsesLightTheme", nullptr, &type,
+                             reinterpret_cast<LPBYTE>(&val), &sz) != ERROR_SUCCESS || type != REG_DWORD) {
+            val = 0;
+        }
+        RegCloseKey(hKey);
+    }
+    return val != 0;
+}
+
+TaskbarPopupPalette ResolveTaskbarPopupPalette(HWND anchorWidget, HWND anchorTaskbar) {
+    // 1. Read Windows Personalize & AccentPalette
+    bool sysLight = IsLightTaskbarThemeForPopup();
+    bool colorPrevalence = false;
+    {
+        HKEY hKey = nullptr;
+        if (RegOpenKeyExW(HKEY_CURRENT_USER,
+                          L"Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize",
+                          0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+            DWORD val = 0, sz = sizeof(val), type = 0;
+            if (RegQueryValueExW(hKey, L"ColorPrevalence", nullptr, &type,
+                                 reinterpret_cast<LPBYTE>(&val), &sz) == ERROR_SUCCESS && type == REG_DWORD) {
+                colorPrevalence = (val != 0);
+            }
+            RegCloseKey(hKey);
+        }
+    }
+
+    bool hasPalette = false;
+    uint8_t pal[32]{}; // 8 shades x 4 bytes (R, G, B, A): 0=Light3, 1=Light2, 2=Light1, 3=Base, 4=Dark1, 5=Dark2, 6=Dark3
+    {
+        HKEY hKey = nullptr;
+        if (RegOpenKeyExW(HKEY_CURRENT_USER,
+                          L"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Accent",
+                          0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+            DWORD sz = sizeof(pal), type = 0;
+            if (RegQueryValueExW(hKey, L"AccentPalette", nullptr, &type, pal, &sz) == ERROR_SUCCESS &&
+                type == REG_BINARY && sz >= 28) {
+                hasPalette = true;
+            }
+            RegCloseKey(hKey);
+        }
+    }
+
+    // 2. Live-sample actual taskbar pixel color from Shell_SecondaryTrayWnd (handles Accent, Mica, Light/Dark, custom stylers)
+    bool sampledOk = false;
+    float bgR = sysLight ? 0.95f : 0.13f;
+    float bgG = sysLight ? 0.95f : 0.13f;
+    float bgB = sysLight ? 0.96f : 0.14f;
+
+    if (colorPrevalence && hasPalette) {
+        // Shade 5 (AccentDark2) is Windows' exact taskbar accent surface fallback
+        bgR = pal[5 * 4 + 0] / 255.0f;
+        bgG = pal[5 * 4 + 1] / 255.0f;
+        bgB = pal[5 * 4 + 2] / 255.0f;
+    }
+
+    RECT rcTb{}, rcW{};
+    bool hasTb = (anchorTaskbar && IsWindow(anchorTaskbar) && GetWindowRect(anchorTaskbar, &rcTb));
+    bool hasW = (anchorWidget && IsWindow(anchorWidget) && GetWindowRect(anchorWidget, &rcW));
+    if (hasTb && (rcTb.right - rcTb.left) > 40 && (rcTb.bottom - rcTb.top) > 16) {
+        HDC hdcScreen = GetDC(nullptr);
+        if (hdcScreen) {
+            std::vector<int> rs, gs, bs;
+            int yTop = rcTb.top + 2;
+            int yBot = rcTb.bottom - 3;
+            int xProbe1 = hasW ? (rcW.left - 5) : (rcTb.right - 20);
+            int xProbe2 = hasW ? (rcW.left - 14) : (rcTb.right - 36);
+            int xProbe3 = rcTb.right - 3;
+
+            POINT pts[5] = {
+                { std::clamp(xProbe1, static_cast<int>(rcTb.left + 2), static_cast<int>(rcTb.right - 2)), yTop },
+                { std::clamp(xProbe1, static_cast<int>(rcTb.left + 2), static_cast<int>(rcTb.right - 2)), yBot },
+                { std::clamp(xProbe2, static_cast<int>(rcTb.left + 2), static_cast<int>(rcTb.right - 2)), yTop },
+                { std::clamp(xProbe2, static_cast<int>(rcTb.left + 2), static_cast<int>(rcTb.right - 2)), yBot },
+                { std::clamp(xProbe3, static_cast<int>(rcTb.left + 2), static_cast<int>(rcTb.right - 2)), yBot }
+            };
+            for (const auto& pt : pts) {
+                COLORREF c = GetPixel(hdcScreen, pt.x, pt.y);
+                if (c != CLR_INVALID) {
+                    rs.push_back(GetRValue(c));
+                    gs.push_back(GetGValue(c));
+                    bs.push_back(GetBValue(c));
+                }
+            }
+            ReleaseDC(nullptr, hdcScreen);
+
+            if (rs.size() >= 3) {
+                std::sort(rs.begin(), rs.end());
+                std::sort(gs.begin(), gs.end());
+                std::sort(bs.begin(), bs.end());
+                size_t mid = rs.size() / 2;
+                int mr = rs[mid], mg = gs[mid], mb = bs[mid];
+                // Accept sampled color unless it's an obvious pure-black capture failure on a light/colored taskbar
+                bool suspectBlack = (mr == 0 && mg == 0 && mb == 0) && (sysLight || colorPrevalence);
+                if (!suspectBlack) {
+                    bgR = mr / 255.0f;
+                    bgG = mg / 255.0f;
+                    bgB = mb / 255.0f;
+                    sampledOk = true;
+                }
+            }
+        }
+    }
+    (void)sampledOk;
+
+    float bgLuma = 0.299f * bgR + 0.587f * bgG + 0.114f * bgB;
+    bool isLight = (bgLuma > 0.56f);
+
+    // 3. Resolve harmonizing Accent color with guaranteed contrast against taskbar background
+    float acR = isLight ? 0.00f : 0.38f;
+    float acG = isLight ? 0.40f : 0.80f;
+    float acB = isLight ? 0.75f : 1.00f;
+    if (hasPalette) {
+        int shadeIdx = isLight ? 4 : 1; // Dark1 on light surface, Light2 on dark/colored surface
+        acR = pal[shadeIdx * 4 + 0] / 255.0f;
+        acG = pal[shadeIdx * 4 + 1] / 255.0f;
+        acB = pal[shadeIdx * 4 + 2] / 255.0f;
+    }
+    float acLuma = 0.299f * acR + 0.587f * acG + 0.114f * acB;
+    if (!isLight && (acLuma - bgLuma) < 0.32f) {
+        // Boost accent brightness so sliders & links pop crisply on dark/colored taskbar backgrounds
+        acR = std::min(1.0f, acR * 0.55f + 0.45f);
+        acG = std::min(1.0f, acG * 0.55f + 0.45f);
+        acB = std::min(1.0f, acB * 0.55f + 0.45f);
+    } else if (isLight && (bgLuma - acLuma) < 0.28f) {
+        acR *= 0.62f;
+        acG *= 0.62f;
+        acB *= 0.62f;
+    }
+
+    TaskbarPopupPalette p{};
+    p.isLight = isLight;
+    p.bg = D2D1::ColorF(bgR, bgG, bgB, 0.97f);
+    p.border = isLight ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.15f) : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.15f);
+    p.card = isLight ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.055f) : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.075f);
+    p.hover = isLight ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.095f) : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.125f);
+    p.text = isLight ? D2D1::ColorF(0.07f, 0.07f, 0.08f, 0.96f) : D2D1::ColorF(0.97f, 0.97f, 0.98f, 0.97f);
+    p.sub = isLight ? D2D1::ColorF(0.28f, 0.28f, 0.31f, 0.86f) : D2D1::ColorF(0.88f, 0.88f, 0.90f, 0.76f);
+    p.accent = D2D1::ColorF(acR, acG, acB, 1.0f);
+    p.trackBg = isLight ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.20f) : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.24f);
+    p.ok = isLight ? D2D1::ColorF(0.06f, 0.54f, 0.24f, 1.0f) : D2D1::ColorF(0.45f, 0.90f, 0.56f, 1.0f);
+    p.mute = isLight ? D2D1::ColorF(0.82f, 0.18f, 0.18f, 0.95f) : D2D1::ColorF(1.00f, 0.48f, 0.48f, 0.96f);
+    return p;
+}
+
+bool PtInD2DRect(float x, float y, const D2D1_RECT_F& r) {
+    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+}
+
+void CaptureLockedPopupAnchor(HWND anchorWidget, HWND anchorTaskbar,
+                              RECT& outWidget, RECT& outTaskbar, RECT& outMonitor) {
+    outWidget = {};
+    outTaskbar = {};
+    outMonitor = {};
+    if (anchorWidget && IsWindow(anchorWidget)) GetWindowRect(anchorWidget, &outWidget);
+    if (anchorTaskbar && IsWindow(anchorTaskbar)) {
+        GetWindowRect(anchorTaskbar, &outTaskbar);
+    } else {
+        outTaskbar = outWidget;
+    }
+    HMONITOR hMon = MonitorFromWindow(
+        (anchorWidget && IsWindow(anchorWidget)) ? anchorWidget : anchorTaskbar,
+        MONITOR_DEFAULTTONEAREST);
+    MONITORINFO mi{};
+    mi.cbSize = sizeof(mi);
+    if (hMon && GetMonitorInfoW(hMon, &mi)) {
+        outMonitor = mi.rcMonitor;
+    } else {
+        outMonitor = outTaskbar;
+    }
+}
+
+void ComputeSecondaryPopupScreenPos(const RECT& rcWidget, const RECT& rcTaskbar, const RECT& rcMonitor,
+                                    float dpi, int pxW, int pxH, int& outX, int& outY) {
+    float scale = dpi / 96.0f;
+    int margin = static_cast<int>(10.0f * scale);
+    bool horizTb = (rcTaskbar.right - rcTaskbar.left) >= (rcTaskbar.bottom - rcTaskbar.top);
+
+    int desiredX = rcMonitor.right - pxW - margin;
+    int desiredY = rcTaskbar.top - pxH - margin;
+
+    if (horizTb) {
+        if (rcTaskbar.top >= (rcMonitor.top + rcMonitor.bottom) / 2) {
+            desiredY = rcTaskbar.top - pxH - margin;
+        } else {
+            desiredY = rcTaskbar.bottom + margin;
+        }
+    } else {
+        desiredY = rcWidget.bottom - pxH;
+        if (rcTaskbar.left >= (rcMonitor.left + rcMonitor.right) / 2) {
+            desiredX = rcTaskbar.left - pxW - margin;
+        } else {
+            desiredX = rcTaskbar.right + margin;
+        }
+    }
+
+    int minX = rcMonitor.left + 4;
+    int maxX = std::max<int>(minX, static_cast<int>(rcMonitor.right) - pxW - 4);
+    int minY = rcMonitor.top + 4;
+    int maxY = std::max<int>(minY, static_cast<int>(rcMonitor.bottom) - pxH - 4);
+
+    outX = std::clamp(desiredX, minX, maxX);
+    outY = std::clamp(desiredY, minY, maxY);
+}
+
+struct LayeredPopupSurface {
+    HDC hdcMem = nullptr;
+    HBITMAP hBmp = nullptr;
+    HGDIOBJ oldBmp = nullptr;
+    ID2D1DCRenderTarget* dcTarget = nullptr;
+    int pxW = 0;
+    int pxH = 0;
+    float dpi = 0.0f;
+    int baseX = 0;
+    int baseY = 0;
+    bool animActive = false;
+    ULONGLONG animStartTick = 0;
+    float animStartOffsetY = 0.0f;
+
+    void Release() {
+        if (dcTarget) { dcTarget->Release(); dcTarget = nullptr; }
+        if (hdcMem) {
+            if (oldBmp) { SelectObject(hdcMem, oldBmp); oldBmp = nullptr; }
+            if (hBmp) { DeleteObject(hBmp); hBmp = nullptr; }
+            DeleteDC(hdcMem);
+            hdcMem = nullptr;
+        }
+        pxW = pxH = 0;
+        dpi = 0.0f;
+        animActive = false;
+    }
+
+    bool Ensure(ID2D1Factory* factory, int w, int h, float newDpi) {
+        if (!factory || w <= 0 || h <= 0) return false;
+        if (!dcTarget || std::abs(newDpi - dpi) > 0.5f) {
+            if (dcTarget) { dcTarget->Release(); dcTarget = nullptr; }
+            D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties(
+                D2D1_RENDER_TARGET_TYPE_DEFAULT,
+                D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+                newDpi, newDpi);
+            if (FAILED(factory->CreateDCRenderTarget(&rtProps, &dcTarget)) || !dcTarget) return false;
+            dpi = newDpi;
+        }
+        if (!hdcMem || !hBmp || w != pxW || h != pxH) {
+            if (hdcMem) {
+                if (oldBmp) { SelectObject(hdcMem, oldBmp); oldBmp = nullptr; }
+                if (hBmp) { DeleteObject(hBmp); hBmp = nullptr; }
+                DeleteDC(hdcMem);
+                hdcMem = nullptr;
+            }
+            BITMAPINFO bmi{};
+            bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+            bmi.bmiHeader.biWidth = w;
+            bmi.bmiHeader.biHeight = -h;
+            bmi.bmiHeader.biPlanes = 1;
+            bmi.bmiHeader.biBitCount = 32;
+            bmi.bmiHeader.biCompression = BI_RGB;
+            void* bits = nullptr;
+            HDC hdcScreen = GetDC(nullptr);
+            hdcMem = CreateCompatibleDC(hdcScreen);
+            hBmp = CreateDIBSection(hdcMem, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
+            ReleaseDC(nullptr, hdcScreen);
+            if (!hdcMem || !hBmp) {
+                Release();
+                return false;
+            }
+            oldBmp = SelectObject(hdcMem, hBmp);
+            pxW = w;
+            pxH = h;
+        }
+        return true;
+    }
+
+    void Present(HWND hWnd, int posX, int posY, BYTE alpha) const {
+        if (!hWnd || !IsWindow(hWnd) || !hdcMem || pxW <= 0 || pxH <= 0) return;
+        HDC hdcScreen = GetDC(nullptr);
+        POINT ptDst{ posX, posY };
+        POINT ptSrc{ 0, 0 };
+        SIZE szWnd{ pxW, pxH };
+        BLENDFUNCTION blend{};
+        blend.BlendOp = AC_SRC_OVER;
+        blend.SourceConstantAlpha = alpha;
+        blend.AlphaFormat = AC_SRC_ALPHA;
+        UpdateLayeredWindow(hWnd, hdcScreen, &ptDst, &szWnd, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
+        ReleaseDC(nullptr, hdcScreen);
+    }
+
+    bool TickAnimation(HWND hWnd, ULONGLONG nowTick) {
+        if (!animActive) return false;
+        if (!hWnd || !IsWindow(hWnd) || !IsWindowVisible(hWnd)) {
+            animActive = false;
+            return false;
+        }
+        constexpr float kAnimDurationMs = 155.0f;
+        float elapsed = static_cast<float>(nowTick >= animStartTick ? (nowTick - animStartTick) : 0);
+        float t = std::clamp(elapsed / kAnimDurationMs, 0.0f, 1.0f);
+        float inv = 1.0f - t;
+        float ease = 1.0f - inv * inv * inv; // Cubic ease-out
+        int curY = baseY + static_cast<int>(std::round(animStartOffsetY * (1.0f - ease)));
+        BYTE alpha = static_cast<BYTE>(std::clamp(static_cast<int>(std::round(ease * 255.0f)), 24, 255));
+        Present(hWnd, baseX, curY, alpha);
+        if (t >= 1.0f) {
+            animActive = false;
+            return false;
+        }
+        return true;
+    }
+};
+
+LayeredPopupSurface g_audioPopupSurface;
+LayeredPopupSurface g_wifiPopupSurface;
+
+void RenderAudioPopup(bool presentNow = true) {
+    if (!g_secAudioPopupHwnd || !IsWindow(g_secAudioPopupHwnd) || !g_secPopupD2dFactory) return;
+
+    auto& st = g_audioPopupState;
+    ModSettings s = GetSettings();
+    bool vi = UseVietnameseLabels(s);
+
+    int visibleCount = static_cast<int>(std::min<size_t>(st.devices.size(), static_cast<size_t>(st.maxVisibleDevices)));
+    int maxScroll = std::max(0, static_cast<int>(st.devices.size()) - st.maxVisibleDevices);
+    st.scrollOffset = std::clamp(st.scrollOffset, 0, maxScroll);
+
+    st.dipW = 326.0f;
+    float volCardTop = 44.0f;
+    float volCardH = 56.0f;
+    float secLabelTop = volCardTop + volCardH + 10.0f;
+    st.devicesTopDip = secLabelTop + 22.0f;
+    st.deviceRowHDip = 36.0f;
+    float devicesH = visibleCount > 0 ? (visibleCount * st.deviceRowHDip + 4.0f) : 34.0f;
+    float footerTop = st.devicesTopDip + devicesH + 8.0f;
+    float footerH = 40.0f;
+    st.dipH = footerTop + footerH;
+
+    st.rcHeaderSettings = D2D1::RectF(st.dipW - 38.0f, 8.0f, st.dipW - 10.0f, 36.0f);
+    st.rcMuteBtn = D2D1::RectF(18.0f, volCardTop + 10.0f, 54.0f, volCardTop + 46.0f);
+    st.rcSliderTrack = D2D1::RectF(62.0f, volCardTop + 26.0f, st.dipW - 60.0f, volCardTop + 30.0f);
+    st.rcSliderHit = D2D1::RectF(56.0f, volCardTop + 10.0f, st.dipW - 54.0f, volCardTop + 46.0f);
+    st.rcFooterLeft = D2D1::RectF(10.0f, footerTop + 5.0f, st.dipW * 0.54f, footerTop + footerH - 6.0f);
+    st.rcFooterRight = D2D1::RectF(st.dipW * 0.56f, footerTop + 5.0f, st.dipW - 10.0f, footerTop + footerH - 6.0f);
+
+    float scale = st.dpi / 96.0f;
+    int pxW = std::max(100, static_cast<int>(std::ceil(st.dipW * scale)));
+    int pxH = std::max(100, static_cast<int>(std::ceil(st.dipH * scale)));
+
+    int posX = 0, posY = 0;
+    ComputeSecondaryPopupScreenPos(st.lockedWidgetRect, st.lockedTaskbarRect, st.lockedMonitorRect, st.dpi, pxW, pxH, posX, posY);
+    g_audioPopupSurface.baseX = posX;
+    g_audioPopupSurface.baseY = posY;
+
+    if (!g_audioPopupSurface.Ensure(g_secPopupD2dFactory, pxW, pxH, st.dpi)) return;
+    ID2D1DCRenderTarget* dcTarget = g_audioPopupSurface.dcTarget;
+    {
+        RECT rcBind{0, 0, pxW, pxH};
+        if (SUCCEEDED(dcTarget->BindDC(g_audioPopupSurface.hdcMem, &rcBind))) {
+            dcTarget->BeginDraw();
+            dcTarget->Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
+
+            ID2D1SolidColorBrush* brush = nullptr;
+            if (SUCCEEDED(dcTarget->CreateSolidColorBrush(D2D1::ColorF(1, 1, 1, 1), &brush)) && brush) {
+                const auto& pal = st.palette;
+                bool lt = pal.isLight;
+                D2D1_COLOR_F bgCol = pal.bg;
+                D2D1_COLOR_F borderCol = pal.border;
+                D2D1_COLOR_F cardCol = pal.card;
+                D2D1_COLOR_F hoverCol = pal.hover;
+                D2D1_COLOR_F textCol = pal.text;
+                D2D1_COLOR_F subCol = pal.sub;
+                D2D1_COLOR_F accentCol = pal.accent;
+                D2D1_COLOR_F trackBgCol = pal.trackBg;
+                D2D1_COLOR_F muteCol = pal.mute;
+
+                // Card background & border
+                D2D1_ROUNDED_RECT bgRR = D2D1::RoundedRect(D2D1::RectF(0.5f, 0.5f, st.dipW - 0.5f, st.dipH - 0.5f), 10.0f, 10.0f);
+                brush->SetColor(bgCol);
+                dcTarget->FillRoundedRectangle(bgRR, brush);
+                brush->SetColor(borderCol);
+                dcTarget->DrawRoundedRectangle(bgRR, brush, 1.0f);
+
+                // Header title
+                const wchar_t* title = vi ? L"Âm thanh" : L"Sound";
+                brush->SetColor(textCol);
+                dcTarget->DrawText(title, static_cast<UINT32>(wcslen(title)), g_secPopupFmtTitle,
+                                   D2D1::RectF(14.0f, 10.0f, st.dipW - 44.0f, 34.0f), brush);
+
+                // Header settings gear button
+                if (st.hoverId == 1) {
+                    brush->SetColor(hoverCol);
+                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(st.rcHeaderSettings, 6.0f, 6.0f), brush);
+                }
+                WCHAR gearGlyph[2] = { 0xE713, 0 };
+                brush->SetColor(subCol);
+                dcTarget->DrawText(gearGlyph, 1, g_secPopupFmtIcon, st.rcHeaderSettings, brush);
+
+                // Volume inner card
+                D2D1_ROUNDED_RECT volCardRR = D2D1::RoundedRect(
+                    D2D1::RectF(10.0f, volCardTop, st.dipW - 10.0f, volCardTop + volCardH), 8.0f, 8.0f);
+                brush->SetColor(cardCol);
+                dcTarget->FillRoundedRectangle(volCardRR, brush);
+
+                // Mute button
+                if (st.hoverId == 2) {
+                    brush->SetColor(hoverCol);
+                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(st.rcMuteBtn, 6.0f, 6.0f), brush);
+                }
+                float vol = std::clamp(g_liveMasterVolume.load(), 0.0f, 1.0f);
+                bool muted = g_liveMasterMuted.load();
+                WCHAR volGlyph[2]{};
+                if (muted || vol <= 0.001f) volGlyph[0] = 0xE74F;
+                else if (vol < 0.33f) volGlyph[0] = 0xE993;
+                else if (vol < 0.66f) volGlyph[0] = 0xE994;
+                else volGlyph[0] = 0xE995;
+                brush->SetColor(muted ? muteCol : textCol);
+                dcTarget->DrawText(volGlyph, 1, g_secPopupFmtIcon, st.rcMuteBtn, brush);
+
+                // Volume slider track
+                brush->SetColor(trackBgCol);
+                dcTarget->FillRoundedRectangle(D2D1::RoundedRect(st.rcSliderTrack, 2.0f, 2.0f), brush);
+
+                float trackW = st.rcSliderTrack.right - st.rcSliderTrack.left;
+                float effectiveVol = muted ? 0.0f : vol;
+                float fillRight = st.rcSliderTrack.left + trackW * effectiveVol;
+                if (fillRight > st.rcSliderTrack.left + 1.0f) {
+                    D2D1_RECT_F fillR = st.rcSliderTrack;
+                    fillR.right = fillRight;
+                    brush->SetColor(accentCol);
+                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(fillR, 2.0f, 2.0f), brush);
+                }
+
+                // Slider thumb
+                float thumbCx = fillRight;
+                float thumbCy = (st.rcSliderTrack.top + st.rcSliderTrack.bottom) * 0.5f;
+                float outerR = (st.draggingSlider || st.hoverId == 3) ? 9.0f : 8.0f;
+                float innerR = (st.draggingSlider || st.hoverId == 3) ? 5.2f : 4.2f;
+                brush->SetColor(lt ? D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f) : D2D1::ColorF(0.26f, 0.26f, 0.28f, 1.0f));
+                dcTarget->FillEllipse(D2D1::Ellipse(D2D1::Point2F(thumbCx, thumbCy), outerR, outerR), brush);
+                brush->SetColor(borderCol);
+                dcTarget->DrawEllipse(D2D1::Ellipse(D2D1::Point2F(thumbCx, thumbCy), outerR, outerR), brush, 1.0f);
+                brush->SetColor(muted ? subCol : accentCol);
+                dcTarget->FillEllipse(D2D1::Ellipse(D2D1::Point2F(thumbCx, thumbCy), innerR, innerR), brush);
+
+                // Volume % readout
+                int volPct = muted ? 0 : std::clamp(static_cast<int>(vol * 100.0f + 0.5f), 0, 100);
+                WCHAR pctBuf[16]{};
+                _snwprintf_s(pctBuf, _TRUNCATE, L"%d%%", volPct);
+                brush->SetColor(muted ? muteCol : textCol);
+                dcTarget->DrawText(pctBuf, static_cast<UINT32>(wcslen(pctBuf)), g_secPopupFmtRight,
+                                   D2D1::RectF(st.dipW - 54.0f, volCardTop + 16.0f, st.dipW - 16.0f, volCardTop + 40.0f), brush);
+
+                // Output devices section label
+                const wchar_t* devHdr = vi ? L"Thiết bị đầu ra" : L"Output device";
+                brush->SetColor(subCol);
+                dcTarget->DrawText(devHdr, static_cast<UINT32>(wcslen(devHdr)), g_secPopupFmtSmall,
+                                   D2D1::RectF(14.0f, secLabelTop, st.dipW - 14.0f, secLabelTop + 18.0f), brush);
+
+                if (st.devices.empty()) {
+                    const wchar_t* noDev = vi ? L"Không tìm thấy thiết bị âm thanh" : L"No audio output devices found";
+                    brush->SetColor(subCol);
+                    dcTarget->DrawText(noDev, static_cast<UINT32>(wcslen(noDev)), g_secPopupFmtBody,
+                                       D2D1::RectF(14.0f, st.devicesTopDip + 4.0f, st.dipW - 14.0f, st.devicesTopDip + 28.0f), brush);
+                } else {
+                    for (int i = 0; i < visibleCount; ++i) {
+                        int idx = st.scrollOffset + i;
+                        if (idx >= static_cast<int>(st.devices.size())) break;
+                        const auto& dev = st.devices[idx];
+                        float y0 = st.devicesTopDip + i * st.deviceRowHDip;
+                        D2D1_RECT_F rowR = D2D1::RectF(10.0f, y0 + 2.0f, st.dipW - 10.0f, y0 + st.deviceRowHDip - 2.0f);
+
+                        bool highlightActive = dev.isDefault || dev.isFxTarget;
+                        if (st.hoverId == 100 + idx) {
+                            brush->SetColor(hoverCol);
+                            dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rowR, 6.0f, 6.0f), brush);
+                        } else if (highlightActive) {
+                            brush->SetColor(cardCol);
+                            dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rowR, 6.0f, 6.0f), brush);
+                        }
+
+                        if (dev.isDefault) {
+                            brush->SetColor(accentCol);
+                            dcTarget->FillRoundedRectangle(
+                                D2D1::RoundedRect(D2D1::RectF(14.0f, y0 + 9.0f, 17.5f, y0 + st.deviceRowHDip - 9.0f), 1.5f, 1.5f),
+                                brush);
+                        } else if (dev.isFxTarget) {
+                            brush->SetColor(pal.ok);
+                            dcTarget->FillRoundedRectangle(
+                                D2D1::RoundedRect(D2D1::RectF(14.0f, y0 + 10.0f, 17.5f, y0 + st.deviceRowHDip - 10.0f), 1.5f, 1.5f),
+                                brush);
+                        }
+
+                        WCHAR spkGlyph[2] = { 0xE7F5, 0 };
+                        brush->SetColor(dev.isDefault ? accentCol : (dev.isFxTarget ? pal.ok : subCol));
+                        dcTarget->DrawText(spkGlyph, 1, g_secPopupFmtIcon,
+                                           D2D1::RectF(22.0f, y0 + 4.0f, 44.0f, y0 + st.deviceRowHDip - 4.0f), brush);
+
+                        bool showBadge = st.fxSoundManaging && (dev.isDefault || dev.isFxTarget);
+                        float nameRightX = showBadge ? (st.dipW - 88.0f) : (st.dipW - 18.0f);
+                        brush->SetColor(highlightActive ? textCol : subCol);
+                        dcTarget->DrawText(dev.name.c_str(), static_cast<UINT32>(dev.name.size()), g_secPopupFmtBody,
+                                           D2D1::RectF(48.0f, y0 + 8.0f, nameRightX, y0 + st.deviceRowHDip - 6.0f),
+                                           brush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
+
+                        if (showBadge) {
+                            const wchar_t* badgeTxt = dev.isDefault
+                                                          ? (vi ? L"Chính" : L"Main")
+                                                          : (vi ? L"Đang phát" : L"Playing");
+                            brush->SetColor(dev.isDefault ? accentCol : pal.ok);
+                            dcTarget->DrawText(badgeTxt, static_cast<UINT32>(wcslen(badgeTxt)), g_secPopupFmtRight,
+                                               D2D1::RectF(st.dipW - 78.0f, y0 + 9.0f, st.dipW - 16.0f, y0 + st.deviceRowHDip - 7.0f),
+                                               brush);
+                        }
+                    }
+                }
+
+                // Footer divider
+                brush->SetColor(borderCol);
+                dcTarget->DrawLine(D2D1::Point2F(10.0f, footerTop), D2D1::Point2F(st.dipW - 10.0f, footerTop), brush, 1.0f);
+
+                // Footer left: Volume Mixer
+                if (st.hoverId == 4) {
+                    brush->SetColor(hoverCol);
+                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(st.rcFooterLeft, 6.0f, 6.0f), brush);
+                }
+                const wchar_t* mixerLbl = vi ? L"Bộ trộn âm lượng" : L"Volume Mixer";
+                brush->SetColor(subCol);
+                dcTarget->DrawText(mixerLbl, static_cast<UINT32>(wcslen(mixerLbl)), g_secPopupFmtCenter, st.rcFooterLeft, brush);
+
+                // Footer right: Sound Settings
+                if (st.hoverId == 5) {
+                    brush->SetColor(hoverCol);
+                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(st.rcFooterRight, 6.0f, 6.0f), brush);
+                }
+                const wchar_t* sndLbl = vi ? L"Cài đặt âm thanh" : L"Sound Settings";
+                brush->SetColor(accentCol);
+                dcTarget->DrawText(sndLbl, static_cast<UINT32>(wcslen(sndLbl)), g_secPopupFmtCenter, st.rcFooterRight, brush);
+
+                brush->Release();
+            }
+            dcTarget->EndDraw();
+
+            if (presentNow && !g_audioPopupSurface.animActive) {
+                g_audioPopupSurface.Present(g_secAudioPopupHwnd, posX, posY, 255);
+            }
+        }
+    }
+}
+
+void RenderWifiPopup(bool presentNow = true) {
+    if (!g_secWifiPopupHwnd || !IsWindow(g_secWifiPopupHwnd) || !g_secPopupD2dFactory) return;
+
+    auto& st = g_wifiPopupState;
+    ModSettings s = GetSettings();
+    bool vi = UseVietnameseLabels(s);
+
+    int visibleCount = static_cast<int>(std::min<size_t>(st.networks.size(), static_cast<size_t>(st.maxVisibleRows)));
+    int maxScroll = std::max(0, static_cast<int>(st.networks.size()) - st.maxVisibleRows);
+    st.scrollOffset = std::clamp(st.scrollOffset, 0, maxScroll);
+
+    st.dipW = 330.0f;
+    float headerH = 42.0f;
+    float curY = headerH + 2.0f;
+
+    bool showNotice = !st.statusNotice.empty() && GetTickCount64() < st.statusNoticeExpireTick;
+    float ethBannerH = st.hasEthernet ? 34.0f : 0.0f;
+    float noticeH = showNotice ? 26.0f : 0.0f;
+    st.listTopDip = curY + ethBannerH + (st.hasEthernet ? 6.0f : 0.0f) + noticeH;
+    st.rowHDip = 46.0f;
+    float listH = visibleCount > 0 ? (visibleCount * st.rowHDip + 4.0f) : 44.0f;
+    float footerTop = st.listTopDip + listH + 6.0f;
+    float footerH = 40.0f;
+    st.dipH = footerTop + footerH;
+
+    st.rcRefreshBtn = D2D1::RectF(st.dipW - 70.0f, 8.0f, st.dipW - 42.0f, 36.0f);
+    st.rcSettingsBtn = D2D1::RectF(st.dipW - 38.0f, 8.0f, st.dipW - 10.0f, 36.0f);
+    st.rcFooterLeft = D2D1::RectF(10.0f, footerTop + 5.0f, st.dipW * 0.50f - 2.0f, footerTop + footerH - 6.0f);
+    st.rcFooterRight = D2D1::RectF(st.dipW * 0.50f + 2.0f, footerTop + 5.0f, st.dipW - 10.0f, footerTop + footerH - 6.0f);
+
+    float scale = st.dpi / 96.0f;
+    int pxW = std::max(100, static_cast<int>(std::ceil(st.dipW * scale)));
+    int pxH = std::max(100, static_cast<int>(std::ceil(st.dipH * scale)));
+
+    int posX = 0, posY = 0;
+    ComputeSecondaryPopupScreenPos(st.lockedWidgetRect, st.lockedTaskbarRect, st.lockedMonitorRect, st.dpi, pxW, pxH, posX, posY);
+    g_wifiPopupSurface.baseX = posX;
+    g_wifiPopupSurface.baseY = posY;
+
+    if (!g_wifiPopupSurface.Ensure(g_secPopupD2dFactory, pxW, pxH, st.dpi)) return;
+    ID2D1DCRenderTarget* dcTarget = g_wifiPopupSurface.dcTarget;
+    {
+        RECT rcBind{0, 0, pxW, pxH};
+        if (SUCCEEDED(dcTarget->BindDC(g_wifiPopupSurface.hdcMem, &rcBind))) {
+            dcTarget->BeginDraw();
+            dcTarget->Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
+
+            ID2D1SolidColorBrush* brush = nullptr;
+            if (SUCCEEDED(dcTarget->CreateSolidColorBrush(D2D1::ColorF(1, 1, 1, 1), &brush)) && brush) {
+                const auto& pal = st.palette;
+                bool lt = pal.isLight;
+                D2D1_COLOR_F bgCol = pal.bg;
+                D2D1_COLOR_F borderCol = pal.border;
+                D2D1_COLOR_F cardCol = pal.card;
+                D2D1_COLOR_F hoverCol = pal.hover;
+                D2D1_COLOR_F textCol = pal.text;
+                D2D1_COLOR_F subCol = pal.sub;
+                D2D1_COLOR_F accentCol = pal.accent;
+                D2D1_COLOR_F okCol = pal.ok;
+
+                // Card background & border
+                D2D1_ROUNDED_RECT bgRR = D2D1::RoundedRect(D2D1::RectF(0.5f, 0.5f, st.dipW - 0.5f, st.dipH - 0.5f), 10.0f, 10.0f);
+                brush->SetColor(bgCol);
+                dcTarget->FillRoundedRectangle(bgRR, brush);
+                brush->SetColor(borderCol);
+                dcTarget->DrawRoundedRectangle(bgRR, brush, 1.0f);
+
+                // Header title
+                const wchar_t* title = vi ? L"Wi-Fi & Mạng" : L"Wi-Fi & Network";
+                brush->SetColor(textCol);
+                dcTarget->DrawText(title, static_cast<UINT32>(wcslen(title)), g_secPopupFmtTitle,
+                                   D2D1::RectF(14.0f, 10.0f, st.dipW - 76.0f, 34.0f), brush);
+
+                // Header Refresh button
+                if (st.hoverId == 1) {
+                    brush->SetColor(hoverCol);
+                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(st.rcRefreshBtn, 6.0f, 6.0f), brush);
+                }
+                WCHAR refGlyph[2] = { 0xE72C, 0 };
+                brush->SetColor(subCol);
+                dcTarget->DrawText(refGlyph, 1, g_secPopupFmtIcon, st.rcRefreshBtn, brush);
+
+                // Header Settings button
+                if (st.hoverId == 2) {
+                    brush->SetColor(hoverCol);
+                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(st.rcSettingsBtn, 6.0f, 6.0f), brush);
+                }
+                WCHAR gearGlyph[2] = { 0xE713, 0 };
+                brush->SetColor(subCol);
+                dcTarget->DrawText(gearGlyph, 1, g_secPopupFmtIcon, st.rcSettingsBtn, brush);
+
+                float yCursor = headerH + 2.0f;
+
+                // Ethernet status banner if connected
+                if (st.hasEthernet) {
+                    D2D1_RECT_F ethR = D2D1::RectF(10.0f, yCursor, st.dipW - 10.0f, yCursor + ethBannerH);
+                    brush->SetColor(cardCol);
+                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(ethR, 7.0f, 7.0f), brush);
+                    WCHAR ethGlyph[2] = { 0xE839, 0 };
+                    brush->SetColor(okCol);
+                    dcTarget->DrawText(ethGlyph, 1, g_secPopupFmtIcon,
+                                       D2D1::RectF(18.0f, yCursor + 4.0f, 42.0f, yCursor + ethBannerH - 4.0f), brush);
+                    const wchar_t* ethTxt = vi ? L"Ethernet — Đã kết nối" : L"Ethernet — Connected";
+                    brush->SetColor(textCol);
+                    dcTarget->DrawText(ethTxt, static_cast<UINT32>(wcslen(ethTxt)), g_secPopupFmtBody,
+                                       D2D1::RectF(48.0f, yCursor + 8.0f, st.dipW - 16.0f, yCursor + ethBannerH - 6.0f), brush);
+                    yCursor += ethBannerH + 6.0f;
+                }
+
+                // Inline status notice (e.g. Scanning / Connecting...)
+                if (showNotice) {
+                    brush->SetColor(accentCol);
+                    dcTarget->DrawText(st.statusNotice.c_str(), static_cast<UINT32>(st.statusNotice.size()), g_secPopupFmtSmall,
+                                       D2D1::RectF(14.0f, yCursor + 3.0f, st.dipW - 14.0f, yCursor + noticeH), brush);
+                }
+
+                // Wi-Fi networks list
+                if (!st.hasAdapter) {
+                    const wchar_t* noAd = vi ? L"Không tìm thấy bộ thu Wi-Fi" : L"No Wi-Fi adapter detected";
+                    brush->SetColor(subCol);
+                    dcTarget->DrawText(noAd, static_cast<UINT32>(wcslen(noAd)), g_secPopupFmtBody,
+                                       D2D1::RectF(14.0f, st.listTopDip + 10.0f, st.dipW - 14.0f, st.listTopDip + 36.0f), brush);
+                } else if (st.networks.empty()) {
+                    const wchar_t* noNet = vi ? L"Chưa tìm thấy mạng Wi-Fi khả dụng" : L"No Wi-Fi networks found";
+                    brush->SetColor(subCol);
+                    dcTarget->DrawText(noNet, static_cast<UINT32>(wcslen(noNet)), g_secPopupFmtBody,
+                                       D2D1::RectF(14.0f, st.listTopDip + 10.0f, st.dipW - 14.0f, st.listTopDip + 36.0f), brush);
+                } else {
+                    for (int i = 0; i < visibleCount; ++i) {
+                        int idx = st.scrollOffset + i;
+                        if (idx >= static_cast<int>(st.networks.size())) break;
+                        const auto& net = st.networks[idx];
+                        float y0 = st.listTopDip + i * st.rowHDip;
+                        D2D1_RECT_F rowR = D2D1::RectF(10.0f, y0 + 2.0f, st.dipW - 10.0f, y0 + st.rowHDip - 2.0f);
+
+                        bool hovered = (st.hoverId == 100 + idx);
+                        if (hovered) {
+                            brush->SetColor(hoverCol);
+                            dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rowR, 7.0f, 7.0f), brush);
+                        } else if (net.isConnected) {
+                            brush->SetColor(cardCol);
+                            dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rowR, 7.0f, 7.0f), brush);
+                        }
+
+                        if (net.isConnected) {
+                            brush->SetColor(accentCol);
+                            dcTarget->FillRoundedRectangle(
+                                D2D1::RoundedRect(D2D1::RectF(14.0f, y0 + 10.0f, 17.5f, y0 + st.rowHDip - 10.0f), 1.5f, 1.5f),
+                                brush);
+                        }
+
+                        // Signal strength glyph (4 levels)
+                        WCHAR wfGlyph[2]{};
+                        if (net.signalQuality >= 75) wfGlyph[0] = 0xE701;      // Full
+                        else if (net.signalQuality >= 50) wfGlyph[0] = 0xE874; // 3 bars
+                        else if (net.signalQuality >= 25) wfGlyph[0] = 0xE873; // 2 bars
+                        else wfGlyph[0] = 0xE872;                              // 1 bar
+
+                        brush->SetColor(net.isConnected ? accentCol : textCol);
+                        dcTarget->DrawText(wfGlyph, 1, g_secPopupFmtIcon,
+                                           D2D1::RectF(22.0f, y0 + 8.0f, 44.0f, y0 + st.rowHDip - 8.0f), brush);
+
+                        // SSID
+                        float rightColX = (hovered || net.isConnected) ? (st.dipW - 92.0f) : (st.dipW - 48.0f);
+                        brush->SetColor(textCol);
+                        dcTarget->DrawText(net.ssid.c_str(), static_cast<UINT32>(net.ssid.size()), g_secPopupFmtBody,
+                                           D2D1::RectF(48.0f, y0 + 6.0f, rightColX, y0 + 24.0f),
+                                           brush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
+
+                        // Subtitle (status + security)
+                        WCHAR subBuf[96]{};
+                        if (net.isConnected) {
+                            _snwprintf_s(subBuf, _TRUNCATE, vi ? L"Đã kết nối • %lu%%" : L"Connected • %lu%%", net.signalQuality);
+                        } else if (net.hasProfile) {
+                            _snwprintf_s(subBuf, _TRUNCATE, vi ? L"Đã lưu • %lu%%" : L"Saved • %lu%%", net.signalQuality);
+                        } else if (net.isSecured) {
+                            _snwprintf_s(subBuf, _TRUNCATE, vi ? L"Bảo mật • %lu%%" : L"Secured • %lu%%", net.signalQuality);
+                        } else {
+                            _snwprintf_s(subBuf, _TRUNCATE, vi ? L"Mở • %lu%%" : L"Open • %lu%%", net.signalQuality);
+                        }
+                        brush->SetColor(net.isConnected ? accentCol : subCol);
+                        dcTarget->DrawText(subBuf, static_cast<UINT32>(wcslen(subBuf)), g_secPopupFmtSmall,
+                                           D2D1::RectF(48.0f, y0 + 25.0f, rightColX, y0 + 41.0f),
+                                           brush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
+
+                        // Right action pill on hover or connected
+                        if (hovered || net.isConnected) {
+                            D2D1_RECT_F actR = D2D1::RectF(st.dipW - 88.0f, y0 + 11.0f, st.dipW - 16.0f, y0 + st.rowHDip - 11.0f);
+                            brush->SetColor(hovered ? (net.isConnected ? hoverCol : accentCol) : cardCol);
+                            dcTarget->FillRoundedRectangle(D2D1::RoundedRect(actR, 5.0f, 5.0f), brush);
+                            const wchar_t* actTxt = net.isConnected
+                                                        ? (vi ? L"Ngắt" : L"Disconnect")
+                                                        : (net.hasProfile ? (vi ? L"Kết nối" : L"Connect")
+                                                                          : (vi ? L"Cài đặt" : L"Settings"));
+                            bool darkTextOnAccent = hovered && !net.isConnected && !lt;
+                            brush->SetColor(darkTextOnAccent ? D2D1::ColorF(0.05f, 0.05f, 0.07f, 1.0f)
+                                                             : (hovered && !net.isConnected && lt ? D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f)
+                                                                                                  : textCol));
+                            dcTarget->DrawText(actTxt, static_cast<UINT32>(wcslen(actTxt)), g_secPopupFmtCenter, actR, brush);
+                        }
+                    }
+                }
+
+                // Footer divider
+                brush->SetColor(borderCol);
+                dcTarget->DrawLine(D2D1::Point2F(10.0f, footerTop), D2D1::Point2F(st.dipW - 10.0f, footerTop), brush, 1.0f);
+
+                // Footer left: Network & Internet
+                if (st.hoverId == 3) {
+                    brush->SetColor(hoverCol);
+                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(st.rcFooterLeft, 6.0f, 6.0f), brush);
+                }
+                const wchar_t* netLbl = vi ? L"Mạng & Internet" : L"Network Settings";
+                brush->SetColor(subCol);
+                dcTarget->DrawText(netLbl, static_cast<UINT32>(wcslen(netLbl)), g_secPopupFmtCenter, st.rcFooterLeft, brush);
+
+                // Footer right: Wi-Fi Settings
+                if (st.hoverId == 4) {
+                    brush->SetColor(hoverCol);
+                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(st.rcFooterRight, 6.0f, 6.0f), brush);
+                }
+                const wchar_t* wfLbl = vi ? L"Cài đặt Wi-Fi" : L"Wi-Fi Settings";
+                brush->SetColor(accentCol);
+                dcTarget->DrawText(wfLbl, static_cast<UINT32>(wcslen(wfLbl)), g_secPopupFmtCenter, st.rcFooterRight, brush);
+
+                brush->Release();
+            }
+            dcTarget->EndDraw();
+
+            if (presentNow && !g_wifiPopupSurface.animActive) {
+                g_wifiPopupSurface.Present(g_secWifiPopupHwnd, posX, posY, 255);
+            }
+        }
+    }
+}
+
+constexpr UINT_PTR kTimerRefreshAudioPopup = 101;
+constexpr UINT_PTR kTimerRefreshWifiPopup = 102;
+constexpr UINT_PTR kTimerClearWifiNotice = 103;
+
+void CloseAllSecondaryPopups() {
+    g_audioPopupSurface.animActive = false;
+    g_wifiPopupSurface.animActive = false;
+    if (g_secAudioPopupHwnd && IsWindow(g_secAudioPopupHwnd)) {
+        KillTimer(g_secAudioPopupHwnd, kTimerRefreshAudioPopup);
+        if (IsWindowVisible(g_secAudioPopupHwnd)) ShowWindow(g_secAudioPopupHwnd, SW_HIDE);
+    }
+    if (g_secWifiPopupHwnd && IsWindow(g_secWifiPopupHwnd)) {
+        KillTimer(g_secWifiPopupHwnd, kTimerRefreshWifiPopup);
+        KillTimer(g_secWifiPopupHwnd, kTimerClearWifiNotice);
+        if (IsWindowVisible(g_secWifiPopupHwnd)) ShowWindow(g_secWifiPopupHwnd, SW_HIDE);
+    }
+}
+
+void OpenOrToggleSecondaryAudioPopup(HWND hClickedWidget, HWND hSecTaskbar) {
+    if (!g_secAudioPopupHwnd || !IsWindow(g_secAudioPopupHwnd)) return;
+
+    // Anti-bounce if clicking the same tray icon right after WA_INACTIVE closed it
+    if (g_lastDeactivatedPopupKind == 2 && g_lastDeactivatedAnchor == hClickedWidget &&
+        (GetTickCount64() - g_lastPopupDeactivateTick) < 220) {
+        g_lastDeactivatedPopupKind = 0;
+        g_lastDeactivatedAnchor = nullptr;
+        return;
+    }
+
+    if (IsWindowVisible(g_secAudioPopupHwnd) && g_audioPopupState.anchorWidget == hClickedWidget) {
+        g_audioPopupSurface.animActive = false;
+        KillTimer(g_secAudioPopupHwnd, kTimerRefreshAudioPopup);
+        ShowWindow(g_secAudioPopupHwnd, SW_HIDE);
+        return;
+    }
+
+    if (g_secWifiPopupHwnd && IsWindowVisible(g_secWifiPopupHwnd)) {
+        g_wifiPopupSurface.animActive = false;
+        KillTimer(g_secWifiPopupHwnd, kTimerRefreshWifiPopup);
+        KillTimer(g_secWifiPopupHwnd, kTimerClearWifiNotice);
+        ShowWindow(g_secWifiPopupHwnd, SW_HIDE);
+    }
+
+    // Refresh audio endpoint & devices
+    InitAudioEndpoint();
+    RebindAudioEndpointVolume();
+    g_audioPopupState.anchorWidget = hClickedWidget;
+    g_audioPopupState.anchorTaskbar = hSecTaskbar;
+    CaptureLockedPopupAnchor(hClickedWidget, hSecTaskbar,
+                             g_audioPopupState.lockedWidgetRect,
+                             g_audioPopupState.lockedTaskbarRect,
+                             g_audioPopupState.lockedMonitorRect);
+    g_audioPopupState.dpi = static_cast<float>(GetWindowDpiSafe(hClickedWidget));
+    g_audioPopupState.palette = ResolveTaskbarPopupPalette(hClickedWidget, hSecTaskbar);
+    g_audioPopupState.lightTheme = g_audioPopupState.palette.isLight;
+    g_audioPopupState.hoverId = 0;
+    g_audioPopupState.draggingSlider = false;
+    g_audioPopupState.scrollOffset = 0;
+    EnumerateAudioOutputDevices(g_audioPopupState.devices, g_audioPopupState.fxSoundManaging, g_audioPopupState.fxExePath);
+
+    RenderAudioPopup(false);
+    float slideDip = 14.0f * (g_audioPopupState.dpi / 96.0f);
+    bool topTb = (g_audioPopupState.lockedTaskbarRect.top <
+                  (g_audioPopupState.lockedMonitorRect.top + g_audioPopupState.lockedMonitorRect.bottom) / 2);
+    g_audioPopupSurface.animStartOffsetY = topTb ? -slideDip : slideDip;
+    g_audioPopupSurface.animStartTick = GetTickCount64();
+    g_audioPopupSurface.animActive = true;
+    g_audioPopupSurface.Present(g_secAudioPopupHwnd, g_audioPopupSurface.baseX,
+                                g_audioPopupSurface.baseY + static_cast<int>(std::round(g_audioPopupSurface.animStartOffsetY)), 24);
+    ShowWindow(g_secAudioPopupHwnd, SW_SHOW);
+    SetForegroundWindow(g_secAudioPopupHwnd);
+    if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+}
+
+void OpenOrToggleSecondaryWifiPopup(HWND hClickedWidget, HWND hSecTaskbar) {
+    if (!g_secWifiPopupHwnd || !IsWindow(g_secWifiPopupHwnd)) return;
+
+    if (g_lastDeactivatedPopupKind == 1 && g_lastDeactivatedAnchor == hClickedWidget &&
+        (GetTickCount64() - g_lastPopupDeactivateTick) < 220) {
+        g_lastDeactivatedPopupKind = 0;
+        g_lastDeactivatedAnchor = nullptr;
+        return;
+    }
+
+    if (IsWindowVisible(g_secWifiPopupHwnd) && g_wifiPopupState.anchorWidget == hClickedWidget) {
+        g_wifiPopupSurface.animActive = false;
+        KillTimer(g_secWifiPopupHwnd, kTimerRefreshWifiPopup);
+        KillTimer(g_secWifiPopupHwnd, kTimerClearWifiNotice);
+        ShowWindow(g_secWifiPopupHwnd, SW_HIDE);
+        return;
+    }
+
+    if (g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd)) {
+        g_audioPopupSurface.animActive = false;
+        KillTimer(g_secAudioPopupHwnd, kTimerRefreshAudioPopup);
+        ShowWindow(g_secAudioPopupHwnd, SW_HIDE);
+    }
+
+    g_wifiPopupState.anchorWidget = hClickedWidget;
+    g_wifiPopupState.anchorTaskbar = hSecTaskbar;
+    CaptureLockedPopupAnchor(hClickedWidget, hSecTaskbar,
+                             g_wifiPopupState.lockedWidgetRect,
+                             g_wifiPopupState.lockedTaskbarRect,
+                             g_wifiPopupState.lockedMonitorRect);
+    g_wifiPopupState.dpi = static_cast<float>(GetWindowDpiSafe(hClickedWidget));
+    g_wifiPopupState.palette = ResolveTaskbarPopupPalette(hClickedWidget, hSecTaskbar);
+    g_wifiPopupState.lightTheme = g_wifiPopupState.palette.isLight;
+    g_wifiPopupState.hasEthernet = g_hasActiveEthernet.load();
+    g_wifiPopupState.hoverId = 0;
+    g_wifiPopupState.scrollOffset = 0;
+    g_wifiPopupState.statusNotice.clear();
+    QueryWifiNetworks(g_wifiPopupState.hasAdapter, g_wifiPopupState.networks, false);
+
+    RenderWifiPopup(false);
+    float slideDip = 14.0f * (g_wifiPopupState.dpi / 96.0f);
+    bool topTb = (g_wifiPopupState.lockedTaskbarRect.top <
+                  (g_wifiPopupState.lockedMonitorRect.top + g_wifiPopupState.lockedMonitorRect.bottom) / 2);
+    g_wifiPopupSurface.animStartOffsetY = topTb ? -slideDip : slideDip;
+    g_wifiPopupSurface.animStartTick = GetTickCount64();
+    g_wifiPopupSurface.animActive = true;
+    g_wifiPopupSurface.Present(g_secWifiPopupHwnd, g_wifiPopupSurface.baseX,
+                               g_wifiPopupSurface.baseY + static_cast<int>(std::round(g_wifiPopupSurface.animStartOffsetY)), 24);
+    ShowWindow(g_secWifiPopupHwnd, SW_SHOW);
+    SetForegroundWindow(g_secWifiPopupHwnd);
+    if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+}
+
+constexpr UINT kMsgRefreshWifiPopup = WM_APP + 77;
+constexpr UINT kMsgRefreshAudioPopup = WM_APP + 78;
+
+LRESULT CALLBACK SecondaryAudioPopupWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    auto& st = g_audioPopupState;
+    auto hitTest = [&](float xDip, float yDip) -> int {
+        if (PtInD2DRect(xDip, yDip, st.rcHeaderSettings)) return 1;
+        if (PtInD2DRect(xDip, yDip, st.rcMuteBtn)) return 2;
+        if (PtInD2DRect(xDip, yDip, st.rcSliderHit)) return 3;
+        if (PtInD2DRect(xDip, yDip, st.rcFooterLeft)) return 4;
+        if (PtInD2DRect(xDip, yDip, st.rcFooterRight)) return 5;
+        int visibleCount = static_cast<int>(std::min<size_t>(st.devices.size(), static_cast<size_t>(st.maxVisibleDevices)));
+        for (int i = 0; i < visibleCount; ++i) {
+            int idx = st.scrollOffset + i;
+            if (idx >= static_cast<int>(st.devices.size())) break;
+            float y0 = st.devicesTopDip + i * st.deviceRowHDip;
+            D2D1_RECT_F rowR = D2D1::RectF(10.0f, y0 + 2.0f, st.dipW - 10.0f, y0 + st.deviceRowHDip - 2.0f);
+            if (PtInD2DRect(xDip, yDip, rowR)) return 100 + idx;
+        }
+        return 0;
+    };
+
+    auto applySliderAtDipX = [&](float xDip) {
+        float w = st.rcSliderTrack.right - st.rcSliderTrack.left;
+        if (w <= 1.0f) return;
+        float ratio = std::clamp((xDip - st.rcSliderTrack.left) / w, 0.0f, 1.0f);
+        SetMasterVolumeScalar(ratio);
+        RenderAudioPopup();
+        if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+    };
+
+    switch (uMsg) {
+        case WM_ACTIVATE:
+            if (LOWORD(wParam) == WA_INACTIVE) {
+                g_audioPopupSurface.animActive = false;
+                KillTimer(hWnd, kTimerRefreshAudioPopup);
+                if (st.draggingSlider) {
+                    ReleaseCapture();
+                    st.draggingSlider = false;
+                }
+                g_lastPopupDeactivateTick = GetTickCount64();
+                g_lastDeactivatedPopupKind = 2;
+                g_lastDeactivatedAnchor = st.anchorWidget;
+                ShowWindow(hWnd, SW_HIDE);
+            }
+            return 0;
+
+        case WM_CAPTURECHANGED:
+            if (st.draggingSlider) {
+                st.draggingSlider = false;
+                RenderAudioPopup();
+            }
+            return 0;
+
+        case WM_KEYDOWN:
+            if (wParam == VK_ESCAPE) {
+                g_audioPopupSurface.animActive = false;
+                KillTimer(hWnd, kTimerRefreshAudioPopup);
+                ShowWindow(hWnd, SW_HIDE);
+                return 0;
+            }
+            break;
+
+        case WM_TIMER:
+            if (wParam == kTimerRefreshAudioPopup) {
+                KillTimer(hWnd, kTimerRefreshAudioPopup);
+                if (IsWindowVisible(hWnd)) {
+                    RebindAudioEndpointVolume();
+                    EnumerateAudioOutputDevices(st.devices, st.fxSoundManaging, st.fxExePath);
+                    RenderAudioPopup();
+                    if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+                }
+                return 0;
+            }
+            break;
+
+        case kMsgRefreshAudioPopup:
+            if (IsWindowVisible(hWnd)) {
+                RebindAudioEndpointVolume();
+                EnumerateAudioOutputDevices(st.devices, st.fxSoundManaging, st.fxExePath);
+                RenderAudioPopup();
+                if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+            }
+            return 0;
+
+        case WM_SETCURSOR:
+            if (LOWORD(lParam) == HTCLIENT) {
+                SetCursor(LoadCursorW(nullptr, st.hoverId != 0 ? MAKEINTRESOURCEW(32649) : IDC_ARROW));
+                return TRUE;
+            }
+            break;
+
+        case WM_MOUSEMOVE: {
+            float scale = st.dpi / 96.0f;
+            float xDip = static_cast<float>(static_cast<short>(LOWORD(lParam))) / scale;
+            float yDip = static_cast<float>(static_cast<short>(HIWORD(lParam))) / scale;
+            if (st.draggingSlider && (wParam & MK_LBUTTON)) {
+                applySliderAtDipX(xDip);
+                return 0;
+            }
+            int newHover = hitTest(xDip, yDip);
+            if (newHover != st.hoverId) {
+                st.hoverId = newHover;
+                RenderAudioPopup();
+            }
+            TRACKMOUSEEVENT tme{ sizeof(tme), TME_LEAVE, hWnd, 0 };
+            TrackMouseEvent(&tme);
+            return 0;
+        }
+
+        case WM_MOUSELEAVE:
+            if (!st.draggingSlider && st.hoverId != 0) {
+                st.hoverId = 0;
+                RenderAudioPopup();
+            }
+            return 0;
+
+        case WM_LBUTTONDOWN: {
+            float scale = st.dpi / 96.0f;
+            float xDip = static_cast<float>(static_cast<short>(LOWORD(lParam))) / scale;
+            float yDip = static_cast<float>(static_cast<short>(HIWORD(lParam))) / scale;
+            int id = hitTest(xDip, yDip);
+            if (id == 1 || id == 5) {
+                ShowWindow(hWnd, SW_HIDE);
+                ShellExecuteW(nullptr, L"open", L"ms-settings:sound", nullptr, nullptr, SW_SHOWNORMAL);
+            } else if (id == 4) {
+                ShowWindow(hWnd, SW_HIDE);
+                ShellExecuteW(nullptr, L"open", L"sndvol.exe", nullptr, nullptr, SW_SHOWNORMAL);
+            } else if (id == 2) {
+                ToggleMasterMute();
+                RenderAudioPopup();
+                if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+            } else if (id == 3) {
+                st.draggingSlider = true;
+                SetCapture(hWnd);
+                applySliderAtDipX(xDip);
+            } else if (id >= 100) {
+                int idx = id - 100;
+                if (idx >= 0 && idx < static_cast<int>(st.devices.size())) {
+                    const auto& clickedDev = st.devices[idx];
+                    if (st.fxSoundManaging && !clickedDev.isFxVirtual && !st.fxExePath.empty()) {
+                        // FxSound manages physical speakers: switch FxSound's physical speaker while keeping FxSound as primary default!
+                        SwitchFxSoundOutputDevice(st.fxExePath, clickedDev.name);
+                        for (auto& d : st.devices) d.isFxTarget = false;
+                        st.devices[idx].isFxTarget = true;
+                        RenderAudioPopup();
+                        SetTimer(hWnd, kTimerRefreshAudioPopup, 400, nullptr);
+                    } else {
+                        SetDefaultAudioOutputDevice(clickedDev.id);
+                        EnumerateAudioOutputDevices(st.devices, st.fxSoundManaging, st.fxExePath);
+                        RenderAudioPopup();
+                        if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+                    }
+                }
+            }
+            return 0;
+        }
+
+        case WM_LBUTTONUP:
+            if (st.draggingSlider) {
+                ReleaseCapture();
+                st.draggingSlider = false;
+                RenderAudioPopup();
+            }
+            return 0;
+
+        case WM_MOUSEWHEEL: {
+            short delta = GET_WHEEL_DELTA_WPARAM(wParam);
+            POINT pt{};
+            GetCursorPos(&pt);
+            ScreenToClient(hWnd, &pt);
+            float scale = st.dpi / 96.0f;
+            float yDip = static_cast<float>(pt.y) / scale;
+            if (yDip >= st.devicesTopDip && static_cast<int>(st.devices.size()) > st.maxVisibleDevices) {
+                int maxScroll = static_cast<int>(st.devices.size()) - st.maxVisibleDevices;
+                st.scrollOffset = std::clamp(st.scrollOffset + (delta > 0 ? -1 : 1), 0, maxScroll);
+                RenderAudioPopup();
+            } else {
+                AdjustMasterVolume(delta > 0 ? 0.02f : -0.02f);
+                RenderAudioPopup();
+                if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+            }
+            return 0;
+        }
+    }
+    return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
+
+LRESULT CALLBACK SecondaryWifiPopupWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    auto& st = g_wifiPopupState;
+    auto hitTest = [&](float xDip, float yDip) -> int {
+        if (PtInD2DRect(xDip, yDip, st.rcRefreshBtn)) return 1;
+        if (PtInD2DRect(xDip, yDip, st.rcSettingsBtn)) return 2;
+        if (PtInD2DRect(xDip, yDip, st.rcFooterLeft)) return 3;
+        if (PtInD2DRect(xDip, yDip, st.rcFooterRight)) return 4;
+        int visibleCount = static_cast<int>(std::min<size_t>(st.networks.size(), static_cast<size_t>(st.maxVisibleRows)));
+        for (int i = 0; i < visibleCount; ++i) {
+            int idx = st.scrollOffset + i;
+            if (idx >= static_cast<int>(st.networks.size())) break;
+            float y0 = st.listTopDip + i * st.rowHDip;
+            D2D1_RECT_F rowR = D2D1::RectF(10.0f, y0 + 2.0f, st.dipW - 10.0f, y0 + st.rowHDip - 2.0f);
+            if (PtInD2DRect(xDip, yDip, rowR)) return 100 + idx;
+        }
+        return 0;
+    };
+
+    auto scheduleWifiRefresh = [&](DWORD delayMs) {
+        SetTimer(hWnd, kTimerRefreshWifiPopup, delayMs, nullptr);
+        SetTimer(hWnd, kTimerClearWifiNotice, delayMs + 900, nullptr);
+    };
+
+    switch (uMsg) {
+        case WM_ACTIVATE:
+            if (LOWORD(wParam) == WA_INACTIVE) {
+                g_wifiPopupSurface.animActive = false;
+                KillTimer(hWnd, kTimerRefreshWifiPopup);
+                KillTimer(hWnd, kTimerClearWifiNotice);
+                g_lastPopupDeactivateTick = GetTickCount64();
+                g_lastDeactivatedPopupKind = 1;
+                g_lastDeactivatedAnchor = st.anchorWidget;
+                ShowWindow(hWnd, SW_HIDE);
+            }
+            return 0;
+
+        case WM_KEYDOWN:
+            if (wParam == VK_ESCAPE) {
+                g_wifiPopupSurface.animActive = false;
+                KillTimer(hWnd, kTimerRefreshWifiPopup);
+                KillTimer(hWnd, kTimerClearWifiNotice);
+                ShowWindow(hWnd, SW_HIDE);
+                return 0;
+            }
+            break;
+
+        case WM_TIMER:
+            if (wParam == kTimerRefreshWifiPopup) {
+                KillTimer(hWnd, kTimerRefreshWifiPopup);
+                if (IsWindowVisible(hWnd)) {
+                    st.hasEthernet = g_hasActiveEthernet.load();
+                    st.statusNotice.clear();
+                    st.statusNoticeExpireTick = 0;
+                    QueryWifiNetworks(st.hasAdapter, st.networks, false);
+                    RenderWifiPopup();
+                    if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+                }
+                return 0;
+            } else if (wParam == kTimerClearWifiNotice) {
+                KillTimer(hWnd, kTimerClearWifiNotice);
+                if (!st.statusNotice.empty()) {
+                    st.statusNotice.clear();
+                    st.statusNoticeExpireTick = 0;
+                    if (IsWindowVisible(hWnd)) RenderWifiPopup();
+                }
+                return 0;
+            }
+            break;
+
+        case kMsgRefreshWifiPopup:
+            if (IsWindowVisible(hWnd)) {
+                st.hasEthernet = g_hasActiveEthernet.load();
+                st.statusNotice.clear();
+                st.statusNoticeExpireTick = 0;
+                QueryWifiNetworks(st.hasAdapter, st.networks, false);
+                RenderWifiPopup();
+                if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+            }
+            return 0;
+
+        case WM_SETCURSOR:
+            if (LOWORD(lParam) == HTCLIENT) {
+                SetCursor(LoadCursorW(nullptr, st.hoverId != 0 ? MAKEINTRESOURCEW(32649) : IDC_ARROW));
+                return TRUE;
+            }
+            break;
+
+        case WM_MOUSEMOVE: {
+            float scale = st.dpi / 96.0f;
+            float xDip = static_cast<float>(static_cast<short>(LOWORD(lParam))) / scale;
+            float yDip = static_cast<float>(static_cast<short>(HIWORD(lParam))) / scale;
+            int newHover = hitTest(xDip, yDip);
+            if (newHover != st.hoverId) {
+                st.hoverId = newHover;
+                RenderWifiPopup();
+            }
+            TRACKMOUSEEVENT tme{ sizeof(tme), TME_LEAVE, hWnd, 0 };
+            TrackMouseEvent(&tme);
+            return 0;
+        }
+
+        case WM_MOUSELEAVE:
+            if (st.hoverId != 0) {
+                st.hoverId = 0;
+                RenderWifiPopup();
+            }
+            return 0;
+
+        case WM_LBUTTONDOWN: {
+            ModSettings s = GetSettings();
+            bool vi = UseVietnameseLabels(s);
+            float scale = st.dpi / 96.0f;
+            float xDip = static_cast<float>(static_cast<short>(LOWORD(lParam))) / scale;
+            float yDip = static_cast<float>(static_cast<short>(HIWORD(lParam))) / scale;
+            int id = hitTest(xDip, yDip);
+            if (id == 1) {
+                st.statusNotice = vi ? L"Đang quét lại mạng Wi-Fi..." : L"Scanning Wi-Fi networks...";
+                st.statusNoticeExpireTick = GetTickCount64() + 1800;
+                QueryWifiNetworks(st.hasAdapter, st.networks, true);
+                RenderWifiPopup();
+                scheduleWifiRefresh(1100);
+            } else if (id == 2 || id == 4) {
+                ShowWindow(hWnd, SW_HIDE);
+                ShellExecuteW(nullptr, L"open", L"ms-settings:network-wifi", nullptr, nullptr, SW_SHOWNORMAL);
+            } else if (id == 3) {
+                ShowWindow(hWnd, SW_HIDE);
+                ShellExecuteW(nullptr, L"open", L"ms-settings:network", nullptr, nullptr, SW_SHOWNORMAL);
+            } else if (id >= 100) {
+                int idx = id - 100;
+                if (idx >= 0 && idx < static_cast<int>(st.networks.size())) {
+                    WifiNetworkItem net = st.networks[idx];
+                    if (net.isConnected) {
+                        st.statusNotice = (vi ? L"Đang ngắt kết nối " : L"Disconnecting ") + net.ssid + L"...";
+                        st.statusNoticeExpireTick = GetTickCount64() + 2000;
+                        ConnectOrDisconnectWifiItem(net);
+                        RenderWifiPopup();
+                        scheduleWifiRefresh(700);
+                    } else if (net.hasProfile && !net.profileName.empty()) {
+                        st.statusNotice = (vi ? L"Đang kết nối " : L"Connecting to ") + net.ssid + L"...";
+                        st.statusNoticeExpireTick = GetTickCount64() + 2500;
+                        ConnectOrDisconnectWifiItem(net);
+                        RenderWifiPopup();
+                        scheduleWifiRefresh(1400);
+                    } else {
+                        // New network without saved profile -> open native Wi-Fi settings for password entry
+                        ShowWindow(hWnd, SW_HIDE);
+                        ShellExecuteW(nullptr, L"open", L"ms-settings:network-wifi", nullptr, nullptr, SW_SHOWNORMAL);
+                    }
+                }
+            }
+            return 0;
+        }
+
+        case WM_MOUSEWHEEL: {
+            short delta = GET_WHEEL_DELTA_WPARAM(wParam);
+            if (static_cast<int>(st.networks.size()) > st.maxVisibleRows) {
+                int maxScroll = static_cast<int>(st.networks.size()) - st.maxVisibleRows;
+                st.scrollOffset = std::clamp(st.scrollOffset + (delta > 0 ? -1 : 1), 0, maxScroll);
+                RenderWifiPopup();
+            }
+            return 0;
+        }
+    }
+    return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
+
+LRESULT CALLBACK SecondaryTrayWidgetWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    auto* inst = reinterpret_cast<SecondaryTrayInstance*>(GetWindowLongPtrW(hWnd, GWLP_USERDATA));
+    switch (uMsg) {
+        case WM_MOUSEACTIVATE:
+            return MA_NOACTIVATE;
+
+        case WM_SETCURSOR: {
+            if (LOWORD(lParam) == HTCLIENT) {
+                SetCursor(LoadCursorW(nullptr, MAKEINTRESOURCEW(32649))); // IDC_HAND
+                return TRUE;
+            }
+            break;
+        }
+
+        case WM_MOUSEMOVE: {
+            int x = static_cast<int>(static_cast<short>(LOWORD(lParam)));
+            RECT rc{};
+            GetClientRect(hWnd, &rc);
+            int w = rc.right - rc.left;
+
+            float dpi = static_cast<float>(GetWindowDpiSafe(hWnd));
+            float scale = dpi / 96.0f;
+            int xSplit = static_cast<int>(32.0f * scale);
+
+            TrayHoverZone newZone = TrayHoverZone::None;
+            if (x >= 0 && x < xSplit) {
+                newZone = TrayHoverZone::Wifi;
+            } else if (x >= xSplit && x < w) {
+                newZone = TrayHoverZone::Audio;
+            }
+
+            if (inst && inst->hoverZone != newZone) {
+                inst->hoverZone = newZone;
+                if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+            }
+
+            TRACKMOUSEEVENT tme{ sizeof(tme), TME_LEAVE, hWnd, 0 };
+            TrackMouseEvent(&tme);
+            return 0;
+        }
+
+        case WM_MOUSELEAVE: {
+            if (inst && inst->hoverZone != TrayHoverZone::None) {
+                inst->hoverZone = TrayHoverZone::None;
+                if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+            }
+            return 0;
+        }
+
+        case WM_LBUTTONDOWN: {
+            int x = static_cast<int>(static_cast<short>(LOWORD(lParam)));
+            float dpi = static_cast<float>(GetWindowDpiSafe(hWnd));
+            float scale = dpi / 96.0f;
+            int xSplit = static_cast<int>(32.0f * scale);
+            HWND hSecTaskbar = inst ? inst->hSecondaryTray : nullptr;
+
+            if (x >= 0 && x < xSplit) {
+                // 1. Independent Wi-Fi / Network flyout right on secondary monitor
+                OpenOrToggleSecondaryWifiPopup(hWnd, hSecTaskbar);
+            } else {
+                // 2. Independent Audio / Volume flyout right on secondary monitor
+                OpenOrToggleSecondaryAudioPopup(hWnd, hSecTaskbar);
+            }
+            return 0;
+        }
+
+        case WM_MOUSEWHEEL: {
+            short delta = GET_WHEEL_DELTA_WPARAM(wParam);
+            float step = (delta > 0 ? 0.02f : -0.02f);
+            AdjustMasterVolume(step);
+            g_volumeOsdExpiryTick.store(GetTickCount64() + 1500);
+            if (g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd)) {
+                RenderAudioPopup();
+            }
+            if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+            return 0;
+        }
+
+        case WM_RBUTTONUP: {
+            int x = static_cast<int>(static_cast<short>(LOWORD(lParam)));
+            float dpi = static_cast<float>(GetWindowDpiSafe(hWnd));
+            float scale = dpi / 96.0f;
+            int xSplit = static_cast<int>(32.0f * scale);
+            bool onWifi = (x >= 0 && x < xSplit);
+
+            ModSettings s = GetSettings();
+            bool vi = UseVietnameseLabels(s);
+            HMENU hMenu = CreatePopupMenu();
+            if (hMenu) {
+                if (onWifi) {
+                    AppendMenuW(hMenu, MF_STRING, 203, vi ? L"🌐 Cài đặt Mạng & Internet" : L"🌐 Network & Internet Settings");
+                    AppendMenuW(hMenu, MF_STRING, 204, vi ? L"📶 Cài đặt Wi-Fi" : L"📶 Wi-Fi Settings");
+                } else {
+                    bool muted = g_liveMasterMuted.load();
+                    AppendMenuW(hMenu, MF_STRING, 200,
+                                muted ? (vi ? L"🔊 Bật tiếng (Unmute)" : L"🔊 Unmute")
+                                      : (vi ? L"🔇 Tắt tiếng (Mute)" : L"🔇 Mute"));
+                    AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
+                    AppendMenuW(hMenu, MF_STRING, 201, vi ? L"🔊 Cài đặt âm thanh (Sound)" : L"🔊 Sound Settings");
+                    AppendMenuW(hMenu, MF_STRING, 202, vi ? L"🎚 Bộ trộn âm lượng (Volume Mixer)" : L"🎚 Volume Mixer");
+                }
+
+                POINT pt{};
+                GetCursorPos(&pt);
+                SetForegroundWindow(hWnd);
+                int cmd = TrackPopupMenu(hMenu, TPM_RETURNCMD | TPM_NONOTIFY, pt.x, pt.y, 0, hWnd, nullptr);
+                DestroyMenu(hMenu);
+
+                if (cmd == 200) {
+                    ToggleMasterMute();
+                    if (g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd)) RenderAudioPopup();
+                    if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+                } else if (cmd == 201) ShellExecuteW(nullptr, L"open", L"ms-settings:sound", nullptr, nullptr, SW_SHOWNORMAL);
+                else if (cmd == 202) ShellExecuteW(nullptr, L"open", L"sndvol.exe", nullptr, nullptr, SW_SHOWNORMAL);
+                else if (cmd == 203) ShellExecuteW(nullptr, L"open", L"ms-settings:network", nullptr, nullptr, SW_SHOWNORMAL);
+                else if (cmd == 204) ShellExecuteW(nullptr, L"open", L"ms-settings:network-wifi", nullptr, nullptr, SW_SHOWNORMAL);
+            }
+            return 0;
+        }
+    }
+    return DefWindowProcW(hWnd, uMsg, wParam, lParam);
+}
+
+void RenderStatsBitmapToLayeredWindow(
+    HWND hWnd,
+    const std::vector<StatsColumn>& cols,
+    ID2D1Factory* d2dFactory,
+    IDWriteTextFormat* fmtLabel,
+    IDWriteTextFormat* fmtValue,
+    IDWriteTextFormat* fmtCenter,
+    int pxW, int pxH, float dipW, float dipH,
+    float dpi, bool lightTheme,
+    float padX, float colGap,
+    int targetX, int targetY) {
+    if (!hWnd || !d2dFactory || !fmtLabel || !fmtValue || !fmtCenter || cols.empty()) return;
+
+    D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties(
+        D2D1_RENDER_TARGET_TYPE_DEFAULT,
+        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+        dpi, dpi);
+
+    ID2D1DCRenderTarget* dcTarget = nullptr;
+    if (SUCCEEDED(d2dFactory->CreateDCRenderTarget(&rtProps, &dcTarget)) && dcTarget) {
+        BITMAPINFO bmi{};
+        bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+        bmi.bmiHeader.biWidth = pxW;
+        bmi.bmiHeader.biHeight = -pxH;
+        bmi.bmiHeader.biPlanes = 1;
+        bmi.bmiHeader.biBitCount = 32;
+        bmi.bmiHeader.biCompression = BI_RGB;
+
+        void* bits = nullptr;
+        HDC hdcScreen = GetDC(nullptr);
+        HDC hdcMem = CreateCompatibleDC(hdcScreen);
+        HBITMAP hBmp = CreateDIBSection(hdcMem, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
+        if (hBmp) {
+            HGDIOBJ oldBmp = SelectObject(hdcMem, hBmp);
+            RECT rcBind{0, 0, pxW, pxH};
+            if (SUCCEEDED(dcTarget->BindDC(hdcMem, &rcBind))) {
+                dcTarget->BeginDraw();
+                dcTarget->Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
+
+                ID2D1SolidColorBrush* brush = nullptr;
+                if (SUCCEEDED(dcTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f), &brush)) && brush) {
+                    D2D1_ROUNDED_RECT pill = D2D1::RoundedRect(
+                        D2D1::RectF(0.5f, 0.5f, dipW - 0.5f, dipH - 0.5f), 5.5f, 5.5f);
+                    brush->SetColor(lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.06f)
+                                               : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.08f));
+                    dcTarget->FillRoundedRectangle(pill, brush);
+
+                    brush->SetColor(lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.16f)
+                                               : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.16f));
+                    dcTarget->DrawRoundedRectangle(pill, brush, 1.0f);
+
+                    float curX = padX;
+                    float row1Top = 1.5f, row1Bot = dipH * 0.5f;
+                    float row2Top = dipH * 0.5f, row2Bot = dipH - 1.5f;
+
+                    for (size_t i = 0; i < cols.size(); i++) {
+                        const auto& c = cols[i];
+                        if (c.singleRow) {
+                            D2D1_RECT_F rMid = D2D1::RectF(curX, 1.5f, curX + c.widthDip, dipH - 1.5f);
+                            if (!c.topLabel.empty()) {
+                                brush->SetColor(c.topLabelColor);
+                                dcTarget->DrawText(c.topLabel.c_str(), static_cast<UINT32>(c.topLabel.size()), fmtLabel, rMid, brush);
+                            }
+                            if (!c.topValue.empty()) {
+                                brush->SetColor(c.topValueColor);
+                                dcTarget->DrawText(c.topValue.c_str(), static_cast<UINT32>(c.topValue.size()),
+                                                   c.topCentered ? fmtCenter : fmtValue, rMid, brush);
+                            }
+                        } else {
+                            if (c.valueLeading) {
+                                float lblW = 10.0f;
+                                D2D1_RECT_F rLblTop = D2D1::RectF(curX, row1Top, curX + lblW, row1Bot);
+                                D2D1_RECT_F rValTop = D2D1::RectF(curX + lblW + 2.0f, row1Top, curX + c.widthDip, row1Bot);
+                                D2D1_RECT_F rLblBot = D2D1::RectF(curX, row2Top, curX + lblW, row2Bot);
+                                D2D1_RECT_F rValBot = D2D1::RectF(curX + lblW + 2.0f, row2Top, curX + c.widthDip, row2Bot);
+
+                                if (!c.topLabel.empty()) {
+                                    brush->SetColor(c.topLabelColor);
+                                    dcTarget->DrawText(c.topLabel.c_str(), static_cast<UINT32>(c.topLabel.size()), fmtLabel, rLblTop, brush);
+                                }
+                                if (!c.topValue.empty()) {
+                                    brush->SetColor(c.topValueColor);
+                                    dcTarget->DrawText(c.topValue.c_str(), static_cast<UINT32>(c.topValue.size()), fmtLabel, rValTop, brush);
+                                }
+                                if (!c.botLabel.empty()) {
+                                    brush->SetColor(c.botLabelColor);
+                                    dcTarget->DrawText(c.botLabel.c_str(), static_cast<UINT32>(c.botLabel.size()), fmtLabel, rLblBot, brush);
+                                }
+                                if (!c.botValue.empty()) {
+                                    brush->SetColor(c.botValueColor);
+                                    dcTarget->DrawText(c.botValue.c_str(), static_cast<UINT32>(c.botValue.size()), fmtLabel, rValBot, brush);
+                                }
+                            } else {
+                                D2D1_RECT_F rTop = D2D1::RectF(curX, row1Top, curX + c.widthDip, row1Bot);
+                                D2D1_RECT_F rBot = D2D1::RectF(curX, row2Top, curX + c.widthDip, row2Bot);
+
+                                if (!c.topLabel.empty()) {
+                                    brush->SetColor(c.topLabelColor);
+                                    dcTarget->DrawText(c.topLabel.c_str(), static_cast<UINT32>(c.topLabel.size()), fmtLabel, rTop, brush);
+                                }
+                                if (!c.topValue.empty()) {
+                                    brush->SetColor(c.topValueColor);
+                                    dcTarget->DrawText(c.topValue.c_str(), static_cast<UINT32>(c.topValue.size()),
+                                                       c.topCentered ? fmtCenter : fmtValue, rTop, brush);
+                                }
+                                if (!c.botLabel.empty()) {
+                                    brush->SetColor(c.botLabelColor);
+                                    dcTarget->DrawText(c.botLabel.c_str(), static_cast<UINT32>(c.botLabel.size()), fmtLabel, rBot, brush);
+                                }
+                                if (!c.botValue.empty()) {
+                                    brush->SetColor(c.botValueColor);
+                                    dcTarget->DrawText(c.botValue.c_str(), static_cast<UINT32>(c.botValue.size()),
+                                                       c.topCentered ? fmtCenter : fmtValue, rBot, brush);
+                                }
+                            }
+                        }
+
+                        curX += c.widthDip;
+                        if (i + 1 < cols.size()) {
+                            float divX = std::floor(curX + colGap * 0.5f) + 0.5f;
+                            brush->SetColor(lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.14f)
+                                                       : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.15f));
+                            dcTarget->DrawLine(D2D1::Point2F(divX, 5.5f), D2D1::Point2F(divX, dipH - 5.5f), brush, 1.0f);
+                            curX += colGap;
+                        }
+                    }
+                    brush->Release();
+                }
+                dcTarget->EndDraw();
+
+                POINT ptDst{targetX, targetY};
+                SIZE szWnd{pxW, pxH};
+                POINT ptSrc{0, 0};
+                BLENDFUNCTION blend{};
+                blend.BlendOp = AC_SRC_OVER;
+                blend.SourceConstantAlpha = 255;
+                blend.AlphaFormat = AC_SRC_ALPHA;
+
+                UpdateLayeredWindow(hWnd, hdcScreen, &ptDst, &szWnd, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
+            }
+            SelectObject(hdcMem, oldBmp);
+            DeleteObject(hBmp);
+        }
+        DeleteDC(hdcMem);
+        ReleaseDC(nullptr, hdcScreen);
+        dcTarget->Release();
+    }
+}
+
+void RenderSecondaryTrayBitmap(HWND hWidget,
+                              SecondaryTrayInstance& inst,
+                              ID2D1Factory* d2dFactory,
+                              IDWriteTextFormat* fmtGlyph,
+                              IDWriteTextFormat* fmtOsd,
+                              int pxW, int pxH, float dipW, float dipH,
+                              float dpi, bool lightTheme,
+                              bool hasWifi, bool hasEthernet, bool hasNetwork,
+                              float masterVol, bool isMuted, bool showVolumeOsd,
+                              int targetX, int targetY) {
+    if (!hWidget || !d2dFactory || !fmtGlyph || !fmtOsd) return;
+
+    D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties(
+        D2D1_RENDER_TARGET_TYPE_DEFAULT,
+        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+        dpi, dpi);
+
+    ID2D1DCRenderTarget* dcTarget = nullptr;
+    if (SUCCEEDED(d2dFactory->CreateDCRenderTarget(&rtProps, &dcTarget)) && dcTarget) {
+        BITMAPINFO bmi{};
+        bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+        bmi.bmiHeader.biWidth = pxW;
+        bmi.bmiHeader.biHeight = -pxH;
+        bmi.bmiHeader.biPlanes = 1;
+        bmi.bmiHeader.biBitCount = 32;
+        bmi.bmiHeader.biCompression = BI_RGB;
+
+        void* bits = nullptr;
+        HDC hdcScreen = GetDC(nullptr);
+        HDC hdcMem = CreateCompatibleDC(hdcScreen);
+        HBITMAP hBmp = CreateDIBSection(hdcMem, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
+        if (hBmp) {
+            HGDIOBJ oldBmp = SelectObject(hdcMem, hBmp);
+            RECT rcBind{0, 0, pxW, pxH};
+            if (SUCCEEDED(dcTarget->BindDC(hdcMem, &rcBind))) {
+                dcTarget->BeginDraw();
+                dcTarget->Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
+
+                ID2D1SolidColorBrush* brush = nullptr;
+                if (SUCCEEDED(dcTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f), &brush)) && brush) {
+                    D2D1_COLOR_F hoverColor = lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.07f)
+                                                         : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.09f);
+                    D2D1_COLOR_F activeColor = lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.11f)
+                                                          : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.13f);
+                    D2D1_COLOR_F normalColor = lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.88f)
+                                                          : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.92f);
+                    D2D1_COLOR_F dimColor = lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.45f)
+                                                       : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.55f);
+
+                    float topY = 2.0f;
+                    float botY = dipH - 2.0f;
+
+                    bool wifiOpen = (g_secWifiPopupHwnd && IsWindowVisible(g_secWifiPopupHwnd) &&
+                                     g_wifiPopupState.anchorWidget == hWidget);
+                    bool audioOpen = (g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd) &&
+                                      g_audioPopupState.anchorWidget == hWidget);
+
+                    // Button 1: Independent Wi-Fi / Network (x: 2.0f to 31.0f) with smooth Fluent hover fade
+                    D2D1_RECT_F rWifi = D2D1::RectF(2.0f, topY, 31.0f, botY);
+                    float wfAlpha = wifiOpen ? 1.0f : inst.wifiHoverAlpha;
+                    if (wfAlpha > 0.01f) {
+                        D2D1_COLOR_F c = wifiOpen ? activeColor : hoverColor;
+                        c.a *= wfAlpha;
+                        brush->SetColor(c);
+                        dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rWifi, 5.0f, 5.0f), brush);
+                    }
+                    WCHAR glyphWifi[2]{};
+                    if (hasWifi) {
+                        glyphWifi[0] = 0xE701; // Wifi
+                        brush->SetColor(normalColor);
+                    } else if (hasEthernet) {
+                        glyphWifi[0] = 0xE839; // Ethernet
+                        brush->SetColor(normalColor);
+                    } else {
+                        glyphWifi[0] = 0xEB55; // Offline
+                        brush->SetColor(dimColor);
+                    }
+                    dcTarget->DrawText(glyphWifi, 1, fmtGlyph, rWifi, brush);
+
+                    // Button 2: Independent Audio / Speaker (x: 33.0f to 62.0f) with smooth Fluent hover fade
+                    D2D1_RECT_F rVol = D2D1::RectF(33.0f, topY, 62.0f, botY);
+                    float auAlpha = audioOpen ? 1.0f : inst.audioHoverAlpha;
+                    if (auAlpha > 0.01f) {
+                        D2D1_COLOR_F c = audioOpen ? activeColor : hoverColor;
+                        c.a *= auAlpha;
+                        brush->SetColor(c);
+                        dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rVol, 5.0f, 5.0f), brush);
+                    }
+                    if (showVolumeOsd) {
+                        int volPct = isMuted ? 0 : std::clamp(static_cast<int>(masterVol * 100.0f + 0.5f), 0, 100);
+                        WCHAR volStr[16]{};
+                        _snwprintf_s(volStr, _TRUNCATE, L"%d%%", volPct);
+                        brush->SetColor(normalColor);
+                        dcTarget->DrawText(volStr, static_cast<UINT32>(wcslen(volStr)), fmtOsd, rVol, brush);
+                    } else {
+                        WCHAR glyphVol[2]{};
+                        if (isMuted || masterVol <= 0.001f) {
+                            glyphVol[0] = 0xE74F; // Mute
+                            brush->SetColor(dimColor);
+                        } else if (masterVol < 0.33f) {
+                            glyphVol[0] = 0xE993; // Volume 1
+                            brush->SetColor(normalColor);
+                        } else if (masterVol < 0.66f) {
+                            glyphVol[0] = 0xE994; // Volume 2
+                            brush->SetColor(normalColor);
+                        } else {
+                            glyphVol[0] = 0xE995; // Volume 3
+                            brush->SetColor(normalColor);
+                        }
+                        dcTarget->DrawText(glyphVol, 1, fmtGlyph, rVol, brush);
+                    }
+
+                    brush->Release();
+                }
+
+                dcTarget->EndDraw();
+
+                POINT ptDst{ targetX, targetY };
+                POINT ptSrc{ 0, 0 };
+                SIZE szWnd{ pxW, pxH };
+                BLENDFUNCTION blend{};
+                blend.BlendOp = AC_SRC_OVER;
+                blend.SourceConstantAlpha = 255;
+                blend.AlphaFormat = AC_SRC_ALPHA;
+
+                UpdateLayeredWindow(hWidget, hdcScreen, &ptDst, &szWnd, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
+            }
+            SelectObject(hdcMem, oldBmp);
+            DeleteObject(hBmp);
+        }
+        DeleteDC(hdcMem);
+        ReleaseDC(nullptr, hdcScreen);
+        dcTarget->Release();
+    }
+}
+
+static constexpr GUID kClsidCUIAutomation =
+    { 0xff48dba4, 0x60ef, 0x4201, { 0xaa, 0x87, 0x54, 0x10, 0x3e, 0xef, 0x59, 0x4e } };
+static constexpr GUID kIidIUIAutomation =
+    { 0x30cbe57d, 0xd9d0, 0x452a, { 0xab, 0x13, 0x7a, 0xc5, 0xac, 0x48, 0x25, 0xee } };
+
+std::mutex g_secClockMarginMutex;
+std::unordered_map<HWND, int> g_secClockMargins;
+std::vector<HWND> g_activeSecTraysForUia;
+std::thread g_secClockUiaThread;
+
+int MeasureSecondaryClockMarginWithUia(IUIAutomation* pUia, HWND hSec) {
+    if (!pUia || !hSec || !IsWindow(hSec) || !IsWindowVisible(hSec)) return 0;
+    RECT rcSec{};
+    if (!GetWindowRect(hSec, &rcSec)) return 0;
+    int tbW = rcSec.right - rcSec.left;
+    int tbH = rcSec.bottom - rcSec.top;
+    if (tbW < 200 || tbH < 20) return 0;
+
+    float scale = static_cast<float>(GetWindowDpiSafe(hSec)) / 96.0f;
+
+    IUIAutomationElement* pRoot = nullptr;
+    if (FAILED(pUia->ElementFromHandle(hSec, &pRoot)) || !pRoot) return 0;
+
+    VARIANT varBtn{};
+    varBtn.vt = VT_I4;
+    varBtn.lVal = UIA_ButtonControlTypeId;
+    IUIAutomationCondition* pCond = nullptr;
+    int measuredMargin = 0;
+
+    if (SUCCEEDED(pUia->CreatePropertyCondition(UIA_ControlTypePropertyId, varBtn, &pCond)) && pCond) {
+        IUIAutomationElementArray* pArr = nullptr;
+        if (SUCCEEDED(pRoot->FindAll(TreeScope_Descendants, pCond, &pArr)) && pArr) {
+            int count = 0;
+            pArr->get_Length(&count);
+
+            int rightZoneLimit = rcSec.right - static_cast<int>(260.0f * scale);
+            int minRightEdgeAttach = rcSec.right - static_cast<int>(38.0f * scale);
+            int minBtnW = static_cast<int>(36.0f * scale);
+            int maxBtnW = static_cast<int>(250.0f * scale);
+            int minBtnH = static_cast<int>(18.0f * scale);
+
+            int bestLeft = rcSec.right;
+            bool foundPrimaryClockBtn = false;
+
+            struct BtnRect { int l, r; };
+            std::vector<BtnRect> rightBtns;
+
+            for (int i = 0; i < count; ++i) {
+                IUIAutomationElement* pEl = nullptr;
+                if (SUCCEEDED(pArr->GetElement(i, &pEl)) && pEl) {
+                    RECT rcEl{};
+                    if (SUCCEEDED(pEl->get_CurrentBoundingRectangle(&rcEl))) {
+                        int w = rcEl.right - rcEl.left;
+                        int h = rcEl.bottom - rcEl.top;
+                        if (w >= static_cast<int>(16.0f * scale) && w <= maxBtnW &&
+                            h >= minBtnH && h <= tbH + 6 &&
+                            rcEl.left >= rightZoneLimit && rcEl.right <= rcSec.right + 4 &&
+                            rcEl.top >= rcSec.top - 4 && rcEl.bottom <= rcSec.bottom + 4) {
+                            rightBtns.push_back({ static_cast<int>(rcEl.left), static_cast<int>(rcEl.right) });
+                            if (w >= minBtnW && rcEl.right >= minRightEdgeAttach) {
+                                bestLeft = std::min(bestLeft, static_cast<int>(rcEl.left));
+                                foundPrimaryClockBtn = true;
+                            }
+                        }
+                    }
+                    pEl->Release();
+                }
+            }
+
+            if (foundPrimaryClockBtn) {
+                bool extended = true;
+                while (extended) {
+                    extended = false;
+                    for (const auto& b : rightBtns) {
+                        if (b.l < bestLeft &&
+                            b.r >= bestLeft - static_cast<int>(10.0f * scale) &&
+                            b.r <= bestLeft + static_cast<int>(6.0f * scale) &&
+                            b.l >= rcSec.right - static_cast<int>(240.0f * scale)) {
+                            bestLeft = b.l;
+                            extended = true;
+                        }
+                    }
+                }
+                measuredMargin = (static_cast<int>(rcSec.right) - bestLeft) + static_cast<int>(4.0f * scale);
+                measuredMargin = std::clamp(measuredMargin,
+                                            static_cast<int>(64.0f * scale),
+                                            static_cast<int>(240.0f * scale));
+            }
+            pArr->Release();
+        }
+        pCond->Release();
+    }
+    pRoot->Release();
+    return measuredMargin;
+}
+
+void RunSecondaryClockUiaLoop() {
+    HRESULT hrCo = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    IUIAutomation* pUia = nullptr;
+    CoCreateInstance(kClsidCUIAutomation, nullptr, CLSCTX_INPROC_SERVER,
+                     kIidIUIAutomation, reinterpret_cast<void**>(&pUia));
+
+    while (!g_shuttingDown) {
+        ModSettings s = GetSettings();
+        if (pUia && (s.enableSecondaryMonitorTray || s.enableSecondaryMonitorStats)) {
+            std::vector<HWND> targets;
+            {
+                std::lock_guard<std::mutex> lock(g_secClockMarginMutex);
+                targets = g_activeSecTraysForUia;
+            }
+            bool anyChanged = false;
+            for (HWND hSec : targets) {
+                if (g_shuttingDown) break;
+                int m = MeasureSecondaryClockMarginWithUia(pUia, hSec);
+                if (m > 0) {
+                    std::lock_guard<std::mutex> lock(g_secClockMarginMutex);
+                    auto it = g_secClockMargins.find(hSec);
+                    if (it == g_secClockMargins.end() || it->second != m) {
+                        g_secClockMargins[hSec] = m;
+                        anyChanged = true;
+                    }
+                }
+            }
+            if (anyChanged && g_sysMonitorWakeEvent) {
+                SetEvent(g_sysMonitorWakeEvent);
+            }
+        }
+        if (g_sysMonitorStopEvent) {
+            if (WaitForSingleObject(g_sysMonitorStopEvent, 350) == WAIT_OBJECT_0) break;
+        } else {
+            Sleep(350);
+        }
+    }
+
+    if (pUia) pUia->Release();
+    if (SUCCEEDED(hrCo)) CoUninitialize();
+}
+
+void RunTaskbarSystemMonitorLoop() {
+    HRESULT hrCoInit = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
+    g_userOffsetX = LoadPersistedOffsetX();
+    g_secUserOffsetX = LoadPersistedSecOffsetX();
+
+    HMODULE hPdh = LoadLibraryExW(L"pdh.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    PdhOpenQueryW_t pPdhOpenQueryW = nullptr;
+    PdhAddEnglishCounterW_t pPdhAddEnglishCounterW = nullptr;
+    PdhCollectQueryData_t pPdhCollectQueryData = nullptr;
+    PdhGetFormattedCounterValue_t pPdhGetFormattedCounterValue = nullptr;
+    PdhGetFormattedCounterArrayW_t pPdhGetFormattedCounterArrayW = nullptr;
+    PdhCloseQuery_t pPdhCloseQuery = nullptr;
+
+    if (hPdh) {
+        pPdhOpenQueryW = reinterpret_cast<PdhOpenQueryW_t>(GetProcAddress(hPdh, "PdhOpenQueryW"));
+        pPdhAddEnglishCounterW = reinterpret_cast<PdhAddEnglishCounterW_t>(GetProcAddress(hPdh, "PdhAddEnglishCounterW"));
+        pPdhCollectQueryData = reinterpret_cast<PdhCollectQueryData_t>(GetProcAddress(hPdh, "PdhCollectQueryData"));
+        pPdhGetFormattedCounterValue = reinterpret_cast<PdhGetFormattedCounterValue_t>(GetProcAddress(hPdh, "PdhGetFormattedCounterValue"));
+        pPdhGetFormattedCounterArrayW = reinterpret_cast<PdhGetFormattedCounterArrayW_t>(GetProcAddress(hPdh, "PdhGetFormattedCounterArrayW"));
+        pPdhCloseQuery = reinterpret_cast<PdhCloseQuery_t>(GetProcAddress(hPdh, "PdhCloseQuery"));
+    }
+
+    HMODULE hIphlp = LoadLibraryExW(L"iphlpapi.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    GetIfTable2_t pGetIfTable2 = hIphlp ? reinterpret_cast<GetIfTable2_t>(GetProcAddress(hIphlp, "GetIfTable2")) : nullptr;
+    FreeMibTable_t pFreeMibTable = hIphlp ? reinterpret_cast<FreeMibTable_t>(GetProcAddress(hIphlp, "FreeMibTable")) : nullptr;
+
+    PDH_HQUERY_T hQuery = nullptr;
+    PDH_HCOUNTER_T hCpuUtilCounter = nullptr;
+    PDH_HCOUNTER_T hGpuCounter = nullptr;
+    if (pPdhOpenQueryW && pPdhAddEnglishCounterW && pPdhCollectQueryData) {
+        if (pPdhOpenQueryW(nullptr, 0, &hQuery) == 0 && hQuery) {
+            pPdhAddEnglishCounterW(hQuery, L"\\Processor Information(_Total)\\% Processor Time", 0, &hCpuUtilCounter);
+            pPdhAddEnglishCounterW(hQuery, L"\\GPU Engine(*)\\Utilization Percentage", 0, &hGpuCounter);
+            pPdhCollectQueryData(hQuery);
+        }
+    }
+
+    ID2D1Factory* d2dFactory = nullptr;
+    IDWriteFactory* dwriteFactory = nullptr;
+    D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &d2dFactory);
+    DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
+                        reinterpret_cast<IUnknown**>(&dwriteFactory));
+
+    IDWriteTextFormat* fmtLabel = nullptr;
+    IDWriteTextFormat* fmtValue = nullptr;
+    IDWriteTextFormat* fmtCenter = nullptr;
+    if (dwriteFactory) {
+        dwriteFactory->CreateTextFormat(L"Segoe UI", nullptr, DWRITE_FONT_WEIGHT_SEMI_BOLD,
+                                        DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                        11.0f, L"vi-VN", &fmtLabel);
+        dwriteFactory->CreateTextFormat(L"Segoe UI", nullptr, DWRITE_FONT_WEIGHT_SEMI_BOLD,
+                                        DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                        11.0f, L"vi-VN", &fmtValue);
+        dwriteFactory->CreateTextFormat(L"Segoe UI", nullptr, DWRITE_FONT_WEIGHT_SEMI_BOLD,
+                                        DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                        10.5f, L"vi-VN", &fmtCenter);
+        if (fmtLabel) {
+            fmtLabel->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+            fmtLabel->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            fmtLabel->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        }
+        if (fmtValue) {
+            fmtValue->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
+            fmtValue->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            fmtValue->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        }
+        if (fmtCenter) {
+            fmtCenter->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+            fmtCenter->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            fmtCenter->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        }
+    }
+
+    IDWriteTextFormat* fmtTrayGlyph = nullptr;
+    IDWriteTextFormat* fmtTrayText = nullptr;
+    IDWriteTextFormat* fmtTrayOsd = nullptr;
+    if (dwriteFactory) {
+        if (FAILED(dwriteFactory->CreateTextFormat(L"Segoe Fluent Icons", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+                                                  DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                                  13.5f, L"en-US", &fmtTrayGlyph)) || !fmtTrayGlyph) {
+            dwriteFactory->CreateTextFormat(L"Segoe MDL2 Assets", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+                                            DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                            13.5f, L"en-US", &fmtTrayGlyph);
+        }
+        if (fmtTrayGlyph) {
+            fmtTrayGlyph->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+            fmtTrayGlyph->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            fmtTrayGlyph->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        }
+
+        if (FAILED(dwriteFactory->CreateTextFormat(L"Segoe UI Variable Text", nullptr, DWRITE_FONT_WEIGHT_SEMI_BOLD,
+                                                  DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                                  11.5f, L"en-US", &fmtTrayText)) || !fmtTrayText) {
+            dwriteFactory->CreateTextFormat(L"Segoe UI", nullptr, DWRITE_FONT_WEIGHT_SEMI_BOLD,
+                                            DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                            11.5f, L"en-US", &fmtTrayText);
+        }
+        if (fmtTrayText) {
+            fmtTrayText->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+            fmtTrayText->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            fmtTrayText->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        }
+
+        if (FAILED(dwriteFactory->CreateTextFormat(L"Segoe UI Variable Text", nullptr, DWRITE_FONT_WEIGHT_BOLD,
+                                                  DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                                  10.5f, L"en-US", &fmtTrayOsd)) || !fmtTrayOsd) {
+            dwriteFactory->CreateTextFormat(L"Segoe UI", nullptr, DWRITE_FONT_WEIGHT_BOLD,
+                                            DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                            10.5f, L"en-US", &fmtTrayOsd);
+        }
+        if (fmtTrayOsd) {
+            fmtTrayOsd->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+            fmtTrayOsd->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            fmtTrayOsd->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        }
+    }
+
+    InitAudioEndpoint();
+
+    HINSTANCE hInst = GetModuleHandleW(nullptr);
+    WNDCLASSEXW wc{};
+    wc.cbSize = sizeof(wc);
+    wc.style = CS_DBLCLKS;
+    wc.lpfnWndProc = StatsWidgetWndProc;
+    wc.hInstance = hInst;
+    wc.hCursor = LoadCursorW(nullptr, IDC_SIZEWE);
+    wc.lpszClassName = kStatsWidgetClassName;
+    RegisterClassExW(&wc);
+
+    WNDCLASSEXW wcSecTray{};
+    wcSecTray.cbSize = sizeof(wcSecTray);
+    wcSecTray.style = CS_DBLCLKS;
+    wcSecTray.lpfnWndProc = SecondaryTrayWidgetWndProc;
+    wcSecTray.hInstance = hInst;
+    wcSecTray.hCursor = LoadCursorW(nullptr, MAKEINTRESOURCEW(32649));
+    wcSecTray.lpszClassName = kSecondaryTrayWidgetClassName;
+    RegisterClassExW(&wcSecTray);
+
+    g_secPopupD2dFactory = d2dFactory;
+    if (dwriteFactory) {
+        dwriteFactory->CreateTextFormat(L"Segoe UI", nullptr, DWRITE_FONT_WEIGHT_SEMI_BOLD,
+                                        DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                        13.5f, L"vi-VN", &g_secPopupFmtTitle);
+        dwriteFactory->CreateTextFormat(L"Segoe UI", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+                                        DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                        12.0f, L"vi-VN", &g_secPopupFmtBody);
+        dwriteFactory->CreateTextFormat(L"Segoe UI", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+                                        DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                        10.5f, L"vi-VN", &g_secPopupFmtSmall);
+        dwriteFactory->CreateTextFormat(L"Segoe MDL2 Assets", nullptr, DWRITE_FONT_WEIGHT_NORMAL,
+                                        DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                        14.5f, L"", &g_secPopupFmtIcon);
+        dwriteFactory->CreateTextFormat(L"Segoe UI", nullptr, DWRITE_FONT_WEIGHT_SEMI_BOLD,
+                                        DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                        11.0f, L"vi-VN", &g_secPopupFmtCenter);
+        dwriteFactory->CreateTextFormat(L"Segoe UI", nullptr, DWRITE_FONT_WEIGHT_SEMI_BOLD,
+                                        DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL,
+                                        12.0f, L"vi-VN", &g_secPopupFmtRight);
+        if (g_secPopupFmtTitle) {
+            g_secPopupFmtTitle->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+            g_secPopupFmtTitle->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            g_secPopupFmtTitle->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        }
+        if (g_secPopupFmtBody) {
+            g_secPopupFmtBody->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+            g_secPopupFmtBody->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            g_secPopupFmtBody->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+            IDWriteInlineObject* ellipsis = nullptr;
+            if (SUCCEEDED(dwriteFactory->CreateEllipsisTrimmingSign(g_secPopupFmtBody, &ellipsis)) && ellipsis) {
+                DWRITE_TRIMMING trim{ DWRITE_TRIMMING_GRANULARITY_CHARACTER, 0, 0 };
+                g_secPopupFmtBody->SetTrimming(&trim, ellipsis);
+                ellipsis->Release();
+            }
+        }
+        if (g_secPopupFmtSmall) {
+            g_secPopupFmtSmall->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+            g_secPopupFmtSmall->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            g_secPopupFmtSmall->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        }
+        if (g_secPopupFmtIcon) {
+            g_secPopupFmtIcon->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+            g_secPopupFmtIcon->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            g_secPopupFmtIcon->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        }
+        if (g_secPopupFmtCenter) {
+            g_secPopupFmtCenter->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
+            g_secPopupFmtCenter->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            g_secPopupFmtCenter->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        }
+        if (g_secPopupFmtRight) {
+            g_secPopupFmtRight->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_TRAILING);
+            g_secPopupFmtRight->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
+            g_secPopupFmtRight->SetWordWrapping(DWRITE_WORD_WRAPPING_NO_WRAP);
+        }
+    }
+
+    WNDCLASSEXW wcAudioPop{};
+    wcAudioPop.cbSize = sizeof(wcAudioPop);
+    wcAudioPop.lpfnWndProc = SecondaryAudioPopupWndProc;
+    wcAudioPop.hInstance = hInst;
+    wcAudioPop.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+    wcAudioPop.lpszClassName = kSecAudioPopupClassName;
+    RegisterClassExW(&wcAudioPop);
+
+    WNDCLASSEXW wcWifiPop{};
+    wcWifiPop.cbSize = sizeof(wcWifiPop);
+    wcWifiPop.lpfnWndProc = SecondaryWifiPopupWndProc;
+    wcWifiPop.hInstance = hInst;
+    wcWifiPop.hCursor = LoadCursorW(nullptr, IDC_ARROW);
+    wcWifiPop.lpszClassName = kSecWifiPopupClassName;
+    RegisterClassExW(&wcWifiPop);
+
+    using CreateWindowInBand_t = HWND(WINAPI*)(DWORD dwExStyle, LPCWSTR lpClassName, LPCWSTR lpWindowName,
+                                               DWORD dwStyle, int X, int Y, int nWidth, int nHeight,
+                                               HWND hWndParent, HMENU hMenu, HINSTANCE hInstance,
+                                               PVOID lpParam, DWORD dwBand);
+    auto pCreateWindowInBand = reinterpret_cast<CreateWindowInBand_t>(
+        GetProcAddress(GetModuleHandleW(L"user32.dll"), "CreateWindowInBand"));
+
+    HWND hWidget = nullptr;
+    if (pCreateWindowInBand) {
+        hWidget = pCreateWindowInBand(
+            WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_TOPMOST,
+            kStatsWidgetClassName,
+            L"",
+            WS_POPUP,
+            0, 0, 0, 0,
+            nullptr, nullptr, hInst, nullptr, 16 /* ZBID_SYSTEM_TOOLS */);
+    }
+    if (!hWidget) {
+        hWidget = CreateWindowExW(
+            WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_TOPMOST,
+            kStatsWidgetClassName,
+            L"",
+            WS_POPUP,
+            0, 0, 0, 0,
+            nullptr, nullptr, hInst, nullptr);
+    }
+    g_statsWidgetHwnd.store(hWidget);
+
+    auto createPopupWindow = [&](PCWSTR className) -> HWND {
+        HWND hw = nullptr;
+        if (pCreateWindowInBand) {
+            hw = pCreateWindowInBand(
+                WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST,
+                className, L"", WS_POPUP, 0, 0, 0, 0,
+                nullptr, nullptr, hInst, nullptr, 16 /* ZBID_SYSTEM_TOOLS */);
+        }
+        if (!hw) {
+            hw = CreateWindowExW(
+                WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_TOPMOST,
+                className, L"", WS_POPUP, 0, 0, 0, 0,
+                nullptr, nullptr, hInst, nullptr);
+        }
+        return hw;
+    };
+    g_secAudioPopupHwnd = createPopupWindow(kSecAudioPopupClassName);
+    g_secWifiPopupHwnd = createPopupWindow(kSecWifiPopupClassName);
+
+    auto createSecondaryTrayWidget = [&](SecondaryTrayInstance* pInst) -> HWND {
+        HWND hw = nullptr;
+        if (pCreateWindowInBand) {
+            hw = pCreateWindowInBand(
+                WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_TOPMOST,
+                kSecondaryTrayWidgetClassName,
+                L"",
+                WS_POPUP,
+                0, 0, 0, 0,
+                nullptr, nullptr, hInst, nullptr, 16 /* ZBID_SYSTEM_TOOLS */);
+        }
+        if (!hw) {
+            hw = CreateWindowExW(
+                WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_TOPMOST,
+                kSecondaryTrayWidgetClassName,
+                L"",
+                WS_POPUP,
+                0, 0, 0, 0,
+                nullptr, nullptr, hInst, nullptr);
+        }
+        if (hw) {
+            SetWindowLongPtrW(hw, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pInst));
+        }
+        return hw;
+    };
+
+    auto createSecondaryStatsWidget = [&]() -> HWND {
+        HWND hw = nullptr;
+        if (pCreateWindowInBand) {
+            hw = pCreateWindowInBand(
+                WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_TOPMOST,
+                kStatsWidgetClassName,
+                L"",
+                WS_POPUP,
+                0, 0, 0, 0,
+                nullptr, nullptr, hInst, nullptr, 16 /* ZBID_SYSTEM_TOOLS */);
+        }
+        if (!hw) {
+            hw = CreateWindowExW(
+                WS_EX_LAYERED | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE | WS_EX_TOPMOST,
+                kStatsWidgetClassName,
+                L"",
+                WS_POPUP,
+                0, 0, 0, 0,
+                nullptr, nullptr, hInst, nullptr);
+        }
+        return hw;
+    };
+
+    std::vector<std::unique_ptr<SecondaryTrayInstance>> secondaryInstances;
+
+    HWINEVENTHOOK hTrayEventHook = nullptr;
+    DWORD hookedTrayTid = 0;
+    auto ensureTrayWinEventHook = [&](HWND hTrayWnd) {
+        if (!hTrayWnd) return;
+        DWORD pid = 0;
+        DWORD tid = GetWindowThreadProcessId(hTrayWnd, &pid);
+        if (tid != 0 && tid != hookedTrayTid) {
+            if (hTrayEventHook) {
+                UnhookWinEvent(hTrayEventHook);
+                hTrayEventHook = nullptr;
+            }
+            hTrayEventHook = SetWinEventHook(
+                EVENT_OBJECT_CREATE, EVENT_OBJECT_LOCATIONCHANGE,
+                nullptr, TrayWinEventProc, pid, tid, WINEVENT_OUTOFCONTEXT);
+            hookedTrayTid = tid;
+        }
+    };
+
+    uint64_t prevIdle = 0, prevKernel = 0, prevUser = 0;
+    FILETIME ftIdle{}, ftKernel{}, ftUser{};
+    if (GetSystemTimes(&ftIdle, &ftKernel, &ftUser)) {
+        prevIdle = FileTimeToU64(ftIdle);
+        prevKernel = FileTimeToU64(ftKernel);
+        prevUser = FileTimeToU64(ftUser);
+    }
+
+    uint64_t prevNetIn = 0, prevNetOut = 0;
+    uint32_t prevAdapterSig = 0;
+    ULONGLONG prevNetTick = 0;
+    if (SampleNetworkOctetsFromIfTable2(pGetIfTable2, pFreeMibTable, prevNetIn, prevNetOut, prevAdapterSig)) {
+        prevNetTick = GetTickCount64();
+    }
+
+    LiveSystemMetrics metrics{};
+    ULONGLONG lastSampleTick = 0;
+    bool bitmapDirty = true;
+    int lastRenderedPxW = 0, lastRenderedPxH = 0;
+    int lastPlacedX = -99999, lastPlacedY = -99999;
+    bool lastRenderedLightTheme = false;
+    float lastRenderedDpi = 0.0f;
+
+    auto sampleMetricsNow = [&](ModSettings const& s) {
+        ULONGLONG now = GetTickCount64();
+        if (now - lastSampleTick < 950) return;
+        lastSampleTick = now;
+
+        bool pdhCollected = false;
+        if (hQuery && pPdhCollectQueryData && (s.showCpuStats || s.showGpuStats)) {
+            pdhCollected = (pPdhCollectQueryData(hQuery) == 0);
+        }
+
+        if (s.showCpuStats) {
+            FILETIME curI{}, curK{}, curU{};
+            if (GetSystemTimes(&curI, &curK, &curU)) {
+                uint64_t iDiff = FileTimeToU64(curI) - prevIdle;
+                uint64_t kDiff = FileTimeToU64(curK) - prevKernel;
+                uint64_t uDiff = FileTimeToU64(curU) - prevUser;
+                prevIdle = FileTimeToU64(curI);
+                prevKernel = FileTimeToU64(curK);
+                prevUser = FileTimeToU64(curU);
+                uint64_t totalSys = kDiff + uDiff;
+                if (totalSys > 0 && totalSys >= iDiff) {
+                    uint64_t busy = totalSys - iDiff;
+                    metrics.cpuPercent = std::clamp(
+                        static_cast<int>((busy * 100ULL + totalSys / 2) / totalSys), 0, 100);
+                }
+            } else if (pdhCollected && hCpuUtilCounter && pPdhGetFormattedCounterValue) {
+                PdhFmtCounterValueDbl val{};
+                if (pPdhGetFormattedCounterValue(hCpuUtilCounter, kPdhFmtDouble, nullptr, &val) == 0 &&
+                    (val.CStatus == 0 || val.CStatus == 1)) {
+                    metrics.cpuPercent = std::clamp(static_cast<int>(val.doubleValue + 0.5), 0, 100);
+                }
+            }
+        }
+
+        if (s.showRamStats) {
+            MEMORYSTATUSEX mem{};
+            mem.dwLength = sizeof(mem);
+            if (GlobalMemoryStatusEx(&mem)) {
+                metrics.ramPercent = std::clamp(static_cast<int>(mem.dwMemoryLoad), 0, 100);
+                constexpr double kBytesPerGb = 1024.0 * 1024.0 * 1024.0;
+                metrics.ramTotalGb = static_cast<double>(mem.ullTotalPhys) / kBytesPerGb;
+                metrics.ramUsedGb = static_cast<double>(mem.ullTotalPhys - mem.ullAvailPhys) / kBytesPerGb;
+            }
+        }
+
+        if (s.showGpuStats && pdhCollected && hGpuCounter && pPdhGetFormattedCounterArrayW) {
+            DWORD bufSize = 0, itemCount = 0;
+            if (pPdhGetFormattedCounterArrayW(hGpuCounter, kPdhFmtDouble, &bufSize, &itemCount, nullptr) == kPdhMoreData && bufSize > 0) {
+                std::vector<BYTE> buf(bufSize);
+                auto* items = reinterpret_cast<PdhFmtCounterValueItemW*>(buf.data());
+                if (pPdhGetFormattedCounterArrayW(hGpuCounter, kPdhFmtDouble, &bufSize, &itemCount, items) == 0) {
+                    std::unordered_map<DWORD, double> procGpu;
+                    for (DWORD i = 0; i < itemCount; i++) {
+                        if ((items[i].FmtValue.CStatus == 0 || items[i].FmtValue.CStatus == 1) &&
+                            items[i].FmtValue.doubleValue > 0.0001 && items[i].szName) {
+                            PCWSTR p = items[i].szName;
+                            if (wcsncmp(p, L"pid_", 4) == 0) {
+                                p += 4;
+                                DWORD pid = 0;
+                                while (*p >= L'0' && *p <= L'9') {
+                                    pid = pid * 10 + (*p - L'0');
+                                    p++;
+                                }
+                                procGpu[pid] += items[i].FmtValue.doubleValue;
+                            }
+                        }
+                    }
+                    double totalGpu = 0.0;
+                    for (const auto& kv : procGpu) {
+                        totalGpu += std::min(100.0, kv.second);
+                    }
+                    metrics.gpuPercent = std::clamp(static_cast<int>(totalGpu + 0.5), 0, 100);
+                }
+            }
+        }
+
+        if (s.showNetStats) {
+            uint64_t curIn = 0, curOut = 0;
+            uint32_t curSig = 0;
+            if (SampleNetworkOctetsFromIfTable2(pGetIfTable2, pFreeMibTable, curIn, curOut, curSig)) {
+                ULONGLONG netNow = GetTickCount64();
+                if (prevNetTick != 0 && netNow > prevNetTick && curSig == prevAdapterSig &&
+                    curIn >= prevNetIn && curOut >= prevNetOut) {
+                    double elapsedSec = static_cast<double>(netNow - prevNetTick) / 1000.0;
+                    if (elapsedSec > 0.05) {
+                        metrics.netDownBytesPerSec = static_cast<double>(curIn - prevNetIn) / elapsedSec;
+                        metrics.netUpBytesPerSec = static_cast<double>(curOut - prevNetOut) / elapsedSec;
+                    }
+                } else {
+                    metrics.netDownBytesPerSec = 0.0;
+                    metrics.netUpBytesPerSec = 0.0;
+                }
+                prevNetIn = curIn;
+                prevNetOut = curOut;
+                prevAdapterSig = curSig;
+                prevNetTick = netNow;
+            } else {
+                metrics.netDownBytesPerSec = 0.0;
+                metrics.netUpBytesPerSec = 0.0;
+                prevNetTick = 0;
+            }
+        }
+
+        metrics.pingMs = g_livePingMs.load();
+        bitmapDirty = true;
+    };
+
+    bool anySecondaryAnimating = false;
+    auto updateWidgetPresentation = [&](bool forceRedraw) {
+        anySecondaryAnimating = false;
+        if (!d2dFactory || !fmtLabel || !fmtValue || !fmtCenter) return;
+
+        ModSettings settings = GetSettings();
+        if (metrics.pingMs != g_livePingMs.load()) {
+            metrics.pingMs = g_livePingMs.load();
+            bitmapDirty = true;
+        }
+
+        bool lightTheme = IsLightSystemThemeFallback();
+        auto cols = BuildActiveColumns(settings, metrics, lightTheme);
+
+        float padX = 8.0f;
+        float colGap = 11.0f;
+        float dipW = padX * 2.0f;
+        for (size_t i = 0; i < cols.size(); i++) {
+            dipW += cols[i].widthDip;
+            if (i + 1 < cols.size()) dipW += colGap;
+        }
+        float dipH = 36.0f;
+
+        // =========================================================================
+        // 1. Primary Taskbar Stats Presentation (hWidget)
+        // =========================================================================
+        bool primaryStatsShown = false;
+        if (hWidget && settings.enableTaskbarSystemStats && !cols.empty()) {
+            HWND hTrayWnd = FindWindowW(L"Shell_TrayWnd", nullptr);
+            if (hTrayWnd && IsWindowVisible(hTrayWnd) && !IsWindowCloakedByDwm(hTrayWnd)) {
+                ensureTrayWinEventHook(hTrayWnd);
+                RECT rcTray{};
+                if (GetWindowRect(hTrayWnd, &rcTray) &&
+                    (rcTray.right - rcTray.left) >= 200 &&
+                    (rcTray.bottom - rcTray.top) >= 24) {
+
+                    float dpi = static_cast<float>(GetWindowDpiSafe(hTrayWnd));
+                    float scale = dpi / 96.0f;
+
+                    int pxW = std::max(32, static_cast<int>(std::ceil(dipW * scale)));
+                    int pxH = std::max(24, static_cast<int>(std::ceil(dipH * scale)));
+                    int trayH = rcTray.bottom - rcTray.top;
+                    if (pxH > trayH - 4) {
+                        pxH = std::max(22, trayH - 4);
+                        dipH = static_cast<float>(pxH) / scale;
+                    }
+
+                    // Auto-Hide Taskbar & Fullscreen visibility check
+                    bool primaryAllowed = true;
+                    HMONITOR hMon = MonitorFromWindow(hTrayWnd, MONITOR_DEFAULTTONEAREST);
+                    if (hMon) {
+                        MONITORINFO mi{};
+                        mi.cbSize = sizeof(mi);
+                        if (GetMonitorInfoW(hMon, &mi)) {
+                            RECT rcVis{};
+                            bool hasIntersect = IntersectRect(&rcVis, &rcTray, &mi.rcMonitor) != FALSE;
+                            int visibleH = hasIntersect ? (rcVis.bottom - rcVis.top) : 0;
+                            int visibleW = hasIntersect ? (rcVis.right - rcVis.left) : 0;
+                            int minVisH = std::max(14, pxH / 2);
+                            if (!hasIntersect || visibleH < minVisH || visibleW < 100) {
+                                primaryAllowed = false;
+                            } else if (IsTrueFullscreenAppActive(hTrayWnd, mi.rcMonitor)) {
+                                primaryAllowed = false;
+                            }
+                        }
+                    }
+
+                    if (primaryAllowed || g_isDraggingWidget || g_isContextMenuOpen) {
+                        // Win10: TrayNotifyWnd.left is the exact left boundary of the system tray (^ chevron)
+                        int trayLeftX = rcTray.right - static_cast<int>(210.0f * scale);
+                        HWND hNotifyWnd = FindWindowExW(hTrayWnd, nullptr, L"TrayNotifyWnd", nullptr);
+                        if (hNotifyWnd) {
+                            RECT rcNotify{};
+                            if (GetWindowRect(hNotifyWnd, &rcNotify) &&
+                                rcNotify.left > rcTray.left + 100 &&
+                                rcNotify.left < rcTray.right - 40) {
+                                trayLeftX = rcNotify.left;
+                            }
+                        }
+                        int baseDefaultX = trayLeftX - pxW - static_cast<int>(8.0f * scale);
+                        int minAllowedX = rcTray.left + static_cast<int>(4.0f * scale);
+                        int maxAllowedX = std::max(minAllowedX, trayLeftX - pxW - 2);
+                        g_cachedBaseDefaultX.store(baseDefaultX);
+                        g_cachedMinAllowedX.store(minAllowedX);
+                        g_cachedMaxAllowedX.store(maxAllowedX);
+
+                        int targetX = std::clamp(baseDefaultX + g_userOffsetX.load(), minAllowedX, maxAllowedX);
+                        int targetY = rcTray.top + (trayH - pxH) / 2;
+
+                        bool needBitmapRedraw = forceRedraw || bitmapDirty ||
+                                                (pxW != lastRenderedPxW) || (pxH != lastRenderedPxH) ||
+                                                (lightTheme != lastRenderedLightTheme) ||
+                                                (std::abs(dpi - lastRenderedDpi) > 0.5f);
+
+                        bool wasVisible = IsWindowVisible(hWidget) != FALSE;
+                        bool posChanged = (targetX != lastPlacedX) || (targetY != lastPlacedY);
+                        bool zOrderBehindTray = !wasVisible || IsTrayCoveringWidget(hTrayWnd, hWidget);
+
+                        if (needBitmapRedraw) {
+                            RenderStatsBitmapToLayeredWindow(
+                                hWidget, cols, d2dFactory, fmtLabel, fmtValue, fmtCenter,
+                                pxW, pxH, dipW, dipH, dpi, lightTheme, padX, colGap, targetX, targetY);
+                            lastRenderedPxW = pxW;
+                            lastRenderedPxH = pxH;
+                            lastRenderedLightTheme = lightTheme;
+                            lastRenderedDpi = dpi;
+                            lastPlacedX = targetX;
+                            lastPlacedY = targetY;
+                            bitmapDirty = false;
+                        }
+
+                        if (!wasVisible) {
+                            ShowWindow(hWidget, SW_SHOWNOACTIVATE);
+                            SetWindowPos(hWidget, HWND_TOPMOST, targetX, targetY, pxW, pxH,
+                                         SWP_NOACTIVATE | SWP_NOSENDCHANGING);
+                            lastPlacedX = targetX;
+                            lastPlacedY = targetY;
+                        } else if (posChanged || zOrderBehindTray || forceRedraw) {
+                            SetWindowPos(hWidget, HWND_TOPMOST, targetX, targetY, pxW, pxH,
+                                         SWP_NOACTIVATE | SWP_NOSENDCHANGING);
+                            lastPlacedX = targetX;
+                            lastPlacedY = targetY;
+                        }
+                        primaryStatsShown = true;
+                    }
+                }
+            }
+        }
+
+        if (!primaryStatsShown) {
+            if (!g_isDraggingWidget && !g_isContextMenuOpen && hWidget && IsWindowVisible(hWidget)) {
+                ShowWindow(hWidget, SW_HIDE);
+            }
+        }
+
+        // =========================================================================
+        // 2. Secondary Monitors Presentation (Multi-Tray & Secondary Stats)
+        // =========================================================================
+        std::vector<HWND> currentSecTrays;
+        HWND hFindSec = nullptr;
+        while ((hFindSec = FindWindowExW(nullptr, hFindSec, L"Shell_SecondaryTrayWnd", nullptr)) != nullptr) {
+            currentSecTrays.push_back(hFindSec);
+        }
+
+        // Reconcile removed secondary monitors
+        for (auto it = secondaryInstances.begin(); it != secondaryInstances.end(); ) {
+            bool stillPresent = false;
+            for (HWND h : currentSecTrays) {
+                if (h == (*it)->hSecondaryTray && IsWindow(h)) {
+                    stillPresent = true;
+                    break;
+                }
+            }
+            if (!stillPresent) {
+                if ((*it)->hTrayWidget &&
+                    (g_audioPopupState.anchorWidget == (*it)->hTrayWidget ||
+                     g_wifiPopupState.anchorWidget == (*it)->hTrayWidget)) {
+                    CloseAllSecondaryPopups();
+                }
+                {
+                    std::lock_guard<std::mutex> lock(g_secClockMarginMutex);
+                    g_secClockMargins.erase((*it)->hSecondaryTray);
+                }
+                if ((*it)->hTrayWidget && IsWindow((*it)->hTrayWidget)) DestroyWindow((*it)->hTrayWidget);
+                if ((*it)->hStatsWidget && IsWindow((*it)->hStatsWidget)) DestroyWindow((*it)->hStatsWidget);
+                it = secondaryInstances.erase(it);
+            } else {
+                ++it;
+            }
+        }
+
+        // Add new secondary monitors
+        for (HWND hSec : currentSecTrays) {
+            bool found = false;
+            for (const auto& entry : secondaryInstances) {
+                if (entry->hSecondaryTray == hSec) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                auto newInst = std::make_unique<SecondaryTrayInstance>();
+                newInst->hSecondaryTray = hSec;
+                secondaryInstances.push_back(std::move(newInst));
+            }
+        }
+
+        bool curWifi = g_hasActiveWifi.load();
+        bool curEth = g_hasActiveEthernet.load();
+        bool curNet = g_hasActiveNetwork.load();
+        float curMasterVol = g_liveMasterVolume.load();
+        bool curMuted = g_liveMasterMuted.load();
+        int curVolPct = std::clamp(static_cast<int>(curMasterVol * 100.0f + 0.5f), 0, 100);
+        bool showVolOsd = (GetTickCount64() < g_volumeOsdExpiryTick.load());
+
+        {
+            std::lock_guard<std::mutex> lock(g_secClockMarginMutex);
+            g_activeSecTraysForUia.clear();
+            for (const auto& instPtr : secondaryInstances) {
+                if (instPtr && instPtr->hSecondaryTray) g_activeSecTraysForUia.push_back(instPtr->hSecondaryTray);
+            }
+        }
+        for (auto& instPtr : secondaryInstances) {
+            SecondaryTrayInstance& inst = *instPtr;
+            HWND hSec = inst.hSecondaryTray;
+            if (!hSec || !IsWindow(hSec)) continue;
+
+            // Visibility and Auto-Hide check for this secondary monitor
+            RECT rcSec{};
+            if (!GetWindowRect(hSec, &rcSec) ||
+                (rcSec.right - rcSec.left) < 100 ||
+                (rcSec.bottom - rcSec.top) < 20) {
+                if (inst.hTrayWidget && IsWindowVisible(inst.hTrayWidget)) ShowWindow(inst.hTrayWidget, SW_HIDE);
+                if (inst.hStatsWidget && IsWindowVisible(inst.hStatsWidget)) ShowWindow(inst.hStatsWidget, SW_HIDE);
+                continue;
+            }
+
+            int secTrayH = rcSec.bottom - rcSec.top;
+            float secDpi = static_cast<float>(GetWindowDpiSafe(hSec));
+            if (secDpi < 24.0f) secDpi = 96.0f;
+            float secScale = secDpi / 96.0f;
+
+            HMONITOR hSecMon = MonitorFromWindow(hSec, MONITOR_DEFAULTTONEAREST);
+            if (hSecMon) {
+                MONITORINFO mi{};
+                mi.cbSize = sizeof(mi);
+                if (GetMonitorInfoW(hSecMon, &mi)) {
+                    RECT rcVis{};
+                    bool hasIntersect = IntersectRect(&rcVis, &rcSec, &mi.rcMonitor) != FALSE;
+                    int visibleH = hasIntersect ? (rcVis.bottom - rcVis.top) : 0;
+                    int visibleW = hasIntersect ? (rcVis.right - rcVis.left) : 0;
+                    if (!hasIntersect || visibleH < 14 || visibleW < 100) {
+                        if (inst.hTrayWidget && IsWindowVisible(inst.hTrayWidget)) ShowWindow(inst.hTrayWidget, SW_HIDE);
+                        if (inst.hStatsWidget && IsWindowVisible(inst.hStatsWidget)) ShowWindow(inst.hStatsWidget, SW_HIDE);
+                        continue;
+                    }
+                    if (IsTrueFullscreenAppActive(hSec, mi.rcMonitor)) {
+                        if (inst.hTrayWidget && IsWindowVisible(inst.hTrayWidget)) ShowWindow(inst.hTrayWidget, SW_HIDE);
+                        if (inst.hStatsWidget && IsWindowVisible(inst.hStatsWidget)) ShowWindow(inst.hStatsWidget, SW_HIDE);
+                        continue;
+                    }
+                }
+            }
+
+            // Secondary clock + notification bell dynamic margin (auto-adapts when DND / notification bell appears or hides):
+            int clockMargin = static_cast<int>(6.0f * secScale);
+            HWND hClock = FindWindowExW(hSec, nullptr, L"ClockButton", nullptr);
+            if (hClock && IsWindowVisible(hClock)) {
+                RECT rcClock{};
+                GetWindowRect(hClock, &rcClock);
+                clockMargin = rcSec.right - rcClock.left + static_cast<int>(4.0f * secScale);
+            } else {
+                int uiaMargin = 0;
+                {
+                    std::lock_guard<std::mutex> lock(g_secClockMarginMutex);
+                    auto it = g_secClockMargins.find(hSec);
+                    if (it != g_secClockMargins.end() && it->second > 0) {
+                        uiaMargin = it->second;
+                    }
+                }
+                if (uiaMargin > 0) {
+                    clockMargin = uiaMargin;
+                } else {
+                    clockMargin = static_cast<int>((settings.enableTaskbarClock ? 112.0f : 72.0f) * secScale);
+                }
+            }
+
+            // 1. Secondary Tray Presentation
+            int secTrayPxW = 0;
+            int targetTrayX = rcSec.right - clockMargin;
+            if (!settings.enableSecondaryMonitorTray) {
+                if (inst.hTrayWidget && IsWindowVisible(inst.hTrayWidget)) ShowWindow(inst.hTrayWidget, SW_HIDE);
+            } else {
+                if (!inst.hTrayWidget) {
+                    inst.hTrayWidget = createSecondaryTrayWidget(&inst);
+                }
+
+                float secDipW = 64.0f;
+                float secDipH = 36.0f;
+                secTrayPxW = std::max(32, static_cast<int>(std::ceil(secDipW * secScale)));
+                int secTrayPxH = std::max(22, std::min(secTrayH - 4, static_cast<int>(std::ceil(secDipH * secScale))));
+
+                int desiredTrayX = rcSec.right - clockMargin - secTrayPxW;
+                if (!inst.hasAnimTrayX || std::abs(desiredTrayX - inst.animTrayX) > 180.0f) {
+                    inst.animTrayX = static_cast<float>(desiredTrayX);
+                    inst.hasAnimTrayX = true;
+                } else if (std::abs(desiredTrayX - inst.animTrayX) > 0.5f) {
+                    inst.animTrayX += (static_cast<float>(desiredTrayX) - inst.animTrayX) * 0.28f;
+                    if (std::abs(desiredTrayX - inst.animTrayX) <= 0.6f) {
+                        inst.animTrayX = static_cast<float>(desiredTrayX);
+                    } else {
+                        anySecondaryAnimating = true;
+                    }
+                } else {
+                    inst.animTrayX = static_cast<float>(desiredTrayX);
+                }
+                targetTrayX = static_cast<int>(std::round(inst.animTrayX));
+                int targetTrayY = rcSec.top + (secTrayH - secTrayPxH) / 2;
+
+                // Smooth Fluent hover pill fade
+                bool wifiPopVis = (g_secWifiPopupHwnd && IsWindowVisible(g_secWifiPopupHwnd) && g_wifiPopupState.anchorWidget == inst.hTrayWidget);
+                bool audioPopVis = (g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd) && g_audioPopupState.anchorWidget == inst.hTrayWidget);
+                float targetWfA = (inst.hoverZone == TrayHoverZone::Wifi || wifiPopVis) ? 1.0f : 0.0f;
+                float targetAuA = (inst.hoverZone == TrayHoverZone::Audio || audioPopVis) ? 1.0f : 0.0f;
+                bool hoverAnimChanged = false;
+                if (std::abs(targetWfA - inst.wifiHoverAlpha) > 0.015f) {
+                    inst.wifiHoverAlpha += (targetWfA - inst.wifiHoverAlpha) * 0.32f;
+                    if (std::abs(targetWfA - inst.wifiHoverAlpha) <= 0.02f) inst.wifiHoverAlpha = targetWfA;
+                    else anySecondaryAnimating = true;
+                    hoverAnimChanged = true;
+                }
+                if (std::abs(targetAuA - inst.audioHoverAlpha) > 0.015f) {
+                    inst.audioHoverAlpha += (targetAuA - inst.audioHoverAlpha) * 0.32f;
+                    if (std::abs(targetAuA - inst.audioHoverAlpha) <= 0.02f) inst.audioHoverAlpha = targetAuA;
+                    else anySecondaryAnimating = true;
+                    hoverAnimChanged = true;
+                }
+
+                bool volChanged = (curVolPct != inst.lastVolumePercent) || (curMuted != inst.lastMuted);
+                bool trayBitmapDirty = forceRedraw ||
+                                       (secTrayPxW != inst.lastTrayW) || (secTrayPxH != inst.lastTrayH) ||
+                                       (lightTheme != inst.lastLightTheme) ||
+                                       (std::abs(secDpi - inst.lastDpi) > 0.5f) ||
+                                       volChanged ||
+                                       (curWifi != inst.lastHasWifi) ||
+                                       (curEth != inst.lastHasEthernet) ||
+                                       (inst.hoverZone != inst.lastHoverZone) ||
+                                       (wifiPopVis != inst.lastWifiPopupOpen) ||
+                                       (audioPopVis != inst.lastAudioPopupOpen) ||
+                                       hoverAnimChanged ||
+                                       showVolOsd;
+                bool trayPosChanged = (targetTrayX != inst.lastTrayX) || (targetTrayY != inst.lastTrayY);
+
+                bool trayWasVis = IsWindowVisible(inst.hTrayWidget) != FALSE;
+                inst.lastTrayX = targetTrayX;
+                inst.lastTrayY = targetTrayY;
+                inst.lastTrayW = secTrayPxW;
+                inst.lastTrayH = secTrayPxH;
+                inst.lastLightTheme = lightTheme;
+                inst.lastDpi = secDpi;
+                inst.lastVolumePercent = curVolPct;
+                inst.lastMuted = curMuted;
+                inst.lastHasWifi = curWifi;
+                inst.lastHasEthernet = curEth;
+                inst.lastHoverZone = inst.hoverZone;
+                inst.lastWifiPopupOpen = wifiPopVis;
+                inst.lastAudioPopupOpen = audioPopVis;
+
+                if (trayBitmapDirty) {
+                    RenderSecondaryTrayBitmap(
+                        inst.hTrayWidget, inst, d2dFactory,
+                        fmtTrayGlyph, fmtTrayOsd,
+                        secTrayPxW, secTrayPxH, secDipW, secDipH,
+                        secDpi, lightTheme,
+                        curWifi, curEth, curNet,
+                        curMasterVol, curMuted, showVolOsd,
+                        targetTrayX, targetTrayY);
+                }
+                if (g_audioDefaultDeviceChanged.exchange(false)) {
+                    RebindAudioEndpointVolume();
+                    if (g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd) && !g_audioPopupState.draggingSlider) {
+                        EnumerateAudioOutputDevices(g_audioPopupState.devices, g_audioPopupState.fxSoundManaging, g_audioPopupState.fxExePath);
+                        RenderAudioPopup();
+                    }
+                } else if (volChanged && g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd) && !g_audioPopupState.draggingSlider) {
+                    RenderAudioPopup();
+                }
+
+                if (!trayWasVis) {
+                    ShowWindow(inst.hTrayWidget, SW_SHOWNOACTIVATE);
+                }
+                ULONGLONG nowTrayTick = GetTickCount64();
+                bool needTrayZ = (!trayWasVis) || (nowTrayTick - inst.lastTrayZTick >= 500);
+                if (trayPosChanged && !trayBitmapDirty) {
+                    SetWindowPos(inst.hTrayWidget, HWND_TOPMOST, targetTrayX, targetTrayY, 0, 0,
+                                 SWP_NOSIZE | SWP_NOACTIVATE | (needTrayZ ? 0 : SWP_NOZORDER));
+                    if (needTrayZ) inst.lastTrayZTick = nowTrayTick;
+                } else if (needTrayZ) {
+                    SetWindowPos(inst.hTrayWidget, HWND_TOPMOST, targetTrayX, targetTrayY, 0, 0,
+                                 SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOMOVE);
+                    inst.lastTrayZTick = nowTrayTick;
+                }
+            }
+
+            // 2. Secondary Stats Presentation (Fully Decoupled)
+            if (!settings.enableSecondaryMonitorStats || cols.empty()) {
+                if (inst.hStatsWidget && IsWindowVisible(inst.hStatsWidget)) ShowWindow(inst.hStatsWidget, SW_HIDE);
+            } else {
+                if (!inst.hStatsWidget) {
+                    inst.hStatsWidget = createSecondaryStatsWidget();
+                }
+
+                int secStatsPxW = std::max(32, static_cast<int>(std::ceil(dipW * secScale)));
+                int secStatsPxH = std::max(22, std::min(secTrayH - 4, static_cast<int>(std::ceil(dipH * secScale))));
+
+                int rightAnchor = settings.enableSecondaryMonitorTray ? targetTrayX : (rcSec.right - clockMargin);
+                int baseDefaultSecX = rightAnchor - secStatsPxW - static_cast<int>(8.0f * secScale);
+                int minAllowedSecX = rcSec.left + static_cast<int>(4.0f * secScale);
+                int maxAllowedSecX = std::max(minAllowedSecX, rightAnchor - secStatsPxW - 2);
+                g_cachedBaseDefaultSecX.store(baseDefaultSecX);
+                g_cachedMinAllowedSecX.store(minAllowedSecX);
+                g_cachedMaxAllowedSecX.store(maxAllowedSecX);
+
+                int desiredStatsX = std::clamp(baseDefaultSecX + g_secUserOffsetX.load(), minAllowedSecX, maxAllowedSecX);
+                bool draggingThisStats = g_isDraggingWidget.load() && (g_draggedHwnd.load() == inst.hStatsWidget);
+                if (draggingThisStats || !inst.hasAnimStatsX || std::abs(desiredStatsX - inst.animStatsX) > 180.0f) {
+                    inst.animStatsX = static_cast<float>(desiredStatsX);
+                    inst.hasAnimStatsX = true;
+                } else if (std::abs(desiredStatsX - inst.animStatsX) > 0.5f) {
+                    inst.animStatsX += (static_cast<float>(desiredStatsX) - inst.animStatsX) * 0.28f;
+                    if (std::abs(desiredStatsX - inst.animStatsX) <= 0.6f) {
+                        inst.animStatsX = static_cast<float>(desiredStatsX);
+                    } else {
+                        anySecondaryAnimating = true;
+                    }
+                } else {
+                    inst.animStatsX = static_cast<float>(desiredStatsX);
+                }
+                int targetStatsX = static_cast<int>(std::round(inst.animStatsX));
+                int targetStatsY = rcSec.top + (secTrayH - secStatsPxH) / 2;
+
+                bool statsBitmapDirty = forceRedraw || bitmapDirty ||
+                                        (secStatsPxW != inst.lastStatsW) || (secStatsPxH != inst.lastStatsH) ||
+                                        (lightTheme != inst.lastLightTheme);
+                bool statsPosChanged = (targetStatsX != inst.lastStatsX) || (targetStatsY != inst.lastStatsY);
+                bool statsWasVis = IsWindowVisible(inst.hStatsWidget) != FALSE;
+
+                inst.lastStatsX = targetStatsX;
+                inst.lastStatsY = targetStatsY;
+                inst.lastStatsW = secStatsPxW;
+                inst.lastStatsH = secStatsPxH;
+
+                if (statsBitmapDirty) {
+                    RenderStatsBitmapToLayeredWindow(
+                        inst.hStatsWidget, cols, d2dFactory,
+                        fmtLabel, fmtValue, fmtCenter,
+                        secStatsPxW, secStatsPxH, dipW, dipH,
+                        secDpi, lightTheme, padX, colGap,
+                        targetStatsX, targetStatsY);
+                }
+
+                if (!statsWasVis) {
+                    ShowWindow(inst.hStatsWidget, SW_SHOWNOACTIVATE);
+                }
+                ULONGLONG nowStatsTick = GetTickCount64();
+                bool needStatsZ = (!statsWasVis) || (nowStatsTick - inst.lastStatsZTick >= 500);
+                if (statsPosChanged && !statsBitmapDirty && !draggingThisStats) {
+                    SetWindowPos(inst.hStatsWidget, HWND_TOPMOST, targetStatsX, targetStatsY, 0, 0,
+                                 SWP_NOSIZE | SWP_NOACTIVATE | (needStatsZ ? 0 : SWP_NOZORDER));
+                    if (needStatsZ) inst.lastStatsZTick = nowStatsTick;
+                } else if (needStatsZ && !draggingThisStats) {
+                    SetWindowPos(inst.hStatsWidget, HWND_TOPMOST, targetStatsX, targetStatsY, 0, 0,
+                                 SWP_NOSIZE | SWP_NOACTIVATE | SWP_NOMOVE);
+                    inst.lastStatsZTick = nowStatsTick;
+                }
+            }
+        }
+    };
+
+        sampleMetricsNow(GetSettings());
+    updateWidgetPresentation(true);
+
+    ULONGLONG lastNetDetectTick = 0;
+    HANDLE waitHandles[2] = { g_sysMonitorStopEvent, g_sysMonitorWakeEvent };
+    while (!g_shuttingDown) {
+        // Adaptive frame pacing: 8ms (~120fps) during popup slide/fade, hover fade, or tray glide;
+        // 60ms ultra-low-CPU poll when idle.
+        bool popupAnimBusy = g_audioPopupSurface.animActive || g_wifiPopupSurface.animActive;
+        DWORD waitMs = (anySecondaryAnimating || popupAnimBusy) ? 8 : 60;
+        DWORD waitRes = MsgWaitForMultipleObjects(2, waitHandles, FALSE, waitMs, QS_ALLINPUT);
+        if (g_shuttingDown || waitRes == WAIT_OBJECT_0) {
+            break;
+        }
+
+        MSG msg{};
+        while (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE)) {
+            if (msg.message == WM_QUIT) break;
+            TranslateMessage(&msg);
+            DispatchMessageW(&msg);
+        }
+        if (g_shuttingDown) break;
+
+        ULONGLONG nowLoopTick = GetTickCount64();
+        g_audioPopupSurface.TickAnimation(g_secAudioPopupHwnd, nowLoopTick);
+        g_wifiPopupSurface.TickAnimation(g_secWifiPopupHwnd, nowLoopTick);
+
+        ModSettings s = GetSettings();
+        if (s.enableTaskbarSystemStats || s.enableSecondaryMonitorStats) {
+            sampleMetricsNow(s);
+        }
+        if (s.enableSecondaryMonitorTray && pGetIfTable2 && pFreeMibTable &&
+            (lastNetDetectTick == 0 || (nowLoopTick - lastNetDetectTick >= 1000))) {
+            lastNetDetectTick = nowLoopTick;
+            bool w = false, e = false, c = false;
+            DetectNetworkState(pGetIfTable2, pFreeMibTable, w, e, c);
+            g_hasActiveWifi.store(w);
+            g_hasActiveEthernet.store(e);
+            g_hasActiveNetwork.store(c);
+        }
+        updateWidgetPresentation(false);
+    }
+
+    if (hTrayEventHook) {
+        UnhookWinEvent(hTrayEventHook);
+    }
+    g_statsWidgetHwnd.store(nullptr);
+    if (hWidget && IsWindow(hWidget)) {
+        DestroyWindow(hWidget);
+    }
+    UnregisterClassW(kStatsWidgetClassName, hInst);
+
+    CloseAllSecondaryPopups();
+    g_audioPopupSurface.Release();
+    g_wifiPopupSurface.Release();
+    if (g_secAudioPopupHwnd && IsWindow(g_secAudioPopupHwnd)) DestroyWindow(g_secAudioPopupHwnd);
+    g_secAudioPopupHwnd = nullptr;
+    if (g_secWifiPopupHwnd && IsWindow(g_secWifiPopupHwnd)) DestroyWindow(g_secWifiPopupHwnd);
+    g_secWifiPopupHwnd = nullptr;
+    UnregisterClassW(kSecAudioPopupClassName, hInst);
+    UnregisterClassW(kSecWifiPopupClassName, hInst);
+
+    if (g_secPopupFmtTitle) { g_secPopupFmtTitle->Release(); g_secPopupFmtTitle = nullptr; }
+    if (g_secPopupFmtBody) { g_secPopupFmtBody->Release(); g_secPopupFmtBody = nullptr; }
+    if (g_secPopupFmtSmall) { g_secPopupFmtSmall->Release(); g_secPopupFmtSmall = nullptr; }
+    if (g_secPopupFmtIcon) { g_secPopupFmtIcon->Release(); g_secPopupFmtIcon = nullptr; }
+    if (g_secPopupFmtCenter) { g_secPopupFmtCenter->Release(); g_secPopupFmtCenter = nullptr; }
+    if (g_secPopupFmtRight) { g_secPopupFmtRight->Release(); g_secPopupFmtRight = nullptr; }
+    g_secPopupD2dFactory = nullptr;
+
+    UninitAudioEndpoint();
+    for (auto& entry : secondaryInstances) {
+        if (entry->hTrayWidget && IsWindow(entry->hTrayWidget)) DestroyWindow(entry->hTrayWidget);
+        if (entry->hStatsWidget && IsWindow(entry->hStatsWidget)) DestroyWindow(entry->hStatsWidget);
+    }
+    secondaryInstances.clear();
+    UnregisterClassW(kSecondaryTrayWidgetClassName, hInst);
+
+    if (fmtTrayGlyph) fmtTrayGlyph->Release();
+    if (fmtTrayText) fmtTrayText->Release();
+    if (fmtTrayOsd) fmtTrayOsd->Release();
+
+    if (fmtLabel) fmtLabel->Release();
+    if (fmtValue) fmtValue->Release();
+    if (fmtCenter) fmtCenter->Release();
+    if (dwriteFactory) dwriteFactory->Release();
+    if (d2dFactory) d2dFactory->Release();
+    if (hQuery && pPdhCloseQuery) pPdhCloseQuery(hQuery);
+    g_wlanApi.Unload();
+    if (hPdh) FreeLibrary(hPdh);
+    if (hIphlp) FreeLibrary(hIphlp);
+    if (SUCCEEDED(hrCoInit)) CoUninitialize();
+}
+
+
+void StartTaskbarSystemMonitor() {
+    if (g_shuttingDown || g_target != Target::Explorer) return;
+    if (g_sysMonitorRunning.exchange(true)) return;
+
+    std::lock_guard<std::mutex> lock(g_sysMonitorMutex);
+    if (!g_sysMonitorStopEvent) {
+        g_sysMonitorStopEvent = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    } else {
+        ResetEvent(g_sysMonitorStopEvent);
+    }
+    if (!g_sysMonitorWakeEvent) {
+        g_sysMonitorWakeEvent = CreateEventW(nullptr, FALSE, FALSE, nullptr);
+    }
+    if (g_sysMonitorThread.joinable()) {
+        g_sysMonitorThread.join();
+    }
+    if (g_pingScannerThread.joinable()) {
+        g_pingScannerThread.join();
+    }
+    if (g_secClockUiaThread.joinable()) {
+        g_secClockUiaThread.join();
+    }
+    g_sysMonitorThread = std::thread(RunTaskbarSystemMonitorLoop);
+    g_pingScannerThread = std::thread(RunPingScannerLoop);
+    g_secClockUiaThread = std::thread(RunSecondaryClockUiaLoop);
+}
+
+void NotifyTaskbarSystemMonitorSettingsChanged() {
+    if (g_sysMonitorWakeEvent) {
+        SetEvent(g_sysMonitorWakeEvent);
+    }
+}
+
+void StopTaskbarSystemMonitor() {
+    if (g_sysMonitorStopEvent) {
+        SetEvent(g_sysMonitorStopEvent);
+    }
+    if (HWND hw = g_statsWidgetHwnd.load()) {
+        PostMessageW(hw, WM_CANCELMODE, 0, 0);
+        PostMessageW(hw, WM_NULL, 0, 0);
+    }
+    std::thread worker, pingWorker, uiaWorker;
+    {
+        std::lock_guard<std::mutex> lock(g_sysMonitorMutex);
+        worker = std::move(g_sysMonitorThread);
+        pingWorker = std::move(g_pingScannerThread);
+        uiaWorker = std::move(g_secClockUiaThread);
+    }
+    if (worker.joinable()) {
+        worker.join();
+    }
+    if (pingWorker.joinable()) {
+        pingWorker.join();
+    }
+    if (uiaWorker.joinable()) {
+        uiaWorker.join();
+    }
+    {
+        std::lock_guard<std::mutex> lock(g_sysMonitorMutex);
+        if (g_sysMonitorStopEvent) {
+            CloseHandle(g_sysMonitorStopEvent);
+            g_sysMonitorStopEvent = nullptr;
+        }
+        if (g_sysMonitorWakeEvent) {
+            CloseHandle(g_sysMonitorWakeEvent);
+            g_sysMonitorWakeEvent = nullptr;
+        }
+    }
+    g_sysMonitorRunning = false;
+}
+
+} // namespace SysMonitor
 
 ////////////////////////////////////////////////////////////////////////////////
 // Process Plumbing
@@ -4689,7 +9975,9 @@ bool RunFromWindowThreadViaPostMessage(HWND hWnd, RunFromWindowThreadProc_t proc
                     auto* param = reinterpret_cast<RUN_FROM_WINDOW_THREAD_PARAM*>(msg->lParam);
                     if (param) {
                         ForgetPendingPostHook(param->hook);
-                        param->proc(param->procParam);
+                        if (!g_shuttingDown) {
+                            param->proc(param->procParam);
+                        }
                         UnhookWindowsHookEx(param->hook);
                         delete param;
                         msg->lParam = 0;
@@ -4855,17 +10143,8 @@ BOOL Wh_ModInit() {
     }
 
     LoadSettings();
-    ModSettings settings = GetSettings();
-
-    EnsureIcsCacheLoadedInMemory();
-    TriggerGoogleCalendarSyncIfNeeded(true);
-    StartPeriodicGoogleCalendarSyncLoop();
 
     if (g_target == Target::Explorer) {
-        if (!settings.enableTaskbarClock && !settings.enableTaskbarTooltip) {
-            return TRUE;
-        }
-
         HookWin10ExplorerClockSymbols();
 
         HMODULE kernelBaseModule = GetModuleHandleW(L"kernelbase.dll");
@@ -4875,11 +10154,12 @@ BOOL Wh_ModInit() {
         }
         InstallHook(kernelBaseModule, "GetTimeFormatEx", GetTimeFormatEx_Hook, &GetTimeFormatEx_Original);
         InstallHook(kernelBaseModule, "GetDateFormatEx", GetDateFormatEx_Hook, &GetDateFormatEx_Original);
-        return TRUE;
-    }
 
-    if (!settings.enableCalendarFlyout) {
-        return FALSE;
+        EnsureIcsCacheLoadedInMemory();
+        TriggerGoogleCalendarSyncIfNeeded(true);
+        StartPeriodicGoogleCalendarSyncLoop();
+        SysMonitor::StartTaskbarSystemMonitor();
+        return TRUE;
     }
 
     RunFromWindowThreadViaPostMessageMsg();
@@ -4887,6 +10167,10 @@ BOOL Wh_ModInit() {
     InstallHook(user32Module, "CreateWindowInBand", CreateWindowInBand_Hook, &CreateWindowInBand_Original);
     InstallHook(user32Module, "CreateWindowInBandEx", CreateWindowInBandEx_Hook, &CreateWindowInBandEx_Original);
     InstallHook(user32Module, "ShowWindow", ShowWindow_Hook, &ShowWindow_Original);
+
+    EnsureIcsCacheLoadedInMemory();
+    TriggerGoogleCalendarSyncIfNeeded(true);
+    StartPeriodicGoogleCalendarSyncLoop();
     return TRUE;
 }
 
@@ -4907,8 +10191,9 @@ void Wh_ModAfterInit() {
 }
 
 void Wh_ModUninit() {
-    g_shuttingDown = true;
+    StopGoogleCalendarSyncThreads();
     if (g_target == Target::Explorer) {
+        SysMonitor::StopTaskbarSystemMonitor();
         RemoveAllWin10TrayClockSubclasses();
         ReleaseD2DAndDWriteResources();
         RefreshTaskbarClock();
@@ -4925,6 +10210,7 @@ void Wh_ModSettingsChanged() {
     TriggerGoogleCalendarSyncIfNeeded(true);
 
     if (g_target == Target::Explorer) {
+        SysMonitor::NotifyTaskbarSystemMonitorSettingsChanged();
         RefreshTaskbarClock();
         return;
     }
