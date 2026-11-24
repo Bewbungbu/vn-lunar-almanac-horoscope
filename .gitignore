@@ -1,7 +1,14 @@
+# Build & debug artifacts
 *.exe
 *.dll
 *.obj
+*.o
 *.pdb
+*.log
+*.dmp
+*.tmp
+
+# IDE & OS metadata
 .vs/
 .vscode/
 Thumbs.db
