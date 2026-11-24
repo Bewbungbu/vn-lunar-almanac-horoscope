@@ -5620,10 +5620,16 @@ bool SampleNetworkOctetsFromIfTable2(GetIfTable2_t pGetIfTable2,
                                      FreeMibTable_t pFreeMibTable,
                                      uint64_t& outInOctets,
                                      uint64_t& outOutOctets,
-                                     uint32_t& outAdapterSig) {
+                                     uint32_t& outAdapterSig,
+                                     bool* outHasWifi = nullptr,
+                                     bool* outHasEthernet = nullptr,
+                                     bool* outHasConnected = nullptr) {
     outInOctets = 0;
     outOutOctets = 0;
     outAdapterSig = 0;
+    if (outHasWifi) *outHasWifi = false;
+    if (outHasEthernet) *outHasEthernet = false;
+    if (outHasConnected) *outHasConnected = false;
     if (!pGetIfTable2 || !pFreeMibTable) return false;
 
     PVOID rawTable = nullptr;
@@ -5632,6 +5638,32 @@ bool SampleNetworkOctetsFromIfTable2(GetIfTable2_t pGetIfTable2,
     const auto* base = static_cast<const uint8_t*>(rawTable);
     ULONG numEntries = 0;
     memcpy(&numEntries, base, sizeof(numEntries));
+
+    if (outHasWifi || outHasEthernet || outHasConnected) {
+        bool hwWifi = false, hwEth = false, hwConn = false;
+        for (ULONG i = 0; i < numEntries; i++) {
+            const uint8_t* row = base + kMibIfTable2TableOffset + static_cast<size_t>(i) * kMibIfRow2Size;
+            ULONG type = 0, operStatus = 0, mediaConn = 0;
+            uint8_t flags = row[kMibIfRow2FlagsOffset];
+            memcpy(&type, row + kMibIfRow2TypeOffset, sizeof(type));
+            memcpy(&operStatus, row + kMibIfRow2OperStatusOffset, sizeof(operStatus));
+            if (type == 24) continue;
+            if ((flags & 0x01) == 0) continue; // HardwareInterface
+            if (flags & 0x02) continue;        // Exclude FilterInterface
+            if ((flags & 0x04) == 0) continue; // ConnectorPresent
+            if (flags & 0x10) continue;        // Exclude NotMediaConnected
+            memcpy(&mediaConn, row + kMibIfRow2MediaConnOffset, sizeof(mediaConn));
+            if (mediaConn != 1) continue;      // MediaConnectStateConnected
+            if (operStatus == 1) {             // IfOperStatusUp
+                hwConn = true;
+                if (type == 71) hwWifi = true;
+                else if (type == 6) hwEth = true;
+            }
+        }
+        if (outHasWifi) *outHasWifi = hwWifi;
+        if (outHasEthernet) *outHasEthernet = hwEth;
+        if (outHasConnected) *outHasConnected = hwConn;
+    }
 
     auto scanRows = [&](bool requireHardware) {
         uint64_t sumIn = 0, sumOut = 0;
@@ -5927,7 +5959,9 @@ bool IsWindowCloakedByDwm(HWND hWnd) {
     return false;
 }
 
-bool IsTrueFullscreenAppActive(HWND hTrayWnd, RECT const& rcMonitor) {
+std::atomic<HWND> g_cachedPrimaryTrayHwnd{nullptr};
+
+bool IsTrueFullscreenAppActiveUncached(HWND hTrayWnd, RECT const& rcMonitor) {
     HWND hFg = GetForegroundWindow();
     if (!hFg || hFg == hTrayWnd || hFg == GetDesktopWindow() || hFg == GetShellWindow()) {
         return false;
@@ -6060,6 +6094,34 @@ bool IsTrueFullscreenAppActive(HWND hTrayWnd, RECT const& rcMonitor) {
     return false;
 }
 
+bool IsTrueFullscreenAppActive(HWND hTrayWnd, RECT const& rcMonitor) {
+    struct FsCacheEntry {
+        HWND hTray = nullptr;
+        HWND hFg = nullptr;
+        ULONGLONG tick = 0;
+        bool result = false;
+    };
+    static thread_local std::vector<FsCacheEntry> s_cache;
+
+    HWND hFg = GetForegroundWindow();
+    ULONGLONG now = GetTickCount64();
+    for (auto& e : s_cache) {
+        if (e.hTray == hTrayWnd) {
+            if (e.hFg == hFg && (now - e.tick) < 250) {
+                return e.result;
+            }
+            e.hFg = hFg;
+            e.tick = now;
+            e.result = IsTrueFullscreenAppActiveUncached(hTrayWnd, rcMonitor);
+            return e.result;
+        }
+    }
+    bool res = IsTrueFullscreenAppActiveUncached(hTrayWnd, rcMonitor);
+    if (s_cache.size() >= 8) s_cache.clear();
+    s_cache.push_back({ hTrayWnd, hFg, now, res });
+    return res;
+}
+
 bool IsTrayCoveringWidget(HWND hTrayWnd, HWND hWidget) {
     if (!hTrayWnd || !hWidget) return false;
     HWND hCur = GetWindow(hTrayWnd, GW_HWNDNEXT);
@@ -6071,9 +6133,8 @@ bool IsTrayCoveringWidget(HWND hTrayWnd, HWND hWidget) {
 
 void CALLBACK TrayWinEventProc(HWINEVENTHOOK, DWORD, HWND hwnd, LONG idObject, LONG, DWORD, DWORD) {
     if (g_shuttingDown) return;
-    if (idObject == OBJID_WINDOW && hwnd) {
-        HWND hTray = FindWindowW(L"Shell_TrayWnd", nullptr);
-        if (hwnd == hTray && g_sysMonitorWakeEvent) {
+    if (idObject == OBJID_WINDOW && hwnd && hwnd == g_cachedPrimaryTrayHwnd.load()) {
+        if (g_sysMonitorWakeEvent) {
             SetEvent(g_sysMonitorWakeEvent);
         }
     }
@@ -6491,10 +6552,14 @@ struct IVnAudioMeterInformation : public IUnknown {
 
 float QueryAudioDevicePeakValue(const std::wstring& deviceId) {
     if (deviceId.empty() || g_liveMasterMuted.load()) return 0.0f;
-    IMMDeviceEnumerator* pEnum = nullptr;
-    if (FAILED(CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER,
-                                __uuidof(IMMDeviceEnumerator), (void**)&pEnum)) || !pEnum) {
-        return 0.0f;
+    IMMDeviceEnumerator* pEnum = g_audioDeviceEnum;
+    bool ownedEnum = false;
+    if (!pEnum) {
+        if (FAILED(CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER,
+                                    __uuidof(IMMDeviceEnumerator), (void**)&pEnum)) || !pEnum) {
+            return 0.0f;
+        }
+        ownedEnum = true;
     }
     float peak = 0.0f;
     IMMDevice* pDev = nullptr;
@@ -6509,7 +6574,7 @@ float QueryAudioDevicePeakValue(const std::wstring& deviceId) {
         }
         pDev->Release();
     }
-    pEnum->Release();
+    if (ownedEnum) pEnum->Release();
     return peak;
 }
 
@@ -7155,12 +7220,122 @@ bool DetectNetworkState(GetIfTable2_t pGetIfTable2, FreeMibTable_t pFreeMibTable
     return true;
 }
 
+struct LayeredPopupSurface {
+    HDC hdcMem = nullptr;
+    HBITMAP hBmp = nullptr;
+    HGDIOBJ oldBmp = nullptr;
+    ID2D1DCRenderTarget* dcTarget = nullptr;
+    ID2D1SolidColorBrush* cachedBrush = nullptr;
+    int pxW = 0;
+    int pxH = 0;
+    float dpi = 0.0f;
+    int baseX = 0;
+    int baseY = 0;
+    bool animActive = false;
+    ULONGLONG animStartTick = 0;
+    float animStartOffsetY = 0.0f;
+
+    void Release() {
+        if (cachedBrush) { cachedBrush->Release(); cachedBrush = nullptr; }
+        if (dcTarget) { dcTarget->Release(); dcTarget = nullptr; }
+        if (hdcMem) {
+            if (oldBmp) { SelectObject(hdcMem, oldBmp); oldBmp = nullptr; }
+            if (hBmp) { DeleteObject(hBmp); hBmp = nullptr; }
+            DeleteDC(hdcMem);
+            hdcMem = nullptr;
+        }
+        pxW = pxH = 0;
+        dpi = 0.0f;
+        animActive = false;
+    }
+
+    bool Ensure(ID2D1Factory* factory, int w, int h, float newDpi) {
+        if (!factory || w <= 0 || h <= 0) return false;
+        if (!dcTarget || std::abs(newDpi - dpi) > 0.5f) {
+            if (cachedBrush) { cachedBrush->Release(); cachedBrush = nullptr; }
+            if (dcTarget) { dcTarget->Release(); dcTarget = nullptr; }
+            D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties(
+                D2D1_RENDER_TARGET_TYPE_DEFAULT,
+                D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
+                newDpi, newDpi);
+            if (FAILED(factory->CreateDCRenderTarget(&rtProps, &dcTarget)) || !dcTarget) return false;
+            dcTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f), &cachedBrush);
+            dpi = newDpi;
+        }
+        if (!hdcMem || !hBmp || w != pxW || h != pxH) {
+            if (hdcMem) {
+                if (oldBmp) { SelectObject(hdcMem, oldBmp); oldBmp = nullptr; }
+                if (hBmp) { DeleteObject(hBmp); hBmp = nullptr; }
+                DeleteDC(hdcMem);
+                hdcMem = nullptr;
+            }
+            BITMAPINFO bmi{};
+            bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+            bmi.bmiHeader.biWidth = w;
+            bmi.bmiHeader.biHeight = -h;
+            bmi.bmiHeader.biPlanes = 1;
+            bmi.bmiHeader.biBitCount = 32;
+            bmi.bmiHeader.biCompression = BI_RGB;
+            void* bits = nullptr;
+            HDC hdcScreen = GetDC(nullptr);
+            hdcMem = CreateCompatibleDC(hdcScreen);
+            hBmp = CreateDIBSection(hdcMem, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
+            ReleaseDC(nullptr, hdcScreen);
+            if (!hdcMem || !hBmp) {
+                Release();
+                return false;
+            }
+            oldBmp = SelectObject(hdcMem, hBmp);
+            pxW = w;
+            pxH = h;
+        }
+        return true;
+    }
+
+    void Present(HWND hWnd, int posX, int posY, BYTE alpha) const {
+        if (!hWnd || !IsWindow(hWnd) || !hdcMem || pxW <= 0 || pxH <= 0) return;
+        HDC hdcScreen = GetDC(nullptr);
+        POINT ptDst{ posX, posY };
+        POINT ptSrc{ 0, 0 };
+        SIZE szWnd{ pxW, pxH };
+        BLENDFUNCTION blend{};
+        blend.BlendOp = AC_SRC_OVER;
+        blend.SourceConstantAlpha = alpha;
+        blend.AlphaFormat = AC_SRC_ALPHA;
+        UpdateLayeredWindow(hWnd, hdcScreen, &ptDst, &szWnd, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
+        ReleaseDC(nullptr, hdcScreen);
+    }
+
+    bool TickAnimation(HWND hWnd, ULONGLONG nowTick) {
+        if (!animActive) return false;
+        if (!hWnd || !IsWindow(hWnd) || !IsWindowVisible(hWnd)) {
+            animActive = false;
+            return false;
+        }
+        constexpr float kAnimDurationMs = 155.0f;
+        float elapsed = static_cast<float>(nowTick >= animStartTick ? (nowTick - animStartTick) : 0);
+        float t = std::clamp(elapsed / kAnimDurationMs, 0.0f, 1.0f);
+        float inv = 1.0f - t;
+        float ease = 1.0f - inv * inv * inv; // Cubic ease-out
+        int curY = baseY + static_cast<int>(std::round(animStartOffsetY * (1.0f - ease)));
+        BYTE alpha = static_cast<BYTE>(std::clamp(static_cast<int>(std::round(ease * 255.0f)), 24, 255));
+        Present(hWnd, baseX, curY, alpha);
+        if (t >= 1.0f) {
+            animActive = false;
+            return false;
+        }
+        return true;
+    }
+};
+
 enum class TrayHoverZone { None, Wifi, Audio };
 
 struct SecondaryTrayInstance {
     HWND hSecondaryTray = nullptr;  // Shell_SecondaryTrayWnd
     HWND hTrayWidget = nullptr;     // Independent Wi-Fi + Audio tray cluster
     HWND hStatsWidget = nullptr;    // Optional system stats (CPU GPU RAM Net Ping)
+    LayeredPopupSurface traySurface{};
+    LayeredPopupSurface statsSurface{};
     TrayHoverZone hoverZone = TrayHoverZone::None;
     TrayHoverZone lastHoverZone = TrayHoverZone::None;
     float wifiHoverAlpha = 0.0f;
@@ -7175,6 +7350,9 @@ struct SecondaryTrayInstance {
     int lastTrayW = 0, lastTrayH = 0;
     int lastStatsX = -99999, lastStatsY = -99999;
     int lastStatsW = 0, lastStatsH = 0;
+    uint64_t lastStatsMetricsGen = 0;
+    bool lastStatsLightTheme = false;
+    float lastStatsDpi = 0.0f;
     bool lastLightTheme = false;
     float lastDpi = 0.0f;
     int lastVolumePercent = -1;
@@ -7499,110 +7677,6 @@ void ComputeSecondaryPopupScreenPos(const RECT& rcWidget, const RECT& rcTaskbar,
     outX = std::clamp(desiredX, minX, maxX);
     outY = std::clamp(desiredY, minY, maxY);
 }
-
-struct LayeredPopupSurface {
-    HDC hdcMem = nullptr;
-    HBITMAP hBmp = nullptr;
-    HGDIOBJ oldBmp = nullptr;
-    ID2D1DCRenderTarget* dcTarget = nullptr;
-    int pxW = 0;
-    int pxH = 0;
-    float dpi = 0.0f;
-    int baseX = 0;
-    int baseY = 0;
-    bool animActive = false;
-    ULONGLONG animStartTick = 0;
-    float animStartOffsetY = 0.0f;
-
-    void Release() {
-        if (dcTarget) { dcTarget->Release(); dcTarget = nullptr; }
-        if (hdcMem) {
-            if (oldBmp) { SelectObject(hdcMem, oldBmp); oldBmp = nullptr; }
-            if (hBmp) { DeleteObject(hBmp); hBmp = nullptr; }
-            DeleteDC(hdcMem);
-            hdcMem = nullptr;
-        }
-        pxW = pxH = 0;
-        dpi = 0.0f;
-        animActive = false;
-    }
-
-    bool Ensure(ID2D1Factory* factory, int w, int h, float newDpi) {
-        if (!factory || w <= 0 || h <= 0) return false;
-        if (!dcTarget || std::abs(newDpi - dpi) > 0.5f) {
-            if (dcTarget) { dcTarget->Release(); dcTarget = nullptr; }
-            D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties(
-                D2D1_RENDER_TARGET_TYPE_DEFAULT,
-                D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-                newDpi, newDpi);
-            if (FAILED(factory->CreateDCRenderTarget(&rtProps, &dcTarget)) || !dcTarget) return false;
-            dpi = newDpi;
-        }
-        if (!hdcMem || !hBmp || w != pxW || h != pxH) {
-            if (hdcMem) {
-                if (oldBmp) { SelectObject(hdcMem, oldBmp); oldBmp = nullptr; }
-                if (hBmp) { DeleteObject(hBmp); hBmp = nullptr; }
-                DeleteDC(hdcMem);
-                hdcMem = nullptr;
-            }
-            BITMAPINFO bmi{};
-            bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-            bmi.bmiHeader.biWidth = w;
-            bmi.bmiHeader.biHeight = -h;
-            bmi.bmiHeader.biPlanes = 1;
-            bmi.bmiHeader.biBitCount = 32;
-            bmi.bmiHeader.biCompression = BI_RGB;
-            void* bits = nullptr;
-            HDC hdcScreen = GetDC(nullptr);
-            hdcMem = CreateCompatibleDC(hdcScreen);
-            hBmp = CreateDIBSection(hdcMem, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
-            ReleaseDC(nullptr, hdcScreen);
-            if (!hdcMem || !hBmp) {
-                Release();
-                return false;
-            }
-            oldBmp = SelectObject(hdcMem, hBmp);
-            pxW = w;
-            pxH = h;
-        }
-        return true;
-    }
-
-    void Present(HWND hWnd, int posX, int posY, BYTE alpha) const {
-        if (!hWnd || !IsWindow(hWnd) || !hdcMem || pxW <= 0 || pxH <= 0) return;
-        HDC hdcScreen = GetDC(nullptr);
-        POINT ptDst{ posX, posY };
-        POINT ptSrc{ 0, 0 };
-        SIZE szWnd{ pxW, pxH };
-        BLENDFUNCTION blend{};
-        blend.BlendOp = AC_SRC_OVER;
-        blend.SourceConstantAlpha = alpha;
-        blend.AlphaFormat = AC_SRC_ALPHA;
-        UpdateLayeredWindow(hWnd, hdcScreen, &ptDst, &szWnd, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
-        ReleaseDC(nullptr, hdcScreen);
-    }
-
-    bool TickAnimation(HWND hWnd, ULONGLONG nowTick) {
-        if (!animActive) return false;
-        if (!hWnd || !IsWindow(hWnd) || !IsWindowVisible(hWnd)) {
-            animActive = false;
-            return false;
-        }
-        constexpr float kAnimDurationMs = 155.0f;
-        float elapsed = static_cast<float>(nowTick >= animStartTick ? (nowTick - animStartTick) : 0);
-        float t = std::clamp(elapsed / kAnimDurationMs, 0.0f, 1.0f);
-        float inv = 1.0f - t;
-        float ease = 1.0f - inv * inv * inv; // Cubic ease-out
-        int curY = baseY + static_cast<int>(std::round(animStartOffsetY * (1.0f - ease)));
-        BYTE alpha = static_cast<BYTE>(std::clamp(static_cast<int>(std::round(ease * 255.0f)), 24, 255));
-        Present(hWnd, baseX, curY, alpha);
-        if (t >= 1.0f) {
-            animActive = false;
-            return false;
-        }
-        return true;
-    }
-};
 
 LayeredPopupSurface g_audioPopupSurface;
 LayeredPopupSurface g_wifiPopupSurface;
@@ -8835,6 +8909,7 @@ LRESULT CALLBACK SecondaryTrayWidgetWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
 
 void RenderStatsBitmapToLayeredWindow(
     HWND hWnd,
+    LayeredPopupSurface& surface,
     const std::vector<StatsColumn>& cols,
     ID2D1Factory* d2dFactory,
     IDWriteTextFormat* fmtLabel,
@@ -8845,140 +8920,104 @@ void RenderStatsBitmapToLayeredWindow(
     float padX, float colGap,
     int targetX, int targetY) {
     if (!hWnd || !d2dFactory || !fmtLabel || !fmtValue || !fmtCenter || cols.empty()) return;
+    if (!surface.Ensure(d2dFactory, pxW, pxH, dpi)) return;
 
-    D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties(
-        D2D1_RENDER_TARGET_TYPE_DEFAULT,
-        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-        dpi, dpi);
+    ID2D1DCRenderTarget* dcTarget = surface.dcTarget;
+    ID2D1SolidColorBrush* brush = surface.cachedBrush;
+    if (!dcTarget || !brush) return;
 
-    ID2D1DCRenderTarget* dcTarget = nullptr;
-    if (SUCCEEDED(d2dFactory->CreateDCRenderTarget(&rtProps, &dcTarget)) && dcTarget) {
-        BITMAPINFO bmi{};
-        bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        bmi.bmiHeader.biWidth = pxW;
-        bmi.bmiHeader.biHeight = -pxH;
-        bmi.bmiHeader.biPlanes = 1;
-        bmi.bmiHeader.biBitCount = 32;
-        bmi.bmiHeader.biCompression = BI_RGB;
+    RECT rcBind{0, 0, pxW, pxH};
+    if (SUCCEEDED(dcTarget->BindDC(surface.hdcMem, &rcBind))) {
+        dcTarget->BeginDraw();
+        dcTarget->Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
 
-        void* bits = nullptr;
-        HDC hdcScreen = GetDC(nullptr);
-        HDC hdcMem = CreateCompatibleDC(hdcScreen);
-        HBITMAP hBmp = CreateDIBSection(hdcMem, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
-        if (hBmp) {
-            HGDIOBJ oldBmp = SelectObject(hdcMem, hBmp);
-            RECT rcBind{0, 0, pxW, pxH};
-            if (SUCCEEDED(dcTarget->BindDC(hdcMem, &rcBind))) {
-                dcTarget->BeginDraw();
-                dcTarget->Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
+        D2D1_ROUNDED_RECT pill = D2D1::RoundedRect(
+            D2D1::RectF(0.5f, 0.5f, dipW - 0.5f, dipH - 0.5f), 5.5f, 5.5f);
+        brush->SetColor(lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.06f)
+                                   : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.08f));
+        dcTarget->FillRoundedRectangle(pill, brush);
 
-                ID2D1SolidColorBrush* brush = nullptr;
-                if (SUCCEEDED(dcTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f), &brush)) && brush) {
-                    D2D1_ROUNDED_RECT pill = D2D1::RoundedRect(
-                        D2D1::RectF(0.5f, 0.5f, dipW - 0.5f, dipH - 0.5f), 5.5f, 5.5f);
-                    brush->SetColor(lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.06f)
-                                               : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.08f));
-                    dcTarget->FillRoundedRectangle(pill, brush);
+        brush->SetColor(lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.16f)
+                                   : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.16f));
+        dcTarget->DrawRoundedRectangle(pill, brush, 1.0f);
 
-                    brush->SetColor(lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.16f)
-                                               : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.16f));
-                    dcTarget->DrawRoundedRectangle(pill, brush, 1.0f);
+        float curX = padX;
+        float row1Top = 1.5f, row1Bot = dipH * 0.5f;
+        float row2Top = dipH * 0.5f, row2Bot = dipH - 1.5f;
 
-                    float curX = padX;
-                    float row1Top = 1.5f, row1Bot = dipH * 0.5f;
-                    float row2Top = dipH * 0.5f, row2Bot = dipH - 1.5f;
-
-                    for (size_t i = 0; i < cols.size(); i++) {
-                        const auto& c = cols[i];
-                        if (c.singleRow) {
-                            D2D1_RECT_F rMid = D2D1::RectF(curX, 1.5f, curX + c.widthDip, dipH - 1.5f);
-                            if (!c.topLabel.empty()) {
-                                brush->SetColor(c.topLabelColor);
-                                dcTarget->DrawText(c.topLabel.c_str(), static_cast<UINT32>(c.topLabel.size()), fmtLabel, rMid, brush);
-                            }
-                            if (!c.topValue.empty()) {
-                                brush->SetColor(c.topValueColor);
-                                dcTarget->DrawText(c.topValue.c_str(), static_cast<UINT32>(c.topValue.size()),
-                                                   c.topCentered ? fmtCenter : fmtValue, rMid, brush);
-                            }
-                        } else {
-                            if (c.valueLeading) {
-                                float lblW = 10.0f;
-                                D2D1_RECT_F rLblTop = D2D1::RectF(curX, row1Top, curX + lblW, row1Bot);
-                                D2D1_RECT_F rValTop = D2D1::RectF(curX + lblW + 2.0f, row1Top, curX + c.widthDip, row1Bot);
-                                D2D1_RECT_F rLblBot = D2D1::RectF(curX, row2Top, curX + lblW, row2Bot);
-                                D2D1_RECT_F rValBot = D2D1::RectF(curX + lblW + 2.0f, row2Top, curX + c.widthDip, row2Bot);
-
-                                if (!c.topLabel.empty()) {
-                                    brush->SetColor(c.topLabelColor);
-                                    dcTarget->DrawText(c.topLabel.c_str(), static_cast<UINT32>(c.topLabel.size()), fmtLabel, rLblTop, brush);
-                                }
-                                if (!c.topValue.empty()) {
-                                    brush->SetColor(c.topValueColor);
-                                    dcTarget->DrawText(c.topValue.c_str(), static_cast<UINT32>(c.topValue.size()), fmtLabel, rValTop, brush);
-                                }
-                                if (!c.botLabel.empty()) {
-                                    brush->SetColor(c.botLabelColor);
-                                    dcTarget->DrawText(c.botLabel.c_str(), static_cast<UINT32>(c.botLabel.size()), fmtLabel, rLblBot, brush);
-                                }
-                                if (!c.botValue.empty()) {
-                                    brush->SetColor(c.botValueColor);
-                                    dcTarget->DrawText(c.botValue.c_str(), static_cast<UINT32>(c.botValue.size()), fmtLabel, rValBot, brush);
-                                }
-                            } else {
-                                D2D1_RECT_F rTop = D2D1::RectF(curX, row1Top, curX + c.widthDip, row1Bot);
-                                D2D1_RECT_F rBot = D2D1::RectF(curX, row2Top, curX + c.widthDip, row2Bot);
-
-                                if (!c.topLabel.empty()) {
-                                    brush->SetColor(c.topLabelColor);
-                                    dcTarget->DrawText(c.topLabel.c_str(), static_cast<UINT32>(c.topLabel.size()), fmtLabel, rTop, brush);
-                                }
-                                if (!c.topValue.empty()) {
-                                    brush->SetColor(c.topValueColor);
-                                    dcTarget->DrawText(c.topValue.c_str(), static_cast<UINT32>(c.topValue.size()),
-                                                       c.topCentered ? fmtCenter : fmtValue, rTop, brush);
-                                }
-                                if (!c.botLabel.empty()) {
-                                    brush->SetColor(c.botLabelColor);
-                                    dcTarget->DrawText(c.botLabel.c_str(), static_cast<UINT32>(c.botLabel.size()), fmtLabel, rBot, brush);
-                                }
-                                if (!c.botValue.empty()) {
-                                    brush->SetColor(c.botValueColor);
-                                    dcTarget->DrawText(c.botValue.c_str(), static_cast<UINT32>(c.botValue.size()),
-                                                       c.topCentered ? fmtCenter : fmtValue, rBot, brush);
-                                }
-                            }
-                        }
-
-                        curX += c.widthDip;
-                        if (i + 1 < cols.size()) {
-                            float divX = std::floor(curX + colGap * 0.5f) + 0.5f;
-                            brush->SetColor(lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.14f)
-                                                       : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.15f));
-                            dcTarget->DrawLine(D2D1::Point2F(divX, 5.5f), D2D1::Point2F(divX, dipH - 5.5f), brush, 1.0f);
-                            curX += colGap;
-                        }
-                    }
-                    brush->Release();
+        for (size_t i = 0; i < cols.size(); i++) {
+            const auto& c = cols[i];
+            if (c.singleRow) {
+                D2D1_RECT_F rMid = D2D1::RectF(curX, 1.5f, curX + c.widthDip, dipH - 1.5f);
+                if (!c.topLabel.empty()) {
+                    brush->SetColor(c.topLabelColor);
+                    dcTarget->DrawText(c.topLabel.c_str(), static_cast<UINT32>(c.topLabel.size()), fmtLabel, rMid, brush);
                 }
-                dcTarget->EndDraw();
+                if (!c.topValue.empty()) {
+                    brush->SetColor(c.topValueColor);
+                    dcTarget->DrawText(c.topValue.c_str(), static_cast<UINT32>(c.topValue.size()),
+                                       c.topCentered ? fmtCenter : fmtValue, rMid, brush);
+                }
+            } else {
+                if (c.valueLeading) {
+                    float lblW = 10.0f;
+                    D2D1_RECT_F rLblTop = D2D1::RectF(curX, row1Top, curX + lblW, row1Bot);
+                    D2D1_RECT_F rValTop = D2D1::RectF(curX + lblW + 2.0f, row1Top, curX + c.widthDip, row1Bot);
+                    D2D1_RECT_F rLblBot = D2D1::RectF(curX, row2Top, curX + lblW, row2Bot);
+                    D2D1_RECT_F rValBot = D2D1::RectF(curX + lblW + 2.0f, row2Top, curX + c.widthDip, row2Bot);
 
-                POINT ptDst{targetX, targetY};
-                SIZE szWnd{pxW, pxH};
-                POINT ptSrc{0, 0};
-                BLENDFUNCTION blend{};
-                blend.BlendOp = AC_SRC_OVER;
-                blend.SourceConstantAlpha = 255;
-                blend.AlphaFormat = AC_SRC_ALPHA;
+                    if (!c.topLabel.empty()) {
+                        brush->SetColor(c.topLabelColor);
+                        dcTarget->DrawText(c.topLabel.c_str(), static_cast<UINT32>(c.topLabel.size()), fmtLabel, rLblTop, brush);
+                    }
+                    if (!c.topValue.empty()) {
+                        brush->SetColor(c.topValueColor);
+                        dcTarget->DrawText(c.topValue.c_str(), static_cast<UINT32>(c.topValue.size()), fmtLabel, rValTop, brush);
+                    }
+                    if (!c.botLabel.empty()) {
+                        brush->SetColor(c.botLabelColor);
+                        dcTarget->DrawText(c.botLabel.c_str(), static_cast<UINT32>(c.botLabel.size()), fmtLabel, rLblBot, brush);
+                    }
+                    if (!c.botValue.empty()) {
+                        brush->SetColor(c.botValueColor);
+                        dcTarget->DrawText(c.botValue.c_str(), static_cast<UINT32>(c.botValue.size()), fmtLabel, rValBot, brush);
+                    }
+                } else {
+                    D2D1_RECT_F rTop = D2D1::RectF(curX, row1Top, curX + c.widthDip, row1Bot);
+                    D2D1_RECT_F rBot = D2D1::RectF(curX, row2Top, curX + c.widthDip, row2Bot);
 
-                UpdateLayeredWindow(hWnd, hdcScreen, &ptDst, &szWnd, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
+                    if (!c.topLabel.empty()) {
+                        brush->SetColor(c.topLabelColor);
+                        dcTarget->DrawText(c.topLabel.c_str(), static_cast<UINT32>(c.topLabel.size()), fmtLabel, rTop, brush);
+                    }
+                    if (!c.topValue.empty()) {
+                        brush->SetColor(c.topValueColor);
+                        dcTarget->DrawText(c.topValue.c_str(), static_cast<UINT32>(c.topValue.size()),
+                                           c.topCentered ? fmtCenter : fmtValue, rTop, brush);
+                    }
+                    if (!c.botLabel.empty()) {
+                        brush->SetColor(c.botLabelColor);
+                        dcTarget->DrawText(c.botLabel.c_str(), static_cast<UINT32>(c.botLabel.size()), fmtLabel, rBot, brush);
+                    }
+                    if (!c.botValue.empty()) {
+                        brush->SetColor(c.botValueColor);
+                        dcTarget->DrawText(c.botValue.c_str(), static_cast<UINT32>(c.botValue.size()),
+                                           c.topCentered ? fmtCenter : fmtValue, rBot, brush);
+                    }
+                }
             }
-            SelectObject(hdcMem, oldBmp);
-            DeleteObject(hBmp);
+
+            curX += c.widthDip;
+            if (i + 1 < cols.size()) {
+                float divX = std::floor(curX + colGap * 0.5f) + 0.5f;
+                brush->SetColor(lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.14f)
+                                           : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.15f));
+                dcTarget->DrawLine(D2D1::Point2F(divX, 5.5f), D2D1::Point2F(divX, dipH - 5.5f), brush, 1.0f);
+                curX += colGap;
+            }
         }
-        DeleteDC(hdcMem);
-        ReleaseDC(nullptr, hdcScreen);
-        dcTarget->Release();
+        dcTarget->EndDraw();
+        surface.Present(hWnd, targetX, targetY, 255);
     }
 }
 
@@ -8993,139 +9032,100 @@ void RenderSecondaryTrayBitmap(HWND hWidget,
                               float masterVol, bool isMuted, bool showVolumeOsd,
                               int targetX, int targetY) {
     if (!hWidget || !d2dFactory || !fmtGlyph || !fmtOsd) return;
+    if (!inst.traySurface.Ensure(d2dFactory, pxW, pxH, dpi)) return;
 
-    D2D1_RENDER_TARGET_PROPERTIES rtProps = D2D1::RenderTargetProperties(
-        D2D1_RENDER_TARGET_TYPE_DEFAULT,
-        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED),
-        dpi, dpi);
+    ID2D1DCRenderTarget* dcTarget = inst.traySurface.dcTarget;
+    ID2D1SolidColorBrush* brush = inst.traySurface.cachedBrush;
+    if (!dcTarget || !brush) return;
 
-    ID2D1DCRenderTarget* dcTarget = nullptr;
-    if (SUCCEEDED(d2dFactory->CreateDCRenderTarget(&rtProps, &dcTarget)) && dcTarget) {
-        BITMAPINFO bmi{};
-        bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        bmi.bmiHeader.biWidth = pxW;
-        bmi.bmiHeader.biHeight = -pxH;
-        bmi.bmiHeader.biPlanes = 1;
-        bmi.bmiHeader.biBitCount = 32;
-        bmi.bmiHeader.biCompression = BI_RGB;
+    RECT rcBind{0, 0, pxW, pxH};
+    if (SUCCEEDED(dcTarget->BindDC(inst.traySurface.hdcMem, &rcBind))) {
+        dcTarget->BeginDraw();
+        dcTarget->Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
 
-        void* bits = nullptr;
-        HDC hdcScreen = GetDC(nullptr);
-        HDC hdcMem = CreateCompatibleDC(hdcScreen);
-        HBITMAP hBmp = CreateDIBSection(hdcMem, &bmi, DIB_RGB_COLORS, &bits, nullptr, 0);
-        if (hBmp) {
-            HGDIOBJ oldBmp = SelectObject(hdcMem, hBmp);
-            RECT rcBind{0, 0, pxW, pxH};
-            if (SUCCEEDED(dcTarget->BindDC(hdcMem, &rcBind))) {
-                dcTarget->BeginDraw();
-                dcTarget->Clear(D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.0f));
+        D2D1_COLOR_F hoverColor = lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.07f)
+                                             : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.09f);
+        D2D1_COLOR_F activeColor = lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.11f)
+                                              : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.13f);
+        D2D1_COLOR_F normalColor = lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.88f)
+                                              : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.92f);
+        D2D1_COLOR_F dimColor = lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.45f)
+                                           : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.55f);
 
-                ID2D1SolidColorBrush* brush = nullptr;
-                if (SUCCEEDED(dcTarget->CreateSolidColorBrush(D2D1::ColorF(1.0f, 1.0f, 1.0f, 1.0f), &brush)) && brush) {
-                    D2D1_COLOR_F hoverColor = lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.07f)
-                                                         : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.09f);
-                    D2D1_COLOR_F activeColor = lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.11f)
-                                                          : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.13f);
-                    D2D1_COLOR_F normalColor = lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.88f)
-                                                          : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.92f);
-                    D2D1_COLOR_F dimColor = lightTheme ? D2D1::ColorF(0.0f, 0.0f, 0.0f, 0.45f)
-                                                       : D2D1::ColorF(1.0f, 1.0f, 1.0f, 0.55f);
+        float topY = 2.0f;
+        float botY = dipH - 2.0f;
 
-                    float topY = 2.0f;
-                    float botY = dipH - 2.0f;
+        bool wifiOpen = (g_secWifiPopupHwnd && IsWindowVisible(g_secWifiPopupHwnd) &&
+                         g_wifiPopupState.anchorWidget == hWidget);
+        bool audioOpen = (g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd) &&
+                          g_audioPopupState.anchorWidget == hWidget);
 
-                    bool wifiOpen = (g_secWifiPopupHwnd && IsWindowVisible(g_secWifiPopupHwnd) &&
-                                     g_wifiPopupState.anchorWidget == hWidget);
-                    bool audioOpen = (g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd) &&
-                                      g_audioPopupState.anchorWidget == hWidget);
-
-                    // Button 1: Independent Wi-Fi / Network (x: 2.0f to 31.0f) with smooth Fluent hover fade
-                    // Paint a 1/255 invisible alpha hit-target across the full rounded button rect so Windows
-                    // UpdateLayeredWindow delivers hover/click/wheel anywhere inside the button, not just icon pixels.
-                    D2D1_RECT_F rWifi = D2D1::RectF(2.0f, topY, 31.0f, botY);
-                    brush->SetColor(D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.5f / 255.0f));
-                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rWifi, 5.0f, 5.0f), brush);
-                    float wfAlpha = wifiOpen ? 1.0f : inst.wifiHoverAlpha;
-                    if (wfAlpha > 0.01f) {
-                        D2D1_COLOR_F c = wifiOpen ? activeColor : hoverColor;
-                        c.a *= wfAlpha;
-                        brush->SetColor(c);
-                        dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rWifi, 5.0f, 5.0f), brush);
-                    }
-                    WCHAR glyphWifi[2]{};
-                    if (hasWifi) {
-                        glyphWifi[0] = 0xE701; // Wifi
-                        brush->SetColor(normalColor);
-                    } else if (hasEthernet) {
-                        glyphWifi[0] = 0xE839; // Ethernet
-                        brush->SetColor(normalColor);
-                    } else {
-                        glyphWifi[0] = 0xEB55; // Offline
-                        brush->SetColor(dimColor);
-                    }
-                    dcTarget->DrawText(glyphWifi, 1, fmtGlyph, rWifi, brush);
-
-                    // Button 2: Independent Audio / Speaker (x: 33.0f to 62.0f) with smooth Fluent hover fade
-                    D2D1_RECT_F rVol = D2D1::RectF(33.0f, topY, 62.0f, botY);
-                    brush->SetColor(D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.5f / 255.0f));
-                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rVol, 5.0f, 5.0f), brush);
-                    float auAlpha = audioOpen ? 1.0f : inst.audioHoverAlpha;
-                    if (auAlpha > 0.01f) {
-                        D2D1_COLOR_F c = audioOpen ? activeColor : hoverColor;
-                        c.a *= auAlpha;
-                        brush->SetColor(c);
-                        dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rVol, 5.0f, 5.0f), brush);
-                    }
-                    float osdA = std::clamp(inst.volOsdAlpha, 0.0f, 1.0f);
-                    if (osdA < 0.99f) {
-                        WCHAR glyphVol[2]{};
-                        D2D1_COLOR_F glyphCol = normalColor;
-                        if (isMuted || masterVol <= 0.001f) {
-                            glyphVol[0] = 0xE74F; // Mute
-                            glyphCol = dimColor;
-                        } else if (masterVol < 0.33f) {
-                            glyphVol[0] = 0xE993; // Volume 1
-                        } else if (masterVol < 0.66f) {
-                            glyphVol[0] = 0xE994; // Volume 2
-                        } else {
-                            glyphVol[0] = 0xE995; // Volume 3
-                        }
-                        glyphCol.a *= (1.0f - osdA);
-                        brush->SetColor(glyphCol);
-                        dcTarget->DrawText(glyphVol, 1, fmtGlyph, rVol, brush);
-                    }
-                    if (osdA > 0.01f) {
-                        int volPct = isMuted ? 0 : std::clamp(static_cast<int>(masterVol * 100.0f + 0.5f), 0, 100);
-                        WCHAR volStr[16]{};
-                        _snwprintf_s(volStr, _TRUNCATE, L"%d%%", volPct);
-                        D2D1_COLOR_F osdCol = (isMuted || volPct == 0) ? dimColor : normalColor;
-                        osdCol.a *= osdA;
-                        brush->SetColor(osdCol);
-                        D2D1_RECT_F rOsd = D2D1::RectF(rVol.left - 1.5f, rVol.top, rVol.right + 1.5f, rVol.bottom);
-                        dcTarget->DrawText(volStr, static_cast<UINT32>(wcslen(volStr)), fmtOsd, rOsd, brush);
-                    }
-
-                    brush->Release();
-                }
-
-                dcTarget->EndDraw();
-
-                POINT ptDst{ targetX, targetY };
-                POINT ptSrc{ 0, 0 };
-                SIZE szWnd{ pxW, pxH };
-                BLENDFUNCTION blend{};
-                blend.BlendOp = AC_SRC_OVER;
-                blend.SourceConstantAlpha = 255;
-                blend.AlphaFormat = AC_SRC_ALPHA;
-
-                UpdateLayeredWindow(hWidget, hdcScreen, &ptDst, &szWnd, hdcMem, &ptSrc, 0, &blend, ULW_ALPHA);
-            }
-            SelectObject(hdcMem, oldBmp);
-            DeleteObject(hBmp);
+        // Button 1: Independent Wi-Fi / Network (x: 2.0f to 31.0f) with smooth Fluent hover fade
+        D2D1_RECT_F rWifi = D2D1::RectF(2.0f, topY, 31.0f, botY);
+        brush->SetColor(D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.5f / 255.0f));
+        dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rWifi, 5.0f, 5.0f), brush);
+        float wfAlpha = wifiOpen ? 1.0f : inst.wifiHoverAlpha;
+        if (wfAlpha > 0.01f) {
+            D2D1_COLOR_F c = wifiOpen ? activeColor : hoverColor;
+            c.a *= wfAlpha;
+            brush->SetColor(c);
+            dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rWifi, 5.0f, 5.0f), brush);
         }
-        DeleteDC(hdcMem);
-        ReleaseDC(nullptr, hdcScreen);
-        dcTarget->Release();
+        WCHAR glyphWifi[2]{};
+        if (hasWifi) {
+            glyphWifi[0] = 0xE701; // Wifi
+            brush->SetColor(normalColor);
+        } else if (hasEthernet) {
+            glyphWifi[0] = 0xE839; // Ethernet
+            brush->SetColor(normalColor);
+        } else {
+            glyphWifi[0] = 0xEB55; // Offline
+            brush->SetColor(dimColor);
+        }
+        dcTarget->DrawText(glyphWifi, 1, fmtGlyph, rWifi, brush);
+
+        // Button 2: Independent Audio / Speaker (x: 33.0f to 62.0f) with smooth Fluent hover fade
+        D2D1_RECT_F rVol = D2D1::RectF(33.0f, topY, 62.0f, botY);
+        brush->SetColor(D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.5f / 255.0f));
+        dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rVol, 5.0f, 5.0f), brush);
+        float auAlpha = audioOpen ? 1.0f : inst.audioHoverAlpha;
+        if (auAlpha > 0.01f) {
+            D2D1_COLOR_F c = audioOpen ? activeColor : hoverColor;
+            c.a *= auAlpha;
+            brush->SetColor(c);
+            dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rVol, 5.0f, 5.0f), brush);
+        }
+        float osdA = std::clamp(inst.volOsdAlpha, 0.0f, 1.0f);
+        if (osdA < 0.99f) {
+            WCHAR glyphVol[2]{};
+            D2D1_COLOR_F glyphCol = normalColor;
+            if (isMuted || masterVol <= 0.001f) {
+                glyphVol[0] = 0xE74F; // Mute
+                glyphCol = dimColor;
+            } else if (masterVol < 0.33f) {
+                glyphVol[0] = 0xE993; // Volume 1
+            } else if (masterVol < 0.66f) {
+                glyphVol[0] = 0xE994; // Volume 2
+            } else {
+                glyphVol[0] = 0xE995; // Volume 3
+            }
+            glyphCol.a *= (1.0f - osdA);
+            brush->SetColor(glyphCol);
+            dcTarget->DrawText(glyphVol, 1, fmtGlyph, rVol, brush);
+        }
+        if (osdA > 0.01f) {
+            int volPct = isMuted ? 0 : std::clamp(static_cast<int>(masterVol * 100.0f + 0.5f), 0, 100);
+            WCHAR volStr[16]{};
+            _snwprintf_s(volStr, _TRUNCATE, L"%d%%", volPct);
+            D2D1_COLOR_F osdCol = (isMuted || volPct == 0) ? dimColor : normalColor;
+            osdCol.a *= osdA;
+            brush->SetColor(osdCol);
+            D2D1_RECT_F rOsd = D2D1::RectF(rVol.left - 1.5f, rVol.top, rVol.right + 1.5f, rVol.bottom);
+            dcTarget->DrawText(volStr, static_cast<UINT32>(wcslen(volStr)), fmtOsd, rOsd, brush);
+        }
+
+        dcTarget->EndDraw();
+        inst.traySurface.Present(hWidget, targetX, targetY, 255);
     }
 }
 
@@ -9139,8 +9139,12 @@ std::unordered_map<HWND, int> g_secClockMargins;
 std::vector<HWND> g_activeSecTraysForUia;
 std::thread g_secClockUiaThread;
 
-int MeasureSecondaryClockMarginWithUia(IUIAutomation* pUia, HWND hSec) {
+int MeasureSecondaryClockMarginWithUia(IUIAutomation* pUia, IUIAutomationCacheRequest* pCacheReq, HWND hSec) {
     if (!pUia || !hSec || !IsWindow(hSec) || !IsWindowVisible(hSec)) return 0;
+    // Win10 fast-skip: if native Win32 ClockButton exists, main loop reads it in 0.001ms without UIA
+    HWND hNativeClock = FindWindowExW(hSec, nullptr, L"ClockButton", nullptr);
+    if (hNativeClock && IsWindowVisible(hNativeClock)) return 0;
+
     RECT rcSec{};
     if (!GetWindowRect(hSec, &rcSec)) return 0;
     int tbW = rcSec.right - rcSec.left;
@@ -9160,7 +9164,10 @@ int MeasureSecondaryClockMarginWithUia(IUIAutomation* pUia, HWND hSec) {
 
     if (SUCCEEDED(pUia->CreatePropertyCondition(UIA_ControlTypePropertyId, varBtn, &pCond)) && pCond) {
         IUIAutomationElementArray* pArr = nullptr;
-        if (SUCCEEDED(pRoot->FindAll(TreeScope_Descendants, pCond, &pArr)) && pArr) {
+        HRESULT hrFind = pCacheReq
+                             ? pRoot->FindAllBuildCache(TreeScope_Descendants, pCond, pCacheReq, &pArr)
+                             : pRoot->FindAll(TreeScope_Descendants, pCond, &pArr);
+        if (SUCCEEDED(hrFind) && pArr) {
             int count = 0;
             pArr->get_Length(&count);
 
@@ -9180,7 +9187,9 @@ int MeasureSecondaryClockMarginWithUia(IUIAutomation* pUia, HWND hSec) {
                 IUIAutomationElement* pEl = nullptr;
                 if (SUCCEEDED(pArr->GetElement(i, &pEl)) && pEl) {
                     RECT rcEl{};
-                    if (SUCCEEDED(pEl->get_CurrentBoundingRectangle(&rcEl))) {
+                    HRESULT hrRect = pCacheReq ? pEl->get_CachedBoundingRectangle(&rcEl)
+                                               : pEl->get_CurrentBoundingRectangle(&rcEl);
+                    if (SUCCEEDED(hrRect)) {
                         int w = rcEl.right - rcEl.left;
                         int h = rcEl.bottom - rcEl.top;
                         if (w >= static_cast<int>(16.0f * scale) && w <= maxBtnW &&
@@ -9231,6 +9240,11 @@ void RunSecondaryClockUiaLoop() {
     CoCreateInstance(kClsidCUIAutomation, nullptr, CLSCTX_INPROC_SERVER,
                      kIidIUIAutomation, reinterpret_cast<void**>(&pUia));
 
+    IUIAutomationCacheRequest* pCacheReq = nullptr;
+    if (pUia && SUCCEEDED(pUia->CreateCacheRequest(&pCacheReq)) && pCacheReq) {
+        pCacheReq->AddProperty(UIA_BoundingRectanglePropertyId);
+    }
+
     while (!g_shuttingDown) {
         ModSettings s = GetSettings();
         if (pUia && (s.enableSecondaryMonitorTray || s.enableSecondaryMonitorStats)) {
@@ -9242,7 +9256,7 @@ void RunSecondaryClockUiaLoop() {
             bool anyChanged = false;
             for (HWND hSec : targets) {
                 if (g_shuttingDown) break;
-                int m = MeasureSecondaryClockMarginWithUia(pUia, hSec);
+                int m = MeasureSecondaryClockMarginWithUia(pUia, pCacheReq, hSec);
                 if (m > 0) {
                     std::lock_guard<std::mutex> lock(g_secClockMarginMutex);
                     auto it = g_secClockMargins.find(hSec);
@@ -9257,12 +9271,13 @@ void RunSecondaryClockUiaLoop() {
             }
         }
         if (g_sysMonitorStopEvent) {
-            if (WaitForSingleObject(g_sysMonitorStopEvent, 350) == WAIT_OBJECT_0) break;
+            if (WaitForSingleObject(g_sysMonitorStopEvent, 1200) == WAIT_OBJECT_0) break;
         } else {
-            Sleep(350);
+            Sleep(1200);
         }
     }
 
+    if (pCacheReq) pCacheReq->Release();
     if (pUia) pUia->Release();
     if (SUCCEEDED(hrCo)) CoUninitialize();
 }
@@ -9276,7 +9291,6 @@ void RunTaskbarSystemMonitorLoop() {
     PdhOpenQueryW_t pPdhOpenQueryW = nullptr;
     PdhAddEnglishCounterW_t pPdhAddEnglishCounterW = nullptr;
     PdhCollectQueryData_t pPdhCollectQueryData = nullptr;
-    PdhGetFormattedCounterValue_t pPdhGetFormattedCounterValue = nullptr;
     PdhGetFormattedCounterArrayW_t pPdhGetFormattedCounterArrayW = nullptr;
     PdhCloseQuery_t pPdhCloseQuery = nullptr;
 
@@ -9284,7 +9298,6 @@ void RunTaskbarSystemMonitorLoop() {
         pPdhOpenQueryW = reinterpret_cast<PdhOpenQueryW_t>(GetProcAddress(hPdh, "PdhOpenQueryW"));
         pPdhAddEnglishCounterW = reinterpret_cast<PdhAddEnglishCounterW_t>(GetProcAddress(hPdh, "PdhAddEnglishCounterW"));
         pPdhCollectQueryData = reinterpret_cast<PdhCollectQueryData_t>(GetProcAddress(hPdh, "PdhCollectQueryData"));
-        pPdhGetFormattedCounterValue = reinterpret_cast<PdhGetFormattedCounterValue_t>(GetProcAddress(hPdh, "PdhGetFormattedCounterValue"));
         pPdhGetFormattedCounterArrayW = reinterpret_cast<PdhGetFormattedCounterArrayW_t>(GetProcAddress(hPdh, "PdhGetFormattedCounterArrayW"));
         pPdhCloseQuery = reinterpret_cast<PdhCloseQuery_t>(GetProcAddress(hPdh, "PdhCloseQuery"));
     }
@@ -9294,11 +9307,9 @@ void RunTaskbarSystemMonitorLoop() {
     FreeMibTable_t pFreeMibTable = hIphlp ? reinterpret_cast<FreeMibTable_t>(GetProcAddress(hIphlp, "FreeMibTable")) : nullptr;
 
     PDH_HQUERY_T hQuery = nullptr;
-    PDH_HCOUNTER_T hCpuUtilCounter = nullptr;
     PDH_HCOUNTER_T hGpuCounter = nullptr;
     if (pPdhOpenQueryW && pPdhAddEnglishCounterW && pPdhCollectQueryData) {
         if (pPdhOpenQueryW(nullptr, 0, &hQuery) == 0 && hQuery) {
-            pPdhAddEnglishCounterW(hQuery, L"\\Processor Information(_Total)\\% Processor Time", 0, &hCpuUtilCounter);
             pPdhAddEnglishCounterW(hQuery, L"\\GPU Engine(*)\\Utilization Percentage", 0, &hGpuCounter);
             pPdhCollectQueryData(hQuery);
         }
@@ -9612,7 +9623,17 @@ void RunTaskbarSystemMonitorLoop() {
 
     LiveSystemMetrics metrics{};
     ULONGLONG lastSampleTick = 0;
-    bool bitmapDirty = true;
+    ULONGLONG lastNetDetectTick = 0;
+    ULONGLONG lastThemeCheckTick = 0;
+    bool cachedLightTheme = IsLightSystemThemeFallback();
+    uint64_t metricsGen = 1;
+    uint64_t lastPrimaryMetricsGen = 0;
+    uint32_t lastMetricsColsMask = 0xFFFFFFFFu;
+    uint64_t lastBuiltColsGen = 0;
+    bool lastBuiltColsLightTheme = false;
+    std::vector<StatsColumn> cachedCols;
+    float cachedDipW = 32.0f;
+    LayeredPopupSurface primaryStatsSurface{};
     int lastRenderedPxW = 0, lastRenderedPxH = 0;
     int lastPlacedX = -99999, lastPlacedY = -99999;
     float animPrimaryStatsX = 0.0f;
@@ -9626,7 +9647,7 @@ void RunTaskbarSystemMonitorLoop() {
         lastSampleTick = now;
 
         bool pdhCollected = false;
-        if (hQuery && pPdhCollectQueryData && (s.showCpuStats || s.showGpuStats)) {
+        if (hQuery && pPdhCollectQueryData && s.showGpuStats) {
             pdhCollected = (pPdhCollectQueryData(hQuery) == 0);
         }
 
@@ -9644,12 +9665,6 @@ void RunTaskbarSystemMonitorLoop() {
                     uint64_t busy = totalSys - iDiff;
                     metrics.cpuPercent = std::clamp(
                         static_cast<int>((busy * 100ULL + totalSys / 2) / totalSys), 0, 100);
-                }
-            } else if (pdhCollected && hCpuUtilCounter && pPdhGetFormattedCounterValue) {
-                PdhFmtCounterValueDbl val{};
-                if (pPdhGetFormattedCounterValue(hCpuUtilCounter, kPdhFmtDouble, nullptr, &val) == 0 &&
-                    (val.CStatus == 0 || val.CStatus == 1)) {
-                    metrics.cpuPercent = std::clamp(static_cast<int>(val.doubleValue + 0.5), 0, 100);
                 }
             }
         }
@@ -9699,8 +9714,19 @@ void RunTaskbarSystemMonitorLoop() {
         if (s.showNetStats) {
             uint64_t curIn = 0, curOut = 0;
             uint32_t curSig = 0;
-            if (SampleNetworkOctetsFromIfTable2(pGetIfTable2, pFreeMibTable, curIn, curOut, curSig)) {
+            bool hwWifi = false, hwEth = false, hwConn = false;
+            bool sampleLinkState = s.enableSecondaryMonitorTray;
+            if (SampleNetworkOctetsFromIfTable2(pGetIfTable2, pFreeMibTable, curIn, curOut, curSig,
+                                                sampleLinkState ? &hwWifi : nullptr,
+                                                sampleLinkState ? &hwEth : nullptr,
+                                                sampleLinkState ? &hwConn : nullptr)) {
                 ULONGLONG netNow = GetTickCount64();
+                if (sampleLinkState) {
+                    g_hasActiveWifi.store(hwWifi);
+                    g_hasActiveEthernet.store(hwEth);
+                    g_hasActiveNetwork.store(hwConn);
+                    lastNetDetectTick = netNow;
+                }
                 if (prevNetTick != 0 && netNow > prevNetTick && curSig == prevAdapterSig &&
                     curIn >= prevNetIn && curOut >= prevNetOut) {
                     double elapsedSec = static_cast<double>(netNow - prevNetTick) / 1000.0;
@@ -9717,6 +9743,12 @@ void RunTaskbarSystemMonitorLoop() {
                 prevAdapterSig = curSig;
                 prevNetTick = netNow;
             } else {
+                if (sampleLinkState) {
+                    g_hasActiveWifi.store(hwWifi);
+                    g_hasActiveEthernet.store(hwEth);
+                    g_hasActiveNetwork.store(hwConn);
+                    lastNetDetectTick = GetTickCount64();
+                }
                 metrics.netDownBytesPerSec = 0.0;
                 metrics.netUpBytesPerSec = 0.0;
                 prevNetTick = 0;
@@ -9724,30 +9756,49 @@ void RunTaskbarSystemMonitorLoop() {
         }
 
         metrics.pingMs = g_livePingMs.load();
-        bitmapDirty = true;
+        ++metricsGen;
     };
 
     bool anySecondaryAnimating = false;
-    auto updateWidgetPresentation = [&](bool forceRedraw) {
+    auto updateWidgetPresentation = [&](const ModSettings& settings, bool forceRedraw) {
         anySecondaryAnimating = false;
         if (!d2dFactory || !fmtLabel || !fmtValue || !fmtCenter) return;
 
-        ModSettings settings = GetSettings();
         if (metrics.pingMs != g_livePingMs.load()) {
             metrics.pingMs = g_livePingMs.load();
-            bitmapDirty = true;
+            ++metricsGen;
+        }
+        uint32_t curColsMask = (settings.showCpuStats ? 1u : 0u) |
+                               (settings.showGpuStats ? 2u : 0u) |
+                               (settings.showRamStats ? 4u : 0u) |
+                               (settings.showNetStats ? 8u : 0u) |
+                               (settings.showPingStats ? 16u : 0u);
+        if (curColsMask != lastMetricsColsMask) {
+            lastMetricsColsMask = curColsMask;
+            ++metricsGen;
         }
 
-        bool lightTheme = IsLightSystemThemeFallback();
-        auto cols = BuildActiveColumns(settings, metrics, lightTheme);
+        ULONGLONG nowPresTick = GetTickCount64();
+        if (forceRedraw || lastThemeCheckTick == 0 || (nowPresTick - lastThemeCheckTick >= 2500ULL)) {
+            cachedLightTheme = IsLightSystemThemeFallback();
+            lastThemeCheckTick = nowPresTick;
+        }
+        bool lightTheme = cachedLightTheme;
 
         float padX = 8.0f;
         float colGap = 11.0f;
-        float dipW = padX * 2.0f;
-        for (size_t i = 0; i < cols.size(); i++) {
-            dipW += cols[i].widthDip;
-            if (i + 1 < cols.size()) dipW += colGap;
+        if (forceRedraw || lastBuiltColsGen != metricsGen || lastBuiltColsLightTheme != lightTheme) {
+            cachedCols = BuildActiveColumns(settings, metrics, lightTheme);
+            cachedDipW = padX * 2.0f;
+            for (size_t i = 0; i < cachedCols.size(); i++) {
+                cachedDipW += cachedCols[i].widthDip;
+                if (i + 1 < cachedCols.size()) cachedDipW += colGap;
+            }
+            lastBuiltColsGen = metricsGen;
+            lastBuiltColsLightTheme = lightTheme;
         }
+        const auto& cols = cachedCols;
+        float dipW = cachedDipW;
         float dipH = 36.0f;
 
         // =========================================================================
@@ -9757,6 +9808,7 @@ void RunTaskbarSystemMonitorLoop() {
         if (hWidget && settings.enableTaskbarSystemStats && !cols.empty()) {
             HWND hTrayWnd = FindWindowW(L"Shell_TrayWnd", nullptr);
             if (hTrayWnd && IsWindowVisible(hTrayWnd) && !IsWindowCloakedByDwm(hTrayWnd)) {
+                g_cachedPrimaryTrayHwnd.store(hTrayWnd);
                 ensureTrayWinEventHook(hTrayWnd);
                 RECT rcTray{};
                 if (GetWindowRect(hTrayWnd, &rcTray) &&
@@ -9831,7 +9883,7 @@ void RunTaskbarSystemMonitorLoop() {
                         int targetX = static_cast<int>(std::round(animPrimaryStatsX));
                         int targetY = rcTray.top + (trayH - pxH) / 2;
 
-                        bool needBitmapRedraw = forceRedraw || bitmapDirty ||
+                        bool needBitmapRedraw = forceRedraw || (metricsGen != lastPrimaryMetricsGen) ||
                                                 (pxW != lastRenderedPxW) || (pxH != lastRenderedPxH) ||
                                                 (lightTheme != lastRenderedLightTheme) ||
                                                 (std::abs(dpi - lastRenderedDpi) > 0.5f);
@@ -9842,7 +9894,7 @@ void RunTaskbarSystemMonitorLoop() {
 
                         if (needBitmapRedraw) {
                             RenderStatsBitmapToLayeredWindow(
-                                hWidget, cols, d2dFactory, fmtLabel, fmtValue, fmtCenter,
+                                hWidget, primaryStatsSurface, cols, d2dFactory, fmtLabel, fmtValue, fmtCenter,
                                 pxW, pxH, dipW, dipH, dpi, lightTheme, padX, colGap, targetX, targetY);
                             lastRenderedPxW = pxW;
                             lastRenderedPxH = pxH;
@@ -9850,7 +9902,7 @@ void RunTaskbarSystemMonitorLoop() {
                             lastRenderedDpi = dpi;
                             lastPlacedX = targetX;
                             lastPlacedY = targetY;
-                            bitmapDirty = false;
+                            lastPrimaryMetricsGen = metricsGen;
                         }
 
                         if (!wasVisible) {
@@ -9905,6 +9957,8 @@ void RunTaskbarSystemMonitorLoop() {
                     std::lock_guard<std::mutex> lock(g_secClockMarginMutex);
                     g_secClockMargins.erase((*it)->hSecondaryTray);
                 }
+                (*it)->traySurface.Release();
+                (*it)->statsSurface.Release();
                 if ((*it)->hTrayWidget && IsWindow((*it)->hTrayWidget)) DestroyWindow((*it)->hTrayWidget);
                 if ((*it)->hStatsWidget && IsWindow((*it)->hStatsWidget)) DestroyWindow((*it)->hStatsWidget);
                 it = secondaryInstances.erase(it);
@@ -10177,9 +10231,10 @@ void RunTaskbarSystemMonitorLoop() {
                 int targetStatsX = static_cast<int>(std::round(inst.animStatsX));
                 int targetStatsY = rcSec.top + (secTrayH - secStatsPxH) / 2;
 
-                bool statsBitmapDirty = forceRedraw || bitmapDirty ||
+                bool statsBitmapDirty = forceRedraw || (metricsGen != inst.lastStatsMetricsGen) ||
                                         (secStatsPxW != inst.lastStatsW) || (secStatsPxH != inst.lastStatsH) ||
-                                        (lightTheme != inst.lastLightTheme);
+                                        (lightTheme != inst.lastStatsLightTheme) ||
+                                        (std::abs(secDpi - inst.lastStatsDpi) > 0.5f);
                 bool statsPosChanged = (targetStatsX != inst.lastStatsX) || (targetStatsY != inst.lastStatsY);
                 bool statsWasVis = IsWindowVisible(inst.hStatsWidget) != FALSE;
 
@@ -10190,11 +10245,14 @@ void RunTaskbarSystemMonitorLoop() {
 
                 if (statsBitmapDirty) {
                     RenderStatsBitmapToLayeredWindow(
-                        inst.hStatsWidget, cols, d2dFactory,
+                        inst.hStatsWidget, inst.statsSurface, cols, d2dFactory,
                         fmtLabel, fmtValue, fmtCenter,
                         secStatsPxW, secStatsPxH, dipW, dipH,
                         secDpi, lightTheme, padX, colGap,
                         targetStatsX, targetStatsY);
+                    inst.lastStatsMetricsGen = metricsGen;
+                    inst.lastStatsLightTheme = lightTheme;
+                    inst.lastStatsDpi = secDpi;
                 }
 
                 if (!statsWasVis) {
@@ -10215,18 +10273,20 @@ void RunTaskbarSystemMonitorLoop() {
         }
     };
 
-        sampleMetricsNow(GetSettings());
-    updateWidgetPresentation(true);
+    {
+        ModSettings initS = GetSettings();
+        sampleMetricsNow(initS);
+        updateWidgetPresentation(initS, true);
+    }
 
-    ULONGLONG lastNetDetectTick = 0;
     HANDLE waitHandles[2] = { g_sysMonitorStopEvent, g_sysMonitorWakeEvent };
     while (!g_shuttingDown) {
-        // Adaptive frame pacing: 8ms (~120fps) during popup slide/fade, hover fade, or tray glide;
-        // 60ms ultra-low-CPU poll when idle.
+        // Adaptive frame pacing: 8ms (~120fps) during popup slide/fade, hover fade, OSD cross-fade, or tray glide;
+        // 250ms ultra-low-CPU sleep when idle (woken immediately at 0ms on any mouse/tray/audio event).
         bool audioPlayFadeBusy = g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd) &&
                                  std::abs((g_audioPopupState.audioIsPlayingNow ? 1.0f : 0.0f) - g_audioPopupState.audioPlayingAlpha) > 0.01f;
         bool popupAnimBusy = g_audioPopupSurface.animActive || g_wifiPopupSurface.animActive || audioPlayFadeBusy;
-        DWORD waitMs = (anySecondaryAnimating || popupAnimBusy) ? 8 : 60;
+        DWORD waitMs = (anySecondaryAnimating || popupAnimBusy) ? 8 : 250;
         DWORD waitRes = MsgWaitForMultipleObjects(2, waitHandles, FALSE, waitMs, QS_ALLINPUT);
         if (g_shuttingDown || waitRes == WAIT_OBJECT_0) {
             break;
@@ -10259,7 +10319,7 @@ void RunTaskbarSystemMonitorLoop() {
             sampleMetricsNow(s);
         }
         if (s.enableSecondaryMonitorTray && pGetIfTable2 && pFreeMibTable &&
-            (lastNetDetectTick == 0 || (nowLoopTick - lastNetDetectTick >= 1000))) {
+            (lastNetDetectTick == 0 || (nowLoopTick - lastNetDetectTick >= 2000))) {
             lastNetDetectTick = nowLoopTick;
             bool w = false, e = false, c = false;
             DetectNetworkState(pGetIfTable2, pFreeMibTable, w, e, c);
@@ -10267,13 +10327,15 @@ void RunTaskbarSystemMonitorLoop() {
             g_hasActiveEthernet.store(e);
             g_hasActiveNetwork.store(c);
         }
-        updateWidgetPresentation(false);
+        updateWidgetPresentation(s, false);
     }
 
     if (hTrayEventHook) {
         UnhookWinEvent(hTrayEventHook);
     }
+    g_cachedPrimaryTrayHwnd.store(nullptr);
     g_statsWidgetHwnd.store(nullptr);
+    primaryStatsSurface.Release();
     if (hWidget && IsWindow(hWidget)) {
         DestroyWindow(hWidget);
     }
@@ -10299,6 +10361,8 @@ void RunTaskbarSystemMonitorLoop() {
 
     UninitAudioEndpoint();
     for (auto& entry : secondaryInstances) {
+        entry->traySurface.Release();
+        entry->statsSurface.Release();
         if (entry->hTrayWidget && IsWindow(entry->hTrayWidget)) DestroyWindow(entry->hTrayWidget);
         if (entry->hStatsWidget && IsWindow(entry->hStatsWidget)) DestroyWindow(entry->hStatsWidget);
     }
