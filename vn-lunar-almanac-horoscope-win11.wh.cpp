@@ -4,7 +4,7 @@
 // @name:vi-VN      Lịch Vạn Niên & Tử Vi Phong Thủy
 // @description     Displays the Vietnamese Lunar Calendar, 24 Solar Terms, Five Elements (Ngũ Hành), Google Calendar notes, personalized daily Horoscope (Tử Vi), live Taskbar System Stats, and independent Multi-Monitor Wi-Fi & Audio controls on Windows 11
 // @description:vi-VN Hiển thị Âm lịch Việt Nam, 24 Tiết khí, Ngũ hành Nạp âm, đồng bộ Google Calendar, Tử Vi cá nhân hóa, khung thông số hệ thống (CPU/GPU/RAM/Mạng/Ping) và cụm điều khiển Wi-Fi & Âm thanh độc lập cho màn hình phụ trên Windows 11
-// @version         0.2.2
+// @version         0.2.5
 // @author          bewbungbu
 // @include         explorer.exe
 // @include         ShellExperienceHost.exe
@@ -227,6 +227,7 @@ Khi bạn nhập **Năm sinh Âm lịch** trong phần **Cài đặt** (ví dụ
 #include <windows.h>
 #include <mmdeviceapi.h>
 #include <endpointvolume.h>
+#include <audiopolicy.h>
 #include <propsys.h>
 #include <wlanapi.h>
 #include <tlhelp32.h>
@@ -5518,6 +5519,121 @@ bool ProbeSingleIcmpMs(IcmpSendEcho_t pIcmpSendEcho, HANDLE hIcmp, DWORD ipNetOr
     return true;
 }
 
+bool IsPublicIpv4Address(DWORD ip) {
+    BYTE a = static_cast<BYTE>(ip & 0xFF);
+    BYTE b = static_cast<BYTE>((ip >> 8) & 0xFF);
+    if (a == 0 || a == 10 || a == 127) return false;
+    if (a == 169 && b == 254) return false;
+    if (a == 172 && b >= 16 && b <= 31) return false;
+    if (a == 192 && b == 168) return false;
+    if (a == 100 && b >= 64 && b <= 127) return false;
+    if (a >= 224) return false;
+    return true;
+}
+
+std::vector<DWORD> DetectActiveSystemPublicDnsServers(HMODULE hIphlp) {
+    std::vector<DWORD> result;
+    if (!hIphlp) return result;
+
+    using GetBestInterface_t = DWORD(WINAPI*)(DWORD dwDestAddr, PDWORD pdwBestIfIndex);
+    using GetAdaptersAddresses_t = ULONG(WINAPI*)(ULONG Family, ULONG Flags, PVOID Reserved, PVOID AdapterAddresses, PULONG SizePointer);
+    auto pGetBestInterface = reinterpret_cast<GetBestInterface_t>(GetProcAddress(hIphlp, "GetBestInterface"));
+    auto pGetAdaptersAddresses = reinterpret_cast<GetAdaptersAddresses_t>(GetProcAddress(hIphlp, "GetAdaptersAddresses"));
+    if (!pGetAdaptersAddresses) return result;
+
+    DWORD bestIf = 0;
+    if (pGetBestInterface) {
+        DWORD probeDst = (1u) | (1u << 8) | (1u << 16) | (1u << 24);
+        if (pGetBestInterface(probeDst, &bestIf) != 0) {
+            bestIf = 0;
+        }
+    }
+
+    constexpr ULONG kAfInet = 2;
+    constexpr ULONG kFlags = 0x06; // GAA_FLAG_SKIP_ANYCAST | GAA_FLAG_SKIP_MULTICAST
+    ULONG bufLen = 16384;
+    std::vector<BYTE> buf(bufLen);
+    ULONG rc = pGetAdaptersAddresses(kAfInet, kFlags, nullptr, buf.data(), &bufLen);
+    if (rc == ERROR_BUFFER_OVERFLOW && bufLen > 0 && bufLen <= 1024 * 1024) {
+        buf.resize(bufLen);
+        rc = pGetAdaptersAddresses(kAfInet, kFlags, nullptr, buf.data(), &bufLen);
+    }
+    if (rc != NO_ERROR) return result;
+
+    // Exact x64 ABI offsets of IP_ADAPTER_ADDRESSES / IP_ADAPTER_DNS_SERVER_ADDRESS / sockaddr_in
+    const BYTE* adapter = buf.data();
+    while (adapter) {
+        DWORD ifIndex = 0;
+        const BYTE* nextAdapter = nullptr;
+        const BYTE* dnsNode = nullptr;
+        INT operStatus = 0;
+        memcpy(&ifIndex, adapter + 4, sizeof(ifIndex));
+        memcpy(&nextAdapter, adapter + 8, sizeof(nextAdapter));
+        memcpy(&dnsNode, adapter + 48, sizeof(dnsNode));
+        memcpy(&operStatus, adapter + 104, sizeof(operStatus));
+
+        if (operStatus == 1 && (bestIf == 0 || ifIndex == bestIf)) {
+            while (dnsNode) {
+                const BYTE* nextDns = nullptr;
+                const BYTE* sockAddr = nullptr;
+                memcpy(&nextDns, dnsNode + 8, sizeof(nextDns));
+                memcpy(&sockAddr, dnsNode + 16, sizeof(sockAddr));
+                if (sockAddr) {
+                    USHORT family = 0;
+                    DWORD ip = 0;
+                    memcpy(&family, sockAddr + 0, sizeof(family));
+                    memcpy(&ip, sockAddr + 4, sizeof(ip));
+                    if (family == kAfInet && IsPublicIpv4Address(ip)) {
+                        if (std::find(result.begin(), result.end(), ip) == result.end()) {
+                            result.push_back(ip);
+                        }
+                    }
+                }
+                dnsNode = nextDns;
+            }
+            if (bestIf != 0) break;
+        }
+        adapter = nextAdapter;
+    }
+    return result;
+}
+
+void FormatPingTargetLabel(DWORD ip, WCHAR* outBuf, size_t outCap) {
+    if (!outBuf || outCap == 0) return;
+    auto makeIp = [](DWORD a, DWORD b, DWORD c, DWORD d) -> DWORD {
+        return (a) | (b << 8) | (c << 16) | (d << 24);
+    };
+    if (ip == 0) {
+        wcsncpy_s(outBuf, outCap, L"DNS", _TRUNCATE);
+    } else if (ip == makeIp(1, 1, 1, 1)) {
+        wcsncpy_s(outBuf, outCap, L"Cloudflare 1.1.1.1", _TRUNCATE);
+    } else if (ip == makeIp(1, 0, 0, 1)) {
+        wcsncpy_s(outBuf, outCap, L"Cloudflare 1.0.0.1", _TRUNCATE);
+    } else if (ip == makeIp(8, 8, 8, 8)) {
+        wcsncpy_s(outBuf, outCap, L"Google 8.8.8.8", _TRUNCATE);
+    } else if (ip == makeIp(8, 8, 4, 4)) {
+        wcsncpy_s(outBuf, outCap, L"Google 8.8.4.4", _TRUNCATE);
+    } else if (ip == makeIp(9, 9, 9, 9)) {
+        wcsncpy_s(outBuf, outCap, L"Quad9 9.9.9.9", _TRUNCATE);
+    } else if (ip == makeIp(149, 112, 112, 112)) {
+        wcsncpy_s(outBuf, outCap, L"Quad9 149.112.112.112", _TRUNCATE);
+    } else if (ip == makeIp(208, 67, 222, 222)) {
+        wcsncpy_s(outBuf, outCap, L"OpenDNS 208.67.222.222", _TRUNCATE);
+    } else if (ip == makeIp(208, 67, 220, 220)) {
+        wcsncpy_s(outBuf, outCap, L"OpenDNS 208.67.220.220", _TRUNCATE);
+    } else if (ip == makeIp(94, 140, 14, 14)) {
+        wcsncpy_s(outBuf, outCap, L"AdGuard 94.140.14.14", _TRUNCATE);
+    } else if (ip == makeIp(94, 140, 15, 15)) {
+        wcsncpy_s(outBuf, outCap, L"AdGuard 94.140.15.15", _TRUNCATE);
+    } else {
+        _snwprintf_s(outBuf, outCap, _TRUNCATE, L"%u.%u.%u.%u",
+                     static_cast<unsigned>(ip & 0xFF),
+                     static_cast<unsigned>((ip >> 8) & 0xFF),
+                     static_cast<unsigned>((ip >> 16) & 0xFF),
+                     static_cast<unsigned>((ip >> 24) & 0xFF));
+    }
+}
+
 void RunPingScannerLoop() {
     HMODULE hIphlp = LoadLibraryExW(L"iphlpapi.dll", nullptr, LOAD_LIBRARY_SEARCH_SYSTEM32);
     if (!hIphlp) return;
@@ -5537,68 +5653,57 @@ void RunPingScannerLoop() {
         return;
     }
 
-    // Reliable anycast DNS servers with local Vietnam PoPs: 8.8.8.8, 1.1.1.1, 208.67.222.222
-    const DWORD kTargets[3] = {
-        (8u) | (8u << 8) | (8u << 16) | (8u << 24),
+    // Stable fallback targets if Windows adapter uses DHCP/private router DNS (192.168.x.x)
+    const DWORD kFallbackTargets[3] = {
         (1u) | (1u << 8) | (1u << 16) | (1u << 24),
+        (8u) | (8u << 8) | (8u << 16) | (8u << 24),
         (208u) | (67u << 8) | (222u << 16) | (222u << 24),
     };
 
-    int bestIdx = -1;
-    ULONGLONG lastFullScanTick = 0;
+    std::vector<DWORD> targets;
+    DWORD activeTargetIp = 0;
+    ULONGLONG lastDnsCheckTick = 0;
 
     while (!g_shuttingDown) {
         ModSettings s = GetSettings();
-        if (s.enableTaskbarSystemStats && s.showPingStats) {
+        if ((s.enableTaskbarSystemStats || s.enableSecondaryMonitorStats) && s.showPingStats) {
             ULONGLONG now = GetTickCount64();
-            bool needFullScan = (bestIdx < 0) || (now - lastFullScanTick >= 60000ULL);
-            int measuredMs = -1;
-
-            if (needFullScan) {
-                int bestMs = 999999;
-                int chosen = -1;
-                for (int i = 0; i < 3 && !g_shuttingDown; i++) {
-                    int ms = -1;
-                    if (ProbeSingleIcmpMs(pIcmpSendEcho, hIcmp, kTargets[i], ms)) {
-                        if (ms < bestMs) {
-                            bestMs = ms;
-                            chosen = i;
-                        }
+            if (targets.empty() || activeTargetIp == 0 || (now - lastDnsCheckTick >= 10000ULL)) {
+                lastDnsCheckTick = now;
+                targets = DetectActiveSystemPublicDnsServers(hIphlp);
+                for (DWORD fb : kFallbackTargets) {
+                    if (std::find(targets.begin(), targets.end(), fb) == targets.end()) {
+                        targets.push_back(fb);
                     }
                 }
-                if (chosen >= 0) {
-                    bestIdx = chosen;
-                    measuredMs = bestMs;
-                    g_activePingTargetIp.store(kTargets[bestIdx]);
-                    lastFullScanTick = GetTickCount64();
-                } else {
-                    bestIdx = -1;
+                // Always prefer the user's primary configured DNS server (targets[0]) without random flipping
+                if (!targets.empty()) {
+                    activeTargetIp = targets[0];
+                }
+            }
+
+            int measuredMs = -1;
+            if (activeTargetIp != 0 && ProbeSingleIcmpMs(pIcmpSendEcho, hIcmp, activeTargetIp, measuredMs)) {
+                g_activePingTargetIp.store(activeTargetIp);
+            } else {
+                // Only failover to secondary DNS / fallback if primary actually fails
+                bool recovered = false;
+                for (DWORD ip : targets) {
+                    if (g_shuttingDown) break;
+                    if (ip == activeTargetIp) continue;
+                    int ms = -1;
+                    if (ProbeSingleIcmpMs(pIcmpSendEcho, hIcmp, ip, ms)) {
+                        activeTargetIp = ip;
+                        measuredMs = ms;
+                        g_activePingTargetIp.store(activeTargetIp);
+                        recovered = true;
+                        break;
+                    }
+                }
+                if (!recovered) {
+                    activeTargetIp = 0;
                     measuredMs = -1;
                     g_activePingTargetIp.store(0);
-                }
-            } else {
-                int ms = -1;
-                if (ProbeSingleIcmpMs(pIcmpSendEcho, hIcmp, kTargets[bestIdx], ms)) {
-                    measuredMs = ms;
-                    g_activePingTargetIp.store(kTargets[bestIdx]);
-                } else {
-                    // Immediate failover to another target
-                    bool recovered = false;
-                    for (int i = 0; i < 3 && !g_shuttingDown; i++) {
-                        if (i == bestIdx) continue;
-                        if (ProbeSingleIcmpMs(pIcmpSendEcho, hIcmp, kTargets[i], ms)) {
-                            bestIdx = i;
-                            measuredMs = ms;
-                            g_activePingTargetIp.store(kTargets[bestIdx]);
-                            recovered = true;
-                            break;
-                        }
-                    }
-                    if (!recovered) {
-                        bestIdx = -1;
-                        measuredMs = -1;
-                        g_activePingTargetIp.store(0);
-                    }
                 }
             }
 
@@ -5892,21 +5997,9 @@ LRESULT CALLBACK StatsWidgetWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
                 AppendMenuW(hMenu, MF_STRING | (s.showNetStats ? MF_CHECKED : MF_UNCHECKED), 104,
                             vi ? L"Hiển thị tốc độ Mạng (↓/↑)" : L"Show Network Speed (↓/↑)");
                 WCHAR pingMenuText[80]{};
-                DWORD activeIp = g_activePingTargetIp.load();
-                WCHAR ipStr[32] = L"Google 8.8.8.8";
-                if (activeIp == ((1u) | (1u << 8) | (1u << 16) | (1u << 24))) {
-                    wcscpy_s(ipStr, L"Cloudflare 1.1.1.1");
-                } else if (activeIp == ((8u) | (8u << 8) | (8u << 16) | (8u << 24))) {
-                    wcscpy_s(ipStr, L"Google 8.8.8.8");
-                } else if (activeIp == ((208u) | (67u << 8) | (222u << 16) | (222u << 24))) {
-                    wcscpy_s(ipStr, L"OpenDNS 208.67.222.222");
-                }
-                int curPing = g_livePingMs.load();
-                if (curPing >= 0) {
-                    _snwprintf_s(pingMenuText, _TRUNCATE, vi ? L"Hiển thị Ping mạng (%d ms - %s)" : L"Show Network Ping (%d ms - %s)", curPing, ipStr);
-                } else {
-                    _snwprintf_s(pingMenuText, _TRUNCATE, vi ? L"Hiển thị Ping mạng (%s)" : L"Show Network Ping (%s)", ipStr);
-                }
+                WCHAR ipStr[40]{};
+                FormatPingTargetLabel(g_activePingTargetIp.load(), ipStr, ARRAYSIZE(ipStr));
+                _snwprintf_s(pingMenuText, _TRUNCATE, vi ? L"Hiển thị Ping mạng (%s)" : L"Show Network Ping (%s)", ipStr);
                 AppendMenuW(hMenu, MF_STRING | (s.showPingStats ? MF_CHECKED : MF_UNCHECKED), 108, pingMenuText);
                 AppendMenuW(hMenu, MF_SEPARATOR, 0, nullptr);
                 AppendMenuW(hMenu, MF_STRING, 105,
@@ -6193,12 +6286,49 @@ struct IPolicyConfig : public IUnknown {
     virtual HRESULT STDMETHODCALLTYPE SetEndpointVisibility(PCWSTR, INT) = 0;
 };
 
+const IID kIidAudioMeterInformation = {
+    0xC02216F6, 0x8C67, 0x4B5B, { 0x9D, 0x00, 0xD0, 0x08, 0xE7, 0x3E, 0x00, 0x64 }
+};
+
+struct IVnAudioMeterInformation : public IUnknown {
+    virtual HRESULT STDMETHODCALLTYPE GetPeakValue(float* pfPeak) = 0;
+    virtual HRESULT STDMETHODCALLTYPE GetMeteringChannelCount(UINT* pnChannelCount) = 0;
+    virtual HRESULT STDMETHODCALLTYPE GetChannelsPeakValues(UINT32 u32ChannelCount, float* afPeakValues) = 0;
+    virtual HRESULT STDMETHODCALLTYPE QueryHardwareSupport(DWORD* pdwHardwareSupportMask) = 0;
+};
+
+float QueryAudioDevicePeakValue(const std::wstring& deviceId) {
+    if (deviceId.empty() || g_liveMasterMuted.load()) return 0.0f;
+    IMMDeviceEnumerator* pEnum = nullptr;
+    if (FAILED(CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER,
+                                __uuidof(IMMDeviceEnumerator), (void**)&pEnum)) || !pEnum) {
+        return 0.0f;
+    }
+    float peak = 0.0f;
+    IMMDevice* pDev = nullptr;
+    if (SUCCEEDED(pEnum->GetDevice(deviceId.c_str(), &pDev)) && pDev) {
+        IVnAudioMeterInformation* pMeter = nullptr;
+        if (SUCCEEDED(pDev->Activate(kIidAudioMeterInformation, CLSCTX_ALL, nullptr, (void**)&pMeter)) && pMeter) {
+            float v = 0.0f;
+            if (SUCCEEDED(pMeter->GetPeakValue(&v))) {
+                peak = v;
+            }
+            pMeter->Release();
+        }
+        pDev->Release();
+    }
+    pEnum->Release();
+    return peak;
+}
+
 struct AudioOutputDeviceItem {
     std::wstring id;
     std::wstring name;
+    std::wstring fxPreset;
     bool isDefault = false;
     bool isFxVirtual = false;
     bool isFxTarget = false;
+    int fxSessionState = 0; // 0=none, 1=inactive, 2=active
 };
 
 bool ContainsCaseInsensitive(const std::wstring& hay, const std::wstring& needle) {
@@ -6216,21 +6346,23 @@ bool ContainsCaseInsensitive(const std::wstring& hay, const std::wstring& needle
     return false;
 }
 
-std::wstring FindRunningFxSoundExePath() {
+void FindRunningFxSoundProcess(DWORD& outPid, std::wstring& outExePath) {
+    outPid = 0;
+    outExePath.clear();
     HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
-    if (hSnap == INVALID_HANDLE_VALUE) return L"";
+    if (hSnap == INVALID_HANDLE_VALUE) return;
     PROCESSENTRY32W pe{};
     pe.dwSize = sizeof(pe);
-    std::wstring exePath;
     if (Process32FirstW(hSnap, &pe)) {
         do {
             if (_wcsicmp(pe.szExeFile, L"FxSound.exe") == 0) {
+                outPid = pe.th32ProcessID;
                 HANDLE hProc = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, pe.th32ProcessID);
                 if (hProc) {
                     WCHAR buf[MAX_PATH]{};
                     DWORD sz = ARRAYSIZE(buf);
                     if (QueryFullProcessImageNameW(hProc, 0, buf, &sz)) {
-                        exePath = buf;
+                        outExePath = buf;
                     }
                     CloseHandle(hProc);
                 }
@@ -6239,7 +6371,45 @@ std::wstring FindRunningFxSoundExePath() {
         } while (Process32NextW(hSnap, &pe));
     }
     CloseHandle(hSnap);
-    return exePath;
+}
+
+int GetProcessAudioSessionState(IMMDevice* pDev, DWORD targetPid) {
+    if (!pDev || targetPid == 0) return 0;
+    IAudioSessionManager2* pMgr = nullptr;
+    if (FAILED(pDev->Activate(__uuidof(IAudioSessionManager2), CLSCTX_ALL, nullptr, (void**)&pMgr)) || !pMgr) {
+        return 0;
+    }
+    int bestState = 0; // 0=none, 1=inactive, 2=active
+    IAudioSessionEnumerator* pEnum = nullptr;
+    if (SUCCEEDED(pMgr->GetSessionEnumerator(&pEnum)) && pEnum) {
+        int count = 0;
+        if (SUCCEEDED(pEnum->GetCount(&count))) {
+            for (int i = 0; i < count; ++i) {
+                IAudioSessionControl* pCtrl = nullptr;
+                if (SUCCEEDED(pEnum->GetSession(i, &pCtrl)) && pCtrl) {
+                    IAudioSessionControl2* pCtrl2 = nullptr;
+                    if (SUCCEEDED(pCtrl->QueryInterface(__uuidof(IAudioSessionControl2), (void**)&pCtrl2)) && pCtrl2) {
+                        DWORD pid = 0;
+                        AudioSessionState state = AudioSessionStateExpired;
+                        if (SUCCEEDED(pCtrl2->GetProcessId(&pid)) && pid == targetPid &&
+                            SUCCEEDED(pCtrl2->GetState(&state))) {
+                            if (state == AudioSessionStateActive) {
+                                bestState = 2;
+                            } else if (state == AudioSessionStateInactive && bestState < 1) {
+                                bestState = 1;
+                            }
+                        }
+                        pCtrl2->Release();
+                    }
+                    pCtrl->Release();
+                    if (bestState == 2) break;
+                }
+            }
+        }
+        pEnum->Release();
+    }
+    pMgr->Release();
+    return bestState;
 }
 
 std::wstring UnescapeBasicXmlEntities(std::wstring s) {
@@ -6257,6 +6427,8 @@ std::wstring UnescapeBasicXmlEntities(std::wstring s) {
     rep(L"&lt;", L"<");
     rep(L"&gt;", L">");
     rep(L"&amp;", L"&");
+    rep(L"&#13;", L"\r");
+    rep(L"&#10;", L"\n");
     return s;
 }
 
@@ -6272,10 +6444,91 @@ std::wstring ExtractXmlAttrVal(const std::wstring& xml, const std::wstring& keyN
     return UnescapeBasicXmlEntities(xml.substr(valPos, endPos - valPos));
 }
 
-void ReadFxSoundActiveOutput(std::wstring& outDeviceId, std::wstring& outDeviceName, bool& outPowerOn) {
+struct FxSoundDevicePresetEntry {
+    std::wstring deviceId;
+    std::wstring deviceName;
+    std::wstring preset;
+};
+
+std::wstring ExtractJsonStringField(const std::wstring& obj, const std::wstring& key) {
+    std::wstring marker = L"\"" + key + L"\"";
+    size_t pos = obj.find(marker);
+    if (pos == std::wstring::npos) return L"";
+    pos += marker.size();
+    size_t colon = obj.find(L':', pos);
+    if (colon == std::wstring::npos) return L"";
+    size_t q1 = obj.find(L'\"', colon + 1);
+    if (q1 == std::wstring::npos) return L"";
+    std::wstring out;
+    for (size_t i = q1 + 1; i < obj.size(); ++i) {
+        wchar_t ch = obj[i];
+        if (ch == L'\\' && i + 1 < obj.size()) {
+            wchar_t nxt = obj[++i];
+            if (nxt == L'\"' || nxt == L'\\' || nxt == L'/') out.push_back(nxt);
+            else if (nxt == L'n') out.push_back(L'\n');
+            else if (nxt == L'r') out.push_back(L'\r');
+            else if (nxt == L't') out.push_back(L'\t');
+            else out.push_back(nxt);
+        } else if (ch == L'\"') {
+            break;
+        } else {
+            out.push_back(ch);
+        }
+    }
+    return out;
+}
+
+void ParseFxSoundDeviceConfigs(const std::wstring& json, std::vector<FxSoundDevicePresetEntry>& outPresets) {
+    outPresets.clear();
+    size_t pos = 0;
+    while (pos < json.size()) {
+        size_t open = json.find(L'{', pos);
+        if (open == std::wstring::npos) break;
+        bool inStr = false;
+        int depth = 0;
+        size_t close = std::wstring::npos;
+        for (size_t i = open; i < json.size(); ++i) {
+            wchar_t ch = json[i];
+            if (inStr) {
+                if (ch == L'\\' && i + 1 < json.size()) {
+                    ++i;
+                } else if (ch == L'\"') {
+                    inStr = false;
+                }
+            } else {
+                if (ch == L'\"') {
+                    inStr = true;
+                } else if (ch == L'{') {
+                    ++depth;
+                } else if (ch == L'}') {
+                    if (--depth == 0) {
+                        close = i;
+                        break;
+                    }
+                }
+            }
+        }
+        if (close == std::wstring::npos) break;
+        std::wstring block = json.substr(open, close - open + 1);
+        FxSoundDevicePresetEntry entry{};
+        entry.deviceId = ExtractJsonStringField(block, L"device_id");
+        entry.deviceName = ExtractJsonStringField(block, L"device_name");
+        entry.preset = ExtractJsonStringField(block, L"preset");
+        if (!entry.preset.empty() && (!entry.deviceId.empty() || !entry.deviceName.empty())) {
+            outPresets.push_back(std::move(entry));
+        }
+        pos = close + 1;
+    }
+}
+
+void ReadFxSoundSettings(std::wstring& outDeviceId,
+                         std::wstring& outDeviceName,
+                         bool& outPowerOn,
+                         std::vector<FxSoundDevicePresetEntry>& outPresets) {
     outDeviceId.clear();
     outDeviceName.clear();
     outPowerOn = true;
+    outPresets.clear();
     WCHAR path[MAX_PATH]{};
     if (ExpandEnvironmentStringsW(L"%APPDATA%\\FxSound\\FxSound.settings", path, ARRAYSIZE(path)) == 0) return;
 
@@ -6296,15 +6549,31 @@ void ReadFxSoundActiveOutput(std::wstring& outDeviceId, std::wstring& outDeviceN
                 outDeviceName = ExtractXmlAttrVal(xml, L"output_device_name");
                 std::wstring pwr = ExtractXmlAttrVal(xml, L"power");
                 if (pwr == L"0") outPowerOn = false;
+                std::wstring devConfigs = ExtractXmlAttrVal(xml, L"device_configs");
+                if (!devConfigs.empty()) {
+                    ParseFxSoundDeviceConfigs(devConfigs, outPresets);
+                }
             }
         }
     }
     CloseHandle(hFile);
 }
 
-bool SwitchFxSoundOutputDevice(const std::wstring& fxExePath, const std::wstring& deviceName) {
+bool SwitchFxSoundOutputDevice(const std::wstring& fxExePath,
+                               const std::wstring& deviceName,
+                               const std::wstring& presetName) {
     if (fxExePath.empty() || deviceName.empty()) return false;
-    std::wstring cmdLine = L"\"" + fxExePath + L"\" \"--output=" + deviceName + L"\"";
+    auto stripQuotes = [](std::wstring s) {
+        s.erase(std::remove(s.begin(), s.end(), L'\"'), s.end());
+        return s;
+    };
+    std::wstring cleanDev = stripQuotes(deviceName);
+    std::wstring cleanPreset = stripQuotes(presetName);
+    std::wstring cmdLine = L"\"" + fxExePath + L"\" --output=\"" + cleanDev + L"\"";
+    if (!cleanPreset.empty() && _wcsicmp(cleanPreset.c_str(), L"None") != 0) {
+        cmdLine += L" --preset=\"" + cleanPreset + L"\"";
+    }
+    cmdLine += L" --run_minimized";
     STARTUPINFOW si{};
     si.cb = sizeof(si);
     si.dwFlags = STARTF_USESHOWWINDOW;
@@ -6324,7 +6593,8 @@ void EnumerateAudioOutputDevices(std::vector<AudioOutputDeviceItem>& outDevices,
                                  std::wstring& outFxExePath) {
     outDevices.clear();
     outFxSoundManaging = false;
-    outFxExePath = FindRunningFxSoundExePath();
+    DWORD fxPid = 0;
+    FindRunningFxSoundProcess(fxPid, outFxExePath);
 
     IMMDeviceEnumerator* pEnum = nullptr;
     if (FAILED(CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER,
@@ -6373,6 +6643,9 @@ void EnumerateAudioOutputDevices(std::vector<AudioOutputDeviceItem>& outDevices,
                 if (item.isDefault && item.isFxVirtual && !outFxExePath.empty()) {
                     outFxSoundManaging = true;
                 }
+                if (!item.isFxVirtual && fxPid != 0) {
+                    item.fxSessionState = GetProcessAudioSessionState(pDev, fxPid);
+                }
                 outDevices.push_back(std::move(item));
                 pDev->Release();
             }
@@ -6384,16 +6657,66 @@ void EnumerateAudioOutputDevices(std::vector<AudioOutputDeviceItem>& outDevices,
     if (outFxSoundManaging) {
         std::wstring fxOutId, fxOutName;
         bool fxPowerOn = true;
-        ReadFxSoundActiveOutput(fxOutId, fxOutName, fxPowerOn);
-        if (!fxPowerOn) {
-            outFxSoundManaging = false;
-        } else {
-            for (auto& d : outDevices) {
-                if (!d.isFxVirtual) {
-                    if ((!fxOutId.empty() && _wcsicmp(d.id.c_str(), fxOutId.c_str()) == 0) ||
-                        (!fxOutName.empty() && _wcsicmp(d.name.c_str(), fxOutName.c_str()) == 0)) {
-                        d.isFxTarget = true;
+        std::vector<FxSoundDevicePresetEntry> fxPresets;
+        ReadFxSoundSettings(fxOutId, fxOutName, fxPowerOn, fxPresets);
+
+        // Bind per-device configured FxSound presets (match ID first, then name)
+        for (auto& d : outDevices) {
+            if (d.isFxVirtual) continue;
+            for (const auto& cfg : fxPresets) {
+                if (!cfg.deviceId.empty() && _wcsicmp(d.id.c_str(), cfg.deviceId.c_str()) == 0) {
+                    d.fxPreset = cfg.preset;
+                    break;
+                }
+            }
+            if (d.fxPreset.empty()) {
+                for (const auto& cfg : fxPresets) {
+                    if (!cfg.deviceName.empty() && _wcsicmp(d.name.c_str(), cfg.deviceName.c_str()) == 0) {
+                        d.fxPreset = cfg.preset;
                         break;
+                    }
+                }
+            }
+        }
+
+        // Priority 1 (0ms live): physical endpoint with an Active WASAPI render session owned by FxSound.exe
+        bool foundTarget = false;
+        for (auto& d : outDevices) {
+            if (!d.isFxVirtual && d.fxSessionState == 2) {
+                d.isFxTarget = true;
+                foundTarget = true;
+                break;
+            }
+        }
+
+        // Priority 2 (0ms idle): if audio is paused and exactly one physical endpoint holds FxSound's Inactive session
+        if (!foundTarget && fxPowerOn) {
+            int inactiveIdx = -1;
+            int inactiveCount = 0;
+            for (int i = 0; i < static_cast<int>(outDevices.size()); ++i) {
+                if (!outDevices[i].isFxVirtual && outDevices[i].fxSessionState == 1) {
+                    inactiveIdx = i;
+                    ++inactiveCount;
+                }
+            }
+            if (inactiveCount == 1 && inactiveIdx >= 0) {
+                outDevices[inactiveIdx].isFxTarget = true;
+                foundTarget = true;
+            }
+        }
+
+        // Priority 3 (fallback): use FxSound.settings
+        if (!foundTarget) {
+            if (!fxPowerOn) {
+                outFxSoundManaging = false;
+            } else {
+                for (auto& d : outDevices) {
+                    if (!d.isFxVirtual) {
+                        if ((!fxOutId.empty() && _wcsicmp(d.id.c_str(), fxOutId.c_str()) == 0) ||
+                            (!fxOutName.empty() && _wcsicmp(d.name.c_str(), fxOutName.c_str()) == 0)) {
+                            d.isFxTarget = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -6650,6 +6973,8 @@ struct SecondaryTrayInstance {
     TrayHoverZone lastHoverZone = TrayHoverZone::None;
     float wifiHoverAlpha = 0.0f;
     float audioHoverAlpha = 0.0f;
+    float volOsdAlpha = 0.0f;
+    bool lastShowVolOsd = false;
     float animTrayX = 0.0f;
     bool hasAnimTrayX = false;
     float animStatsX = 0.0f;
@@ -6719,6 +7044,12 @@ struct AudioPopupState {
     int scrollOffset = 0;
     bool fxSoundManaging = false;
     std::wstring fxExePath;
+    std::wstring fxPendingTargetId;
+    ULONGLONG fxPendingUntilTick = 0;
+    float audioPlayingAlpha = 0.0f; // 0.0f = "Đã chọn" (Selected), 1.0f = "Đang phát" (Playing)
+    ULONGLONG lastAudioPeakTick = 0;
+    bool audioIsPlayingNow = false;
+    int liveSyncTickCount = 0;
     std::vector<AudioOutputDeviceItem> devices;
     // Cached layout rects in DIPs
     float dipW = 320.0f;
@@ -7249,38 +7580,63 @@ void RenderAudioPopup(bool presentNow = true) {
                             dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rowR, 6.0f, 6.0f), brush);
                         }
 
-                        if (dev.isDefault) {
+                        bool isPlaybackOutput = st.fxSoundManaging ? dev.isFxTarget : dev.isDefault;
+                        bool isFxPrimaryBadge = st.fxSoundManaging && dev.isDefault;
+                        float playT = std::clamp(st.audioPlayingAlpha, 0.0f, 1.0f);
+                        auto lerpCol = [](D2D1_COLOR_F a, D2D1_COLOR_F b, float t) -> D2D1_COLOR_F {
+                            return D2D1::ColorF(a.r + (b.r - a.r) * t,
+                                                a.g + (b.g - a.g) * t,
+                                                a.b + (b.b - a.b) * t,
+                                                a.a + (b.a - a.a) * t);
+                        };
+                        D2D1_COLOR_F activeOutputCol = lerpCol(accentCol, pal.ok, playT);
+
+                        if (isFxPrimaryBadge) {
                             brush->SetColor(accentCol);
                             dcTarget->FillRoundedRectangle(
                                 D2D1::RoundedRect(D2D1::RectF(14.0f, y0 + 9.0f, 17.5f, y0 + st.deviceRowHDip - 9.0f), 1.5f, 1.5f),
                                 brush);
-                        } else if (dev.isFxTarget) {
-                            brush->SetColor(pal.ok);
+                        } else if (isPlaybackOutput) {
+                            brush->SetColor(activeOutputCol);
                             dcTarget->FillRoundedRectangle(
-                                D2D1::RoundedRect(D2D1::RectF(14.0f, y0 + 10.0f, 17.5f, y0 + st.deviceRowHDip - 10.0f), 1.5f, 1.5f),
+                                D2D1::RoundedRect(D2D1::RectF(14.0f, y0 + 9.5f, 17.5f, y0 + st.deviceRowHDip - 9.5f), 1.5f, 1.5f),
                                 brush);
                         }
 
                         WCHAR spkGlyph[2] = { 0xE7F5, 0 };
-                        brush->SetColor(dev.isDefault ? accentCol : (dev.isFxTarget ? pal.ok : subCol));
+                        brush->SetColor(isFxPrimaryBadge ? accentCol : (isPlaybackOutput ? activeOutputCol : subCol));
                         dcTarget->DrawText(spkGlyph, 1, g_secPopupFmtIcon,
                                            D2D1::RectF(22.0f, y0 + 4.0f, 44.0f, y0 + st.deviceRowHDip - 4.0f), brush);
 
-                        bool showBadge = st.fxSoundManaging && (dev.isDefault || dev.isFxTarget);
+                        bool showBadge = isFxPrimaryBadge || isPlaybackOutput;
                         float nameRightX = showBadge ? (st.dipW - 88.0f) : (st.dipW - 18.0f);
                         brush->SetColor(highlightActive ? textCol : subCol);
                         dcTarget->DrawText(dev.name.c_str(), static_cast<UINT32>(dev.name.size()), g_secPopupFmtBody,
                                            D2D1::RectF(48.0f, y0 + 8.0f, nameRightX, y0 + st.deviceRowHDip - 6.0f),
                                            brush, D2D1_DRAW_TEXT_OPTIONS_CLIP);
 
-                        if (showBadge) {
-                            const wchar_t* badgeTxt = dev.isDefault
-                                                          ? (vi ? L"Chính" : L"Main")
-                                                          : (vi ? L"Đang phát" : L"Playing");
-                            brush->SetColor(dev.isDefault ? accentCol : pal.ok);
+                        if (isFxPrimaryBadge) {
+                            const wchar_t* badgeTxt = vi ? L"Chính" : L"Main";
+                            brush->SetColor(accentCol);
                             dcTarget->DrawText(badgeTxt, static_cast<UINT32>(wcslen(badgeTxt)), g_secPopupFmtRight,
-                                               D2D1::RectF(st.dipW - 78.0f, y0 + 9.0f, st.dipW - 16.0f, y0 + st.deviceRowHDip - 7.0f),
+                                               D2D1::RectF(st.dipW - 82.0f, y0 + 9.0f, st.dipW - 16.0f, y0 + st.deviceRowHDip - 7.0f),
                                                brush);
+                        } else if (isPlaybackOutput) {
+                            D2D1_RECT_F badgeR = D2D1::RectF(st.dipW - 84.0f, y0 + 9.0f, st.dipW - 16.0f, y0 + st.deviceRowHDip - 7.0f);
+                            if (playT < 0.99f) {
+                                const wchar_t* selTxt = vi ? L"Đã chọn" : L"Selected";
+                                D2D1_COLOR_F c = accentCol;
+                                c.a *= (1.0f - playT);
+                                brush->SetColor(c);
+                                dcTarget->DrawText(selTxt, static_cast<UINT32>(wcslen(selTxt)), g_secPopupFmtRight, badgeR, brush);
+                            }
+                            if (playT > 0.01f) {
+                                const wchar_t* playTxt = vi ? L"Đang phát" : L"Playing";
+                                D2D1_COLOR_F c = pal.ok;
+                                c.a *= playT;
+                                brush->SetColor(c);
+                                dcTarget->DrawText(playTxt, static_cast<UINT32>(wcslen(playTxt)), g_secPopupFmtRight, badgeR, brush);
+                            }
                         }
                     }
                 }
@@ -7557,12 +7913,77 @@ void RenderWifiPopup(bool presentNow = true) {
 constexpr UINT_PTR kTimerRefreshAudioPopup = 101;
 constexpr UINT_PTR kTimerRefreshWifiPopup = 102;
 constexpr UINT_PTR kTimerClearWifiNotice = 103;
+constexpr UINT_PTR kTimerLiveSyncAudioPopup = 104;
+
+void StopAudioPopupTimers(HWND hWnd) {
+    if (!hWnd || !IsWindow(hWnd)) return;
+    KillTimer(hWnd, kTimerRefreshAudioPopup);
+    KillTimer(hWnd, kTimerLiveSyncAudioPopup);
+}
+
+void UpdateAudioPopupPlayingState(AudioPopupState& st, bool snapAlpha) {
+    std::wstring activeId;
+    for (const auto& d : st.devices) {
+        if (st.fxSoundManaging) {
+            if (d.isFxTarget) { activeId = d.id; break; }
+        } else {
+            if (d.isDefault) { activeId = d.id; break; }
+        }
+    }
+    float peak = QueryAudioDevicePeakValue(activeId);
+    ULONGLONG now = GetTickCount64();
+    if (peak > 0.0005f) {
+        st.lastAudioPeakTick = now;
+        st.audioIsPlayingNow = true;
+    } else if (snapAlpha || st.lastAudioPeakTick == 0 || (now - st.lastAudioPeakTick) >= 650) {
+        st.audioIsPlayingNow = false;
+    }
+    if (snapAlpha) {
+        st.audioPlayingAlpha = st.audioIsPlayingNow ? 1.0f : 0.0f;
+    }
+}
+
+bool ApplyPendingFxTarget(AudioPopupState& st) {
+    if (st.fxPendingTargetId.empty()) return false;
+    bool confirmed = false;
+    for (const auto& d : st.devices) {
+        if (d.id == st.fxPendingTargetId && d.isFxTarget) {
+            confirmed = true;
+            break;
+        }
+    }
+    if (confirmed || GetTickCount64() >= st.fxPendingUntilTick) {
+        st.fxPendingTargetId.clear();
+        st.fxPendingUntilTick = 0;
+        return false;
+    }
+    for (auto& d : st.devices) {
+        d.isFxTarget = (d.id == st.fxPendingTargetId);
+    }
+    return true;
+}
+
+bool AudioDeviceStatesDiffer(bool prevFxManaging,
+                             const std::vector<AudioOutputDeviceItem>& prev,
+                             bool curFxManaging,
+                             const std::vector<AudioOutputDeviceItem>& cur) {
+    if (prevFxManaging != curFxManaging || prev.size() != cur.size()) return true;
+    for (size_t i = 0; i < cur.size(); ++i) {
+        if (prev[i].id != cur[i].id ||
+            prev[i].isDefault != cur[i].isDefault ||
+            prev[i].isFxTarget != cur[i].isFxTarget ||
+            prev[i].name != cur[i].name) {
+            return true;
+        }
+    }
+    return false;
+}
 
 void CloseAllSecondaryPopups() {
     g_audioPopupSurface.animActive = false;
     g_wifiPopupSurface.animActive = false;
     if (g_secAudioPopupHwnd && IsWindow(g_secAudioPopupHwnd)) {
-        KillTimer(g_secAudioPopupHwnd, kTimerRefreshAudioPopup);
+        StopAudioPopupTimers(g_secAudioPopupHwnd);
         if (IsWindowVisible(g_secAudioPopupHwnd)) ShowWindow(g_secAudioPopupHwnd, SW_HIDE);
     }
     if (g_secWifiPopupHwnd && IsWindow(g_secWifiPopupHwnd)) {
@@ -7585,7 +8006,7 @@ void OpenOrToggleSecondaryAudioPopup(HWND hClickedWidget, HWND hSecTaskbar) {
 
     if (IsWindowVisible(g_secAudioPopupHwnd) && g_audioPopupState.anchorWidget == hClickedWidget) {
         g_audioPopupSurface.animActive = false;
-        KillTimer(g_secAudioPopupHwnd, kTimerRefreshAudioPopup);
+        StopAudioPopupTimers(g_secAudioPopupHwnd);
         ShowWindow(g_secAudioPopupHwnd, SW_HIDE);
         return;
     }
@@ -7612,7 +8033,12 @@ void OpenOrToggleSecondaryAudioPopup(HWND hClickedWidget, HWND hSecTaskbar) {
     g_audioPopupState.hoverId = 0;
     g_audioPopupState.draggingSlider = false;
     g_audioPopupState.scrollOffset = 0;
+    g_audioPopupState.fxPendingTargetId.clear();
+    g_audioPopupState.fxPendingUntilTick = 0;
+    g_audioPopupState.lastAudioPeakTick = 0;
+    g_audioPopupState.liveSyncTickCount = 0;
     EnumerateAudioOutputDevices(g_audioPopupState.devices, g_audioPopupState.fxSoundManaging, g_audioPopupState.fxExePath);
+    UpdateAudioPopupPlayingState(g_audioPopupState, true);
 
     RenderAudioPopup(false);
     float slideDip = 14.0f * (g_audioPopupState.dpi / 96.0f);
@@ -7625,6 +8051,7 @@ void OpenOrToggleSecondaryAudioPopup(HWND hClickedWidget, HWND hSecTaskbar) {
                                 g_audioPopupSurface.baseY + static_cast<int>(std::round(g_audioPopupSurface.animStartOffsetY)), 24);
     ShowWindow(g_secAudioPopupHwnd, SW_SHOW);
     SetForegroundWindow(g_secAudioPopupHwnd);
+    SetTimer(g_secAudioPopupHwnd, kTimerLiveSyncAudioPopup, 180, nullptr);
     if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
 }
 
@@ -7648,7 +8075,7 @@ void OpenOrToggleSecondaryWifiPopup(HWND hClickedWidget, HWND hSecTaskbar) {
 
     if (g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd)) {
         g_audioPopupSurface.animActive = false;
-        KillTimer(g_secAudioPopupHwnd, kTimerRefreshAudioPopup);
+        StopAudioPopupTimers(g_secAudioPopupHwnd);
         ShowWindow(g_secAudioPopupHwnd, SW_HIDE);
     }
 
@@ -7716,7 +8143,7 @@ LRESULT CALLBACK SecondaryAudioPopupWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
         case WM_ACTIVATE:
             if (LOWORD(wParam) == WA_INACTIVE) {
                 g_audioPopupSurface.animActive = false;
-                KillTimer(hWnd, kTimerRefreshAudioPopup);
+                StopAudioPopupTimers(hWnd);
                 if (st.draggingSlider) {
                     ReleaseCapture();
                     st.draggingSlider = false;
@@ -7738,7 +8165,7 @@ LRESULT CALLBACK SecondaryAudioPopupWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
         case WM_KEYDOWN:
             if (wParam == VK_ESCAPE) {
                 g_audioPopupSurface.animActive = false;
-                KillTimer(hWnd, kTimerRefreshAudioPopup);
+                StopAudioPopupTimers(hWnd);
                 ShowWindow(hWnd, SW_HIDE);
                 return 0;
             }
@@ -7748,11 +8175,44 @@ LRESULT CALLBACK SecondaryAudioPopupWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
             if (wParam == kTimerRefreshAudioPopup) {
                 KillTimer(hWnd, kTimerRefreshAudioPopup);
                 if (IsWindowVisible(hWnd)) {
+                    auto prevDevices = st.devices;
+                    bool prevFx = st.fxSoundManaging;
                     RebindAudioEndpointVolume();
                     EnumerateAudioOutputDevices(st.devices, st.fxSoundManaging, st.fxExePath);
-                    RenderAudioPopup();
+                    bool stillPending = ApplyPendingFxTarget(st);
+                    UpdateAudioPopupPlayingState(st, false);
+                    if (stillPending) {
+                        SetTimer(hWnd, kTimerRefreshAudioPopup, 150, nullptr);
+                    }
+                    if (AudioDeviceStatesDiffer(prevFx, prevDevices, st.fxSoundManaging, st.devices)) {
+                        RenderAudioPopup();
+                    }
+                    SetTimer(hWnd, kTimerLiveSyncAudioPopup, 180, nullptr);
                     if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
                 }
+                return 0;
+            } else if (wParam == kTimerLiveSyncAudioPopup) {
+                if (!IsWindowVisible(hWnd)) {
+                    KillTimer(hWnd, kTimerLiveSyncAudioPopup);
+                    return 0;
+                }
+                bool prevPlaying = st.audioIsPlayingNow;
+                UpdateAudioPopupPlayingState(st, false);
+                bool needWake = (prevPlaying != st.audioIsPlayingNow) ||
+                                (std::abs((st.audioIsPlayingNow ? 1.0f : 0.0f) - st.audioPlayingAlpha) > 0.01f);
+                if (st.fxSoundManaging && !st.draggingSlider && (++st.liveSyncTickCount >= 3)) {
+                    st.liveSyncTickCount = 0;
+                    auto prevDevices = st.devices;
+                    bool prevFx = st.fxSoundManaging;
+                    EnumerateAudioOutputDevices(st.devices, st.fxSoundManaging, st.fxExePath);
+                    ApplyPendingFxTarget(st);
+                    if (AudioDeviceStatesDiffer(prevFx, prevDevices, st.fxSoundManaging, st.devices)) {
+                        UpdateAudioPopupPlayingState(st, false);
+                        RenderAudioPopup();
+                        needWake = true;
+                    }
+                }
+                if (needWake && g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
                 return 0;
             }
             break;
@@ -7761,7 +8221,10 @@ LRESULT CALLBACK SecondaryAudioPopupWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
             if (IsWindowVisible(hWnd)) {
                 RebindAudioEndpointVolume();
                 EnumerateAudioOutputDevices(st.devices, st.fxSoundManaging, st.fxExePath);
+                ApplyPendingFxTarget(st);
+                UpdateAudioPopupPlayingState(st, false);
                 RenderAudioPopup();
+                SetTimer(hWnd, kTimerLiveSyncAudioPopup, 180, nullptr);
                 if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
             }
             return 0;
@@ -7804,13 +8267,16 @@ LRESULT CALLBACK SecondaryAudioPopupWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
             float yDip = static_cast<float>(static_cast<short>(HIWORD(lParam))) / scale;
             int id = hitTest(xDip, yDip);
             if (id == 1 || id == 5) {
+                StopAudioPopupTimers(hWnd);
                 ShowWindow(hWnd, SW_HIDE);
                 ShellExecuteW(nullptr, L"open", L"ms-settings:sound", nullptr, nullptr, SW_SHOWNORMAL);
             } else if (id == 4) {
+                StopAudioPopupTimers(hWnd);
                 ShowWindow(hWnd, SW_HIDE);
                 ShellExecuteW(nullptr, L"open", L"sndvol.exe", nullptr, nullptr, SW_SHOWNORMAL);
             } else if (id == 2) {
                 ToggleMasterMute();
+                UpdateAudioPopupPlayingState(st, false);
                 RenderAudioPopup();
                 if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
             } else if (id == 3) {
@@ -7822,16 +8288,22 @@ LRESULT CALLBACK SecondaryAudioPopupWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
                 if (idx >= 0 && idx < static_cast<int>(st.devices.size())) {
                     const auto& clickedDev = st.devices[idx];
                     if (st.fxSoundManaging && !clickedDev.isFxVirtual && !st.fxExePath.empty()) {
-                        // FxSound manages physical speakers: switch FxSound's physical speaker while keeping FxSound as primary default!
-                        SwitchFxSoundOutputDevice(st.fxExePath, clickedDev.name);
+                        // FxSound manages physical speakers: switch FxSound's physical speaker + configured per-device preset
+                        SwitchFxSoundOutputDevice(st.fxExePath, clickedDev.name, clickedDev.fxPreset);
+                        st.fxPendingTargetId = clickedDev.id;
+                        st.fxPendingUntilTick = GetTickCount64() + 1800;
                         for (auto& d : st.devices) d.isFxTarget = false;
                         st.devices[idx].isFxTarget = true;
                         RenderAudioPopup();
-                        SetTimer(hWnd, kTimerRefreshAudioPopup, 400, nullptr);
+                        SetTimer(hWnd, kTimerRefreshAudioPopup, 150, nullptr);
                     } else {
+                        st.fxPendingTargetId.clear();
+                        st.fxPendingUntilTick = 0;
                         SetDefaultAudioOutputDevice(clickedDev.id);
                         EnumerateAudioOutputDevices(st.devices, st.fxSoundManaging, st.fxExePath);
+                        UpdateAudioPopupPlayingState(st, false);
                         RenderAudioPopup();
+                        SetTimer(hWnd, kTimerLiveSyncAudioPopup, 180, nullptr);
                         if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
                     }
                 }
@@ -8067,6 +8539,9 @@ LRESULT CALLBACK SecondaryTrayWidgetWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
             }
 
             if (inst && inst->hoverZone != newZone) {
+                if (inst->hoverZone == TrayHoverZone::Audio && newZone != TrayHoverZone::Audio) {
+                    g_volumeOsdExpiryTick.store(0);
+                }
                 inst->hoverZone = newZone;
                 if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
             }
@@ -8077,10 +8552,15 @@ LRESULT CALLBACK SecondaryTrayWidgetWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
         }
 
         case WM_MOUSELEAVE: {
+            bool needWake = false;
+            if (g_volumeOsdExpiryTick.exchange(0) != 0) {
+                needWake = true;
+            }
             if (inst && inst->hoverZone != TrayHoverZone::None) {
                 inst->hoverZone = TrayHoverZone::None;
-                if (g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
+                needWake = true;
             }
+            if (needWake && g_sysMonitorWakeEvent) SetEvent(g_sysMonitorWakeEvent);
             return 0;
         }
 
@@ -8102,10 +8582,13 @@ LRESULT CALLBACK SecondaryTrayWidgetWndProc(HWND hWnd, UINT uMsg, WPARAM wParam,
         }
 
         case WM_MOUSEWHEEL: {
+            if (inst && inst->hoverZone == TrayHoverZone::Wifi) {
+                return 0;
+            }
             short delta = GET_WHEEL_DELTA_WPARAM(wParam);
             float step = (delta > 0 ? 0.02f : -0.02f);
             AdjustMasterVolume(step);
-            g_volumeOsdExpiryTick.store(GetTickCount64() + 1500);
+            g_volumeOsdExpiryTick.store(GetTickCount64() + 1200);
             if (g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd)) {
                 RenderAudioPopup();
             }
@@ -8365,7 +8848,11 @@ void RenderSecondaryTrayBitmap(HWND hWidget,
                                       g_audioPopupState.anchorWidget == hWidget);
 
                     // Button 1: Independent Wi-Fi / Network (x: 2.0f to 31.0f) with smooth Fluent hover fade
+                    // Paint a 1/255 invisible alpha hit-target across the full rounded button rect so Windows
+                    // UpdateLayeredWindow delivers hover/click/wheel anywhere inside the button, not just icon pixels.
                     D2D1_RECT_F rWifi = D2D1::RectF(2.0f, topY, 31.0f, botY);
+                    brush->SetColor(D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.5f / 255.0f));
+                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rWifi, 5.0f, 5.0f), brush);
                     float wfAlpha = wifiOpen ? 1.0f : inst.wifiHoverAlpha;
                     if (wfAlpha > 0.01f) {
                         D2D1_COLOR_F c = wifiOpen ? activeColor : hoverColor;
@@ -8388,6 +8875,8 @@ void RenderSecondaryTrayBitmap(HWND hWidget,
 
                     // Button 2: Independent Audio / Speaker (x: 33.0f to 62.0f) with smooth Fluent hover fade
                     D2D1_RECT_F rVol = D2D1::RectF(33.0f, topY, 62.0f, botY);
+                    brush->SetColor(D2D1::ColorF(0.0f, 0.0f, 0.0f, 1.5f / 255.0f));
+                    dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rVol, 5.0f, 5.0f), brush);
                     float auAlpha = audioOpen ? 1.0f : inst.audioHoverAlpha;
                     if (auAlpha > 0.01f) {
                         D2D1_COLOR_F c = audioOpen ? activeColor : hoverColor;
@@ -8395,28 +8884,33 @@ void RenderSecondaryTrayBitmap(HWND hWidget,
                         brush->SetColor(c);
                         dcTarget->FillRoundedRectangle(D2D1::RoundedRect(rVol, 5.0f, 5.0f), brush);
                     }
-                    if (showVolumeOsd) {
+                    float osdA = std::clamp(inst.volOsdAlpha, 0.0f, 1.0f);
+                    if (osdA < 0.99f) {
+                        WCHAR glyphVol[2]{};
+                        D2D1_COLOR_F glyphCol = normalColor;
+                        if (isMuted || masterVol <= 0.001f) {
+                            glyphVol[0] = 0xE74F; // Mute
+                            glyphCol = dimColor;
+                        } else if (masterVol < 0.33f) {
+                            glyphVol[0] = 0xE993; // Volume 1
+                        } else if (masterVol < 0.66f) {
+                            glyphVol[0] = 0xE994; // Volume 2
+                        } else {
+                            glyphVol[0] = 0xE995; // Volume 3
+                        }
+                        glyphCol.a *= (1.0f - osdA);
+                        brush->SetColor(glyphCol);
+                        dcTarget->DrawText(glyphVol, 1, fmtGlyph, rVol, brush);
+                    }
+                    if (osdA > 0.01f) {
                         int volPct = isMuted ? 0 : std::clamp(static_cast<int>(masterVol * 100.0f + 0.5f), 0, 100);
                         WCHAR volStr[16]{};
                         _snwprintf_s(volStr, _TRUNCATE, L"%d%%", volPct);
-                        brush->SetColor(normalColor);
-                        dcTarget->DrawText(volStr, static_cast<UINT32>(wcslen(volStr)), fmtOsd, rVol, brush);
-                    } else {
-                        WCHAR glyphVol[2]{};
-                        if (isMuted || masterVol <= 0.001f) {
-                            glyphVol[0] = 0xE74F; // Mute
-                            brush->SetColor(dimColor);
-                        } else if (masterVol < 0.33f) {
-                            glyphVol[0] = 0xE993; // Volume 1
-                            brush->SetColor(normalColor);
-                        } else if (masterVol < 0.66f) {
-                            glyphVol[0] = 0xE994; // Volume 2
-                            brush->SetColor(normalColor);
-                        } else {
-                            glyphVol[0] = 0xE995; // Volume 3
-                            brush->SetColor(normalColor);
-                        }
-                        dcTarget->DrawText(glyphVol, 1, fmtGlyph, rVol, brush);
+                        D2D1_COLOR_F osdCol = (isMuted || volPct == 0) ? dimColor : normalColor;
+                        osdCol.a *= osdA;
+                        brush->SetColor(osdCol);
+                        D2D1_RECT_F rOsd = D2D1::RectF(rVol.left - 1.5f, rVol.top, rVol.right + 1.5f, rVol.bottom);
+                        dcTarget->DrawText(volStr, static_cast<UINT32>(wcslen(volStr)), fmtOsd, rOsd, brush);
                     }
 
                     brush->Release();
@@ -8451,7 +8945,110 @@ static constexpr GUID kIidIUIAutomation =
 std::mutex g_secClockMarginMutex;
 std::unordered_map<HWND, int> g_secClockMargins;
 std::vector<HWND> g_activeSecTraysForUia;
+std::atomic<int> g_primaryTrayMargin{0};
+std::atomic<HWND> g_primaryTrayHwndForUia{nullptr};
 std::thread g_secClockUiaThread;
+
+int MeasurePrimaryTrayMarginWithUia(IUIAutomation* pUia, HWND hTray) {
+    if (!pUia || !hTray || !IsWindow(hTray) || !IsWindowVisible(hTray)) return 0;
+    RECT rcTray{};
+    if (!GetWindowRect(hTray, &rcTray)) return 0;
+    int tbW = rcTray.right - rcTray.left;
+    int tbH = rcTray.bottom - rcTray.top;
+    if (tbW < 300 || tbH < 20) return 0;
+
+    float scale = static_cast<float>(GetWindowDpiSafe(hTray)) / 96.0f;
+
+    IUIAutomationElement* pRoot = nullptr;
+    if (FAILED(pUia->ElementFromHandle(hTray, &pRoot)) || !pRoot) return 0;
+
+    VARIANT varBtn{};
+    varBtn.vt = VT_I4;
+    varBtn.lVal = UIA_ButtonControlTypeId;
+    IUIAutomationCondition* pCond = nullptr;
+    int measuredMargin = 0;
+
+    if (SUCCEEDED(pUia->CreatePropertyCondition(UIA_ControlTypePropertyId, varBtn, &pCond)) && pCond) {
+        IUIAutomationElementArray* pArr = nullptr;
+        if (SUCCEEDED(pRoot->FindAll(TreeScope_Descendants, pCond, &pArr)) && pArr) {
+            int count = 0;
+            pArr->get_Length(&count);
+
+            int maxTraySpan = std::min(static_cast<int>(640.0f * scale), tbW / 2);
+            int rightZoneLimit = rcTray.right - maxTraySpan;
+            int minRightEdgeAttach = rcTray.right - static_cast<int>(42.0f * scale);
+            int minBtnW = static_cast<int>(12.0f * scale);
+            int maxBtnW = static_cast<int>(280.0f * scale);
+            int minBtnH = static_cast<int>(16.0f * scale);
+
+            int bestLeft = rcTray.right;
+            bool foundTraySeed = false;
+
+            struct TrayBtnRect { int l, r; };
+            std::vector<TrayBtnRect> trayCandidates;
+
+            for (int i = 0; i < count; ++i) {
+                IUIAutomationElement* pEl = nullptr;
+                if (SUCCEEDED(pArr->GetElement(i, &pEl)) && pEl) {
+                    RECT rcEl{};
+                    if (SUCCEEDED(pEl->get_CurrentBoundingRectangle(&rcEl))) {
+                        int w = rcEl.right - rcEl.left;
+                        int h = rcEl.bottom - rcEl.top;
+                        if (w >= minBtnW && w <= maxBtnW &&
+                            h >= minBtnH && h <= tbH + 6 &&
+                            rcEl.left >= rightZoneLimit && rcEl.right <= rcTray.right + 4 &&
+                            rcEl.top >= rcTray.top - 4 && rcEl.bottom <= rcTray.bottom + 4) {
+                            bool isTaskbarAppBtn = false;
+                            bool isSysTrayBtn = false;
+                            BSTR bstrCls = nullptr;
+                            if (SUCCEEDED(pEl->get_CurrentClassName(&bstrCls)) && bstrCls) {
+                                if (wcsncmp(bstrCls, L"Taskbar.", 8) == 0) {
+                                    isTaskbarAppBtn = true;
+                                } else if (wcsncmp(bstrCls, L"SystemTray.", 11) == 0) {
+                                    isSysTrayBtn = true;
+                                }
+                                SysFreeString(bstrCls);
+                            }
+                            if (!isTaskbarAppBtn) {
+                                trayCandidates.push_back({ static_cast<int>(rcEl.left), static_cast<int>(rcEl.right) });
+                                if (isSysTrayBtn ||
+                                    (w >= static_cast<int>(36.0f * scale) && rcEl.right >= minRightEdgeAttach)) {
+                                    bestLeft = std::min(bestLeft, static_cast<int>(rcEl.left));
+                                    foundTraySeed = true;
+                                }
+                            }
+                        }
+                    }
+                    pEl->Release();
+                }
+            }
+
+            if (foundTraySeed) {
+                bool extended = true;
+                while (extended) {
+                    extended = false;
+                    for (const auto& b : trayCandidates) {
+                        if (b.l < bestLeft &&
+                            b.r >= bestLeft - static_cast<int>(14.0f * scale) &&
+                            b.r <= bestLeft + static_cast<int>(6.0f * scale) &&
+                            b.l >= rightZoneLimit) {
+                            bestLeft = b.l;
+                            extended = true;
+                        }
+                    }
+                }
+                measuredMargin = (static_cast<int>(rcTray.right) - bestLeft) + static_cast<int>(4.0f * scale);
+                measuredMargin = std::clamp(measuredMargin,
+                                            static_cast<int>(120.0f * scale),
+                                            maxTraySpan);
+            }
+            pArr->Release();
+        }
+        pCond->Release();
+    }
+    pRoot->Release();
+    return measuredMargin;
+}
 
 int MeasureSecondaryClockMarginWithUia(IUIAutomation* pUia, HWND hSec) {
     if (!pUia || !hSec || !IsWindow(hSec) || !IsWindowVisible(hSec)) return 0;
@@ -8547,22 +9144,33 @@ void RunSecondaryClockUiaLoop() {
 
     while (!g_shuttingDown) {
         ModSettings s = GetSettings();
-        if (pUia && (s.enableSecondaryMonitorTray || s.enableSecondaryMonitorStats)) {
-            std::vector<HWND> targets;
-            {
-                std::lock_guard<std::mutex> lock(g_secClockMarginMutex);
-                targets = g_activeSecTraysForUia;
-            }
+        if (pUia && (s.enableTaskbarSystemStats || s.enableSecondaryMonitorTray || s.enableSecondaryMonitorStats)) {
             bool anyChanged = false;
-            for (HWND hSec : targets) {
-                if (g_shuttingDown) break;
-                int m = MeasureSecondaryClockMarginWithUia(pUia, hSec);
-                if (m > 0) {
-                    std::lock_guard<std::mutex> lock(g_secClockMarginMutex);
-                    auto it = g_secClockMargins.find(hSec);
-                    if (it == g_secClockMargins.end() || it->second != m) {
-                        g_secClockMargins[hSec] = m;
+            if (s.enableTaskbarSystemStats) {
+                HWND hPri = g_primaryTrayHwndForUia.load();
+                if (hPri) {
+                    int pm = MeasurePrimaryTrayMarginWithUia(pUia, hPri);
+                    if (pm > 0 && g_primaryTrayMargin.exchange(pm) != pm) {
                         anyChanged = true;
+                    }
+                }
+            }
+            if (s.enableSecondaryMonitorTray || s.enableSecondaryMonitorStats) {
+                std::vector<HWND> targets;
+                {
+                    std::lock_guard<std::mutex> lock(g_secClockMarginMutex);
+                    targets = g_activeSecTraysForUia;
+                }
+                for (HWND hSec : targets) {
+                    if (g_shuttingDown) break;
+                    int m = MeasureSecondaryClockMarginWithUia(pUia, hSec);
+                    if (m > 0) {
+                        std::lock_guard<std::mutex> lock(g_secClockMarginMutex);
+                        auto it = g_secClockMargins.find(hSec);
+                        if (it == g_secClockMargins.end() || it->second != m) {
+                            g_secClockMargins[hSec] = m;
+                            anyChanged = true;
+                        }
                     }
                 }
             }
@@ -8929,6 +9537,8 @@ void RunTaskbarSystemMonitorLoop() {
     bool bitmapDirty = true;
     int lastRenderedPxW = 0, lastRenderedPxH = 0;
     int lastPlacedX = -99999, lastPlacedY = -99999;
+    float animPrimaryStatsX = 0.0f;
+    bool hasAnimPrimaryStatsX = false;
     bool lastRenderedLightTheme = false;
     float lastRenderedDpi = 0.0f;
 
@@ -9107,16 +9717,23 @@ void RunTaskbarSystemMonitorLoop() {
                     }
 
                     if (primaryAllowed || g_isDraggingWidget || g_isContextMenuOpen) {
-                        // Win11: Reserve space for the right-hand system tray (^ ENG WiFi Speaker + 2-line Lunar Clock)
-                        int minTrayW = static_cast<int>((settings.enableTaskbarClock ? 248.0f : 195.0f) * scale);
-                        int trayLeftX = rcTray.right - minTrayW;
-                        HWND hNotifyWnd = FindWindowExW(hTrayWnd, nullptr, L"TrayNotifyWnd", nullptr);
-                        if (hNotifyWnd) {
-                            RECT rcNotify{};
-                            if (GetWindowRect(hNotifyWnd, &rcNotify) &&
-                                rcNotify.left > rcTray.left + 100 &&
-                                rcNotify.left < rcTray.right - 40) {
-                                trayLeftX = std::min<int>(trayLeftX, rcNotify.left);
+                        g_primaryTrayHwndForUia.store(hTrayWnd);
+                        // Win11: Prefer live UIA system-tray width (auto-adapts to ^ chevron, tray icons, ENG/VIE, Quick Settings, Clock & DND bell)
+                        int trayLeftX = 0;
+                        int priUiaMargin = g_primaryTrayMargin.load();
+                        if (priUiaMargin > 0) {
+                            trayLeftX = rcTray.right - priUiaMargin;
+                        } else {
+                            int minTrayW = static_cast<int>((settings.enableTaskbarClock ? 248.0f : 195.0f) * scale);
+                            trayLeftX = rcTray.right - minTrayW;
+                            HWND hNotifyWnd = FindWindowExW(hTrayWnd, nullptr, L"TrayNotifyWnd", nullptr);
+                            if (hNotifyWnd) {
+                                RECT rcNotify{};
+                                if (GetWindowRect(hNotifyWnd, &rcNotify) &&
+                                    rcNotify.left > rcTray.left + 100 &&
+                                    rcNotify.left < rcTray.right - 40) {
+                                    trayLeftX = std::min<int>(trayLeftX, rcNotify.left);
+                                }
                             }
                         }
                         int baseDefaultX = trayLeftX - pxW - static_cast<int>(8.0f * scale);
@@ -9126,7 +9743,22 @@ void RunTaskbarSystemMonitorLoop() {
                         g_cachedMinAllowedX.store(minAllowedX);
                         g_cachedMaxAllowedX.store(maxAllowedX);
 
-                        int targetX = std::clamp(baseDefaultX + g_userOffsetX.load(), minAllowedX, maxAllowedX);
+                        int desiredPrimaryX = std::clamp(baseDefaultX + g_userOffsetX.load(), minAllowedX, maxAllowedX);
+                        bool draggingPrimaryStats = g_isDraggingWidget.load() && (g_draggedHwnd.load() == hWidget);
+                        if (draggingPrimaryStats || !hasAnimPrimaryStatsX || std::abs(desiredPrimaryX - animPrimaryStatsX) > 180.0f) {
+                            animPrimaryStatsX = static_cast<float>(desiredPrimaryX);
+                            hasAnimPrimaryStatsX = true;
+                        } else if (std::abs(desiredPrimaryX - animPrimaryStatsX) > 0.5f) {
+                            animPrimaryStatsX += (static_cast<float>(desiredPrimaryX) - animPrimaryStatsX) * 0.28f;
+                            if (std::abs(desiredPrimaryX - animPrimaryStatsX) <= 0.6f) {
+                                animPrimaryStatsX = static_cast<float>(desiredPrimaryX);
+                            } else {
+                                anySecondaryAnimating = true;
+                            }
+                        } else {
+                            animPrimaryStatsX = static_cast<float>(desiredPrimaryX);
+                        }
+                        int targetX = static_cast<int>(std::round(animPrimaryStatsX));
                         int targetY = rcTray.top + (trayH - pxH) / 2;
 
                         bool needBitmapRedraw = forceRedraw || bitmapDirty ||
@@ -9157,7 +9789,7 @@ void RunTaskbarSystemMonitorLoop() {
                                          SWP_NOACTIVATE | SWP_NOSENDCHANGING);
                             lastPlacedX = targetX;
                             lastPlacedY = targetY;
-                        } else if (posChanged || zOrderBehindTray || forceRedraw) {
+                        } else if (!draggingPrimaryStats && (posChanged || zOrderBehindTray || forceRedraw)) {
                             SetWindowPos(hWidget, HWND_TOPMOST, targetX, targetY, pxW, pxH,
                                          SWP_NOACTIVATE | SWP_NOSENDCHANGING);
                             lastPlacedX = targetX;
@@ -9358,6 +9990,15 @@ void RunTaskbarSystemMonitorLoop() {
                     hoverAnimChanged = true;
                 }
 
+                float targetOsdA = showVolOsd ? 1.0f : 0.0f;
+                bool osdAnimChanged = false;
+                if (std::abs(targetOsdA - inst.volOsdAlpha) > 0.015f) {
+                    inst.volOsdAlpha += (targetOsdA - inst.volOsdAlpha) * 0.25f;
+                    if (std::abs(targetOsdA - inst.volOsdAlpha) <= 0.02f) inst.volOsdAlpha = targetOsdA;
+                    else anySecondaryAnimating = true;
+                    osdAnimChanged = true;
+                }
+
                 bool volChanged = (curVolPct != inst.lastVolumePercent) || (curMuted != inst.lastMuted);
                 bool trayBitmapDirty = forceRedraw ||
                                        (secTrayPxW != inst.lastTrayW) || (secTrayPxH != inst.lastTrayH) ||
@@ -9370,7 +10011,8 @@ void RunTaskbarSystemMonitorLoop() {
                                        (wifiPopVis != inst.lastWifiPopupOpen) ||
                                        (audioPopVis != inst.lastAudioPopupOpen) ||
                                        hoverAnimChanged ||
-                                       showVolOsd;
+                                       osdAnimChanged ||
+                                       (showVolOsd != inst.lastShowVolOsd);
                 bool trayPosChanged = (targetTrayX != inst.lastTrayX) || (targetTrayY != inst.lastTrayY);
 
                 bool trayWasVis = IsWindowVisible(inst.hTrayWidget) != FALSE;
@@ -9387,6 +10029,7 @@ void RunTaskbarSystemMonitorLoop() {
                 inst.lastHoverZone = inst.hoverZone;
                 inst.lastWifiPopupOpen = wifiPopVis;
                 inst.lastAudioPopupOpen = audioPopVis;
+                inst.lastShowVolOsd = showVolOsd;
 
                 if (trayBitmapDirty) {
                     RenderSecondaryTrayBitmap(
@@ -9402,7 +10045,10 @@ void RunTaskbarSystemMonitorLoop() {
                     RebindAudioEndpointVolume();
                     if (g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd) && !g_audioPopupState.draggingSlider) {
                         EnumerateAudioOutputDevices(g_audioPopupState.devices, g_audioPopupState.fxSoundManaging, g_audioPopupState.fxExePath);
+                        ApplyPendingFxTarget(g_audioPopupState);
+                        UpdateAudioPopupPlayingState(g_audioPopupState, false);
                         RenderAudioPopup();
+                        SetTimer(g_secAudioPopupHwnd, kTimerLiveSyncAudioPopup, 180, nullptr);
                     }
                 } else if (volChanged && g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd) && !g_audioPopupState.draggingSlider) {
                     RenderAudioPopup();
@@ -9507,7 +10153,9 @@ void RunTaskbarSystemMonitorLoop() {
     while (!g_shuttingDown) {
         // Adaptive frame pacing: 8ms (~120fps) during popup slide/fade, hover fade, or tray glide;
         // 60ms ultra-low-CPU poll when idle.
-        bool popupAnimBusy = g_audioPopupSurface.animActive || g_wifiPopupSurface.animActive;
+        bool audioPlayFadeBusy = g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd) &&
+                                 std::abs((g_audioPopupState.audioIsPlayingNow ? 1.0f : 0.0f) - g_audioPopupState.audioPlayingAlpha) > 0.01f;
+        bool popupAnimBusy = g_audioPopupSurface.animActive || g_wifiPopupSurface.animActive || audioPlayFadeBusy;
         DWORD waitMs = (anySecondaryAnimating || popupAnimBusy) ? 8 : 60;
         DWORD waitRes = MsgWaitForMultipleObjects(2, waitHandles, FALSE, waitMs, QS_ALLINPUT);
         if (g_shuttingDown || waitRes == WAIT_OBJECT_0) {
@@ -9525,6 +10173,16 @@ void RunTaskbarSystemMonitorLoop() {
         ULONGLONG nowLoopTick = GetTickCount64();
         g_audioPopupSurface.TickAnimation(g_secAudioPopupHwnd, nowLoopTick);
         g_wifiPopupSurface.TickAnimation(g_secWifiPopupHwnd, nowLoopTick);
+        if (g_secAudioPopupHwnd && IsWindowVisible(g_secAudioPopupHwnd) && !g_audioPopupSurface.animActive) {
+            float targetPlayA = g_audioPopupState.audioIsPlayingNow ? 1.0f : 0.0f;
+            if (std::abs(targetPlayA - g_audioPopupState.audioPlayingAlpha) > 0.01f) {
+                g_audioPopupState.audioPlayingAlpha += (targetPlayA - g_audioPopupState.audioPlayingAlpha) * 0.22f;
+                if (std::abs(targetPlayA - g_audioPopupState.audioPlayingAlpha) <= 0.015f) {
+                    g_audioPopupState.audioPlayingAlpha = targetPlayA;
+                }
+                RenderAudioPopup();
+            }
+        }
 
         ModSettings s = GetSettings();
         if (s.enableTaskbarSystemStats || s.enableSecondaryMonitorStats) {

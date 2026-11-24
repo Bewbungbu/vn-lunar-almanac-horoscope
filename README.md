@@ -1,6 +1,6 @@
 # 🌕 Lịch Vạn Niên, Tử Vi Phong Thủy & Tiện Ích Taskbar Đa Màn Hình
 
-![Version](https://img.shields.io/badge/version-0.2.2-blue)
+![Version](https://img.shields.io/badge/version-0.2.5-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%2011%20%7C%20Windows%2010%20(x86--64)-0078D6)
 ![Windhawk](https://img.shields.io/badge/Windhawk-Mod-orange)
 ![License](https://img.shields.io/badge/license-GPL--3.0-green)
@@ -41,17 +41,18 @@ Bản Mod dành cho **Windhawk** (hỗ trợ đầy đủ **Windows 11** và **W
 * **Bảo mật riêng tư trên Tooltip:** Cho phép ẩn nội dung ghi chú Google Calendar nhạy cảm khi vô tình rê chuột qua đồng hồ Taskbar.
 
 ### 📊 Khung theo dõi Thông số hệ thống trên Taskbar
-* Hiển thị thời gian thực **`% CPU`**, **`% GPU`**, **`% & GB RAM`**, **tốc độ Mạng (`↓ Tải xuống / ↑ Tải lên`)** và **độ trễ `Ping (ms)`**.
+* Hiển thị thời gian thực **`% CPU`**, **`% GPU`**, **`% & GB RAM`**, **tốc độ Mạng (`↓ Tải xuống / ↑ Tải lên`)** và **độ trễ `Ping (ms)`** (tự động nhận đúng DNS công cộng đang cấu hình trên Windows).
+* **Tự co giãn mượt 120fps trên cả màn chính & màn phụ:** Tự động đo độ rộng thực tế khay hệ thống (mũi tên `^`, các icon khay, đồng hồ, chuông thông báo `🔔zZ`) để trượt ngang mượt mà, không đè chữ và không bị đứng yên khi khay thay đổi.
 * **Kéo thả tự do & Ghi nhớ vị trí vĩnh viễn:** Giữ chuột trái kéo tới vị trí phù hợp trên Taskbar; tọa độ được lưu cố định vào `HKCU\Software\VnLunarAlmanac\Settings`, giữ nguyên sau khi khởi động lại máy.
 * **Thao tác nhanh:** Nhấp đúp mở **Task Manager**; nhấp chuột phải để bật/tắt nhanh từng chỉ số hoặc chọn **"Đặt lại vị trí"**.
 * Tương thích mượt mà với chế độ **Ẩn Taskbar (Auto-Hide)**, giữ nguyên hiển thị khi mở **Start Menu**, và tự ẩn đúng từng màn hình khi có ứng dụng/game chạy **Fullscreen**.
 
 ### 🖥️ Tiện ích Đa Màn Hình (Multi-Monitor)
 * **Tự động nhận diện tất cả màn hình thứ 2 trở lên** (bỏ qua màn hình chính để tránh trùng lặp), hoạt động **độc lập 100%** — không làm bật hay ảnh hưởng Taskbar màn hình chính.
-* **2 nút tách biệt (Wi-Fi / Mạng và Âm thanh) kèm bảng điều khiển nổi Fluent UI 120fps:**
+* **2 nút trong suốt tách biệt (Wi-Fi / Mạng và Âm thanh) kèm bảng điều khiển nổi Fluent UI 120fps:**
   * **Wi-Fi & Mạng:** Hiển thị danh sách mạng Wi-Fi khả dụng cùng cường độ sóng, bấm **Kết nối / Ngắt kết nối** trực tiếp (mạng đã lưu hồ sơ), nút **Quét lại (`↻`)**, hiển thị chính xác **Ethernet vật lý thật** (tự động lọc bỏ card mạng ảo Hyper-V, WSL, VPN).
-  * **Âm thanh:** Thanh trượt âm lượng mượt 120fps, nút **Tắt/Bật tiếng (Mute)** tức thì, **lăn con lăn chuột trực tiếp trên icon Loa** để tăng/giảm ±2% kèm OSD `%`, hỗ trợ **chuyển đổi thiết bị đầu ra** (Loa / Tai nghe / Màn hình) ngay trên màn hình phụ.
-  * **Tích hợp thông minh với FxSound:** Khi `FxSound` đang chạy và bật làm đầu ra mặc định, bấm chọn loa vật lý sẽ tự động chuyển loa phát qua FxSound mà vẫn giữ **FxSound** làm đầu ra chính (hiển thị nhãn **`Chính`** và **`Đang phát`** trực quan).
+  * **Âm thanh:** Thanh trượt âm lượng mượt 120fps, nút **Tắt/Bật tiếng (Mute)** tức thì, **lăn con lăn chuột trực tiếp trên nút Loa** để tăng/giảm ±2% kèm hiệu ứng cross-fade OSD `%` mượt mà, hỗ trợ **chuyển đổi thiết bị đầu ra** ngay trên màn hình phụ và **tự nhận diện tín hiệu âm thanh thật** để chuyển mượt giữa **`Đang phát`** và **`Đã chọn`**.
+  * **Tích hợp thông minh với FxSound:** Khi `FxSound` đang quản lý âm thanh, bấm chọn loa/tai nghe sẽ **chuyển ngầm dưới khay hệ thống** (không bật cửa sổ FxSound), tự động đổi đúng **chế độ Preset theo từng thiết bị** bạn đã cài sẵn (VD: `Music` / `Gaming`), và đồng bộ thời gian thực 0ms kể cả khi đổi trực tiếp trong app FxSound.
 * **Đồng bộ màu & co giãn thông minh:**
   * Nền 2 bảng nổi tự động lấy theo đúng màu thực tế của thanh Taskbar (Dark / Light / Accent Color / Mica).
   * Tự động trượt ngang co giãn mượt mà khi có biểu tượng chuông thông báo / Do Not Disturb (`🔔zZ`) xuất hiện bên cạnh đồng hồ, không bị đè chữ.
@@ -88,9 +89,9 @@ Bản Mod dành cho **Windhawk** (hỗ trợ đầy đủ **Windows 11** và **W
 
 1. Tải và cài đặt phần mềm [Windhawk](https://windhawk.net/).
 2. Mở Windhawk, bấm nút **Create a new mod** (Tạo mod mới) ở góc dưới bên phải.
-3. Chọn đúng tệp mã nguồn tương ứng với hệ điều hành của bạn ở thư mục gốc của kho mã nguồn:
-   * 💻 **Windows 11:** [`vn-lunar-almanac-horoscope-win11.wh.cpp`](./vn-lunar-almanac-horoscope-win11.wh.cpp)
-   * 🖥️ **Windows 10:** [`vn-lunar-almanac-horoscope-win10.wh.cpp`](./vn-lunar-almanac-horoscope-win10.wh.cpp)
+3. Chọn đúng tệp mã nguồn tương ứng với hệ điều hành của bạn ở thư mục gốc kho lưu trữ:
+   * **Windows 11:** [`vn-lunar-almanac-horoscope-win11.wh.cpp`](./vn-lunar-almanac-horoscope-win11.wh.cpp)
+   * **Windows 10:** [`vn-lunar-almanac-horoscope-win10.wh.cpp`](./vn-lunar-almanac-horoscope-win10.wh.cpp)
 4. Sao chép toàn bộ nội dung tệp và dán đè vào trình soạn thảo mã nguồn của Windhawk, sau đó nhấn **Compile Mod** (Biên dịch).
 5. Chuyển sang tab **Settings** (Cài đặt) để bật/tắt các tiện ích mong muốn, nhập Năm sinh Âm lịch và dán link `.ics` Google Calendar của bạn.
 
